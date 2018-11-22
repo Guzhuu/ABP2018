@@ -2,6 +2,19 @@
 	margin-left: 2%;
 	margin-right: 2%;
 }
+
+html{
+	font: Arial;
+}
+
+.table{
+	
+}
+
+th{
+	text-align: center;
+}
+
 .header{
 	margin: 0;
 	height: 15%;
