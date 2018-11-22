@@ -25,19 +25,21 @@ class SHOWALL{
 	function toString(){
 		include '../Views/base/header.php';
 		/**COMIENZO TABLA**/
-		echo '<table class="tabla">';
+		echo '<table>';
 			echo "<form id='AnadirBuscar' method='GET' action='"; echo $this->controlador; echo "'>";
 			echo '<tr class="filaInvisible">';
 				echo '<td class="celdaInvisible">';
-				echo "<input class='submit' type='submit' name='submit' value='ADD'/>";
+				echo "<input class='btn btn-success' type='submit' name='submit' value='ADD'/>";
 				echo '</td>';
 				
 				echo '<td class="celdaInvisible">';
-				echo "<input class='submit' type='submit' name='submit' value='SEARCH'/>";
+				echo "<input class='btn btn-primary' type='submit' name='submit' value='SEARCH'/>";
 				echo '</td>';
 			echo '</tr>';
 			echo '</form>';
+		echo '</table>';
 			/**COMIENZO FILA TITULOS COLUMNA**/
+		echo '<table class="table">';
 			echo '<tr class="fila">';
 				/*Para cada field (campo) se muestra su nombre*/
 				while($tituloColumna = $this->resultado->fetch_field()){
@@ -72,14 +74,14 @@ class SHOWALL{
 				/*Se crean los botones para las acciones*/
 				//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
 					echo '<td class="celda">';
-					if($this->EDIT){
-						echo "<input class='submit' type='submit' name='submit' value='EDIT'/>";
+					if($this->showEdit){
+						echo "<input class='btn btn-primary' type='submit' name='submit' value='EDIT'/>";
 					}
-					if($this->DELETE){
-						echo "<input class='submit' type='submit' name='submit' value='DELETE'/>";
+					if($this->showDelete){
+						echo "<input class='btn btn-danger' type='submit' name='submit' value='DELETE'/>";
 					}
-					if($this->SHOWCURRENT){
-						echo "<input class='submit' type='submit' name='submit' value='SHOWCURRENT'/>";
+					if($this->showShowcurrent){
+						echo "<input class='btn btn-primary' type='submit' name='submit' value='SHOWCURRENT'/>";
 					}
 					echo '</td>';
 					
