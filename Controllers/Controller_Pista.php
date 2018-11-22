@@ -62,7 +62,7 @@ switch ($_REQUEST['submit']){
 			}else{
 				$pista_tiene_horario = new pista_tiene_horario('',$_REQUEST['codigoPista'], $_REQUEST['codigoHorario']);//Si post cogemos Pista
 				$respuesta = $pista_tiene_horario->ADD();//Y lo añadimos
-				new Mensaje($respuesta, '../Controllers/Controller_Pista.php');// y a ver qué ha pasado en la BD
+				new Mensaje($respuesta, '../Controllers/Controller_Pista.php?codigoPista=' . $_REQUEST['codigoPista'] . '&nombre=' . $_REQUEST['nombre'] . '&submit=ADDHORARIO');// y a ver qué ha pasado en la BD
 			}
 		}
 		break;

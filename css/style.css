@@ -3,12 +3,17 @@
 	margin-right: 2%;
 }
 
+.nav-item{
+	margin-left: 8%;
+}
+
 html{
 	font: Arial;
 }
 
-.table{
-	
+body{
+    background-image:    url(../img/padel.png);
+    background-size:     cover;    
 }
 
 th{
@@ -24,11 +29,6 @@ th{
 .titulo{
 	font-size: 40;
 	margin-top: 0%;
-}
-
-.tabla{
-	padding-top: 5%;
-	padding-left: 7%;
 }
 
 .tituloColumna{
@@ -105,5 +105,7 @@ th{
 }
 
 .nombrePista{
-	width: 25%;
+	font-size: 27;
+	text-align: center;
+	padding: 4%;
 }

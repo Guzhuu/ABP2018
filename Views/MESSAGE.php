@@ -33,7 +33,7 @@ class Mensaje{
 				echo "</td>";
 				
 				echo "<td class='mensaje'>";
-				echo "<a href="; echo $this->retorno; echo '><button>Volver</button></a></td>';
+				echo "<a href="; echo $this->retorno; echo '><button class="btn btn-secondary">Volver</button></a></td>';
 				echo "</td>";
 			echo "</tr>";
 		echo "</table>";

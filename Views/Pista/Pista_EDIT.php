@@ -59,7 +59,7 @@ class Pista_EDIT{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-primary" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
@@ -73,7 +73,7 @@ class Pista_EDIT{  // declaración de clase
 				
 				echo '<td class="formularioTd">';
 					echo '<a href="'; echo $this->controller; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';

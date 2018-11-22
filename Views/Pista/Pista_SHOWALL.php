@@ -18,7 +18,7 @@ class Pista_SHOWALL extends SHOWALL{  // declaracion de clase
 	function toString(){
 		include '../Views/base/header.php';
 		/**COMIENZO TABLA**/
-		echo '<table>';
+		echo '<table align="center">';
 			echo "<form id='AnadirBuscar' method='GET' action='"; echo $this->controlador; echo "'>";
 			echo '<tr class="filaInvisible">';
 				echo '<td class="celdaInvisible">';
@@ -32,7 +32,7 @@ class Pista_SHOWALL extends SHOWALL{  // declaracion de clase
 			echo '</form>';
 		echo '</table>';
 			/**COMIENZO FILA TITULOS COLUMNA**/
-		echo '<table class="table">';
+		echo '<table class="table table-light">';
 			echo '<tr class="fila">';
 				/*Para cada field (campo) se muestra su nombre*/
 				while($tituloColumna = $this->resultado->fetch_field()){

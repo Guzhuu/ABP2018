@@ -45,7 +45,7 @@ class DELETE{
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="DELETE"/>';
+					echo '<input class="btn btn-danger" type="submit" name="submit" value="DELETE"/>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;
@@ -58,7 +58,7 @@ class DELETE{
 				
 				echo '<td class="formularioTd">';
 					echo '<a href="'; echo $this->controller; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';

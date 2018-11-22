@@ -45,7 +45,7 @@ class Pista_ADDHORARIO{
 							echo $this->campos['nombre'];
 						echo '</td>';
 						
-						echo '<td class="mensaje">';
+						echo '<td class="nombrePista">';
 							echo $fila[1];
 						echo '</td>';
 					echo '</tr>';
@@ -60,12 +60,13 @@ class Pista_ADDHORARIO{
 				echo '<b class="lblBtAddHorario"> Desde las ' . $fila[3] . ' hasta las ' . $fila[4] . '</b>';
 				echo '<input type="hidden" name="codigoPista" value="'; echo $fila[0]; echo '"/>';
 				echo '<input type="hidden" name="codigoHorario" value="'; echo $fila[2]; echo '"/>';
-				echo '<input type="submit" name="submit" style="width:100%" value="ADDHORARIO"/><br/><br/>';
-				$i++;
+				echo '<input type="hidden" name="nombre" value="'; echo $fila[1]; echo '"/>';
+				echo '<input class="btn btn-info" type="submit" name="submit" value="ADDHORARIO"/><br/><br/>';
 				echo '</form>';
 			}
 			echo '</td>';
 			echo '</tr>';
+				$i++;
 			/*Fila para volver*/
 			echo '<tr class="'; echo $this->_getTr($i); echo'">';
 				echo '<td class="formularioTd">';
@@ -74,7 +75,7 @@ class Pista_ADDHORARIO{
 				
 				echo '<td class="formularioTd">';
 					echo '<a href="'; echo $this->controlador; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';

@@ -43,7 +43,7 @@ class SHOWCURRENT{
 				
 				echo '<td class="formularioTd">';
 					echo '<a href="'; echo $this->retorno; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';
