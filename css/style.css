@@ -1,0 +1,103 @@
+html{
+	margin: 0;
+	font-family: Arial;
+}
+
+body {
+	margin-top : 0;
+	margin-left: 15%;
+	width: 70%;
+}
+
+.header{
+	margin: 0;
+	height: 15%;
+	background: #1abc9c;
+}
+
+.titulo{
+	font-size: 40;
+	margin-top: 0%;
+}
+
+.tabla{
+	padding-top: 5%;
+	padding-left: 7%;
+}
+
+.tituloColumna{
+	border-top: 2px solid black;
+	border-right: 2px solid black;
+	border-left: 2px solid black;
+	border-bottom: 2px solid black;
+}
+
+.celda{
+	text-align: center;
+	border: 1px solid black;
+	padding-top: 3;
+	padding-bottom: 3;
+	padding-left: 10;
+	padding-right: 10;
+}
+
+.fila{
+	
+}
+
+.mensaje{
+	text-align: center;
+}
+
+.submit{
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+.detalle{
+	margin-left: 15%;
+	margin-top: 5%;
+	width: 70%;
+	height: 13%;
+}
+
+.formulario{
+	margin-left: 15%;
+	margin-top: 5%;
+	width: 70%;
+	height: 13%;
+}
+
+.formularioTd{
+	width: 30%;
+	text-align: center;
+	font-weight: bold;
+}
+
+.trPar{
+	background: #AAAAAA;
+}
+
+.trImpar{
+	background: #EEEEEE;
+}
+
+.botonHorario{
+	colspan: 100%;
+}
+
+.pistaPadel{
+	width: 100%;
+}
+
+.lineaPadel{
+	width: 100%;
+}
+
+.pista{
+	width: 75%;
+}
+
+.nombrePista{
+	width: 25%;
+}

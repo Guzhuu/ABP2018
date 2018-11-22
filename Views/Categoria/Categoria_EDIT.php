@@ -1,0 +1,117 @@
+<?php
+/* 
+	Vista para editar un Categoria
+*/
+	
+class Categoria_EDIT{  // declaración de clase
+	var $Categoria;
+	var $campos;
+	var $controller;
+	var $Volver = 'Volver';
+	var $submit = 'EDIT';
+
+	// declaración constructor de la clase
+	// se inicializa con los valores del formulario y el valor del botón submit pulsado
+	function __construct($Categoria){
+		$this->Categoria = $Categoria;
+		$this->campos = array(
+					"Categoria" => "Codigo de la Categoria",
+					"Nivel" => "nivel de la categoria",
+					"Sexo" => "sexo de los participantes en la categoria");
+		$this->controller = 'controller_Categoria.php';
+		$this->toString();
+	} // fin del constructor
+	
+	function _getTr($i){
+		if($i % 2){
+			return "trImpar";
+		}else{
+			return "trPar";
+		}
+	}
+
+	// declaración de método pinta()
+	// muestra por pantall html con los valores de los atributos de la clase
+	// y un hiperenlace para volver al script php que la invocó
+	function toString(){
+		include_once '../Views/base/header.php';
+		
+		$i = 0;
+		/*Tabla para el formulario*/
+		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
+		echo '<table class="formulario">';
+		
+			
+			/*Fila para Categoria*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Categoria'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Categoria" value="'; echo $this->Categoria->Categoria; echo'">';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+
+			/*Fila para Nivel*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Nivel'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Nivel" value="'; echo $this->Categoria->Nivel; echo'">';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para Sexo*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Sexo'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Sexo" value="'; echo $this->Categoria->Sexo; echo'">';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+
+
+			
+			/*Fila para submit*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->submit;
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para volver*/
+			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+				echo '<td class="formularioTd">';
+					echo $this->Volver;
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<a href="'; echo $this->controller; echo '">';
+					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '</a>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+		echo '</table>';
+		echo '</form>';
+		include_once '../Views/base/footer.php';
+	} // fin método pinta()
+} //fin de class muestradatos
+?>
