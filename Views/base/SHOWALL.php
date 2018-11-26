@@ -20,6 +20,27 @@ class SHOWALL{
 	
 	var $resultado;//Las tuplas a mostrar
 	
+	
+	function botonesArriba(){
+		//Implementar, si es necesario, en las vistas_SHOWALL.php
+		// a poder ser acordaos de poenrlo btn-secondary en vez de btn-primary
+		/*************************** EJEMPLO ************************
+			echo '<td class="celdaInvisible">';
+				echo "<input class='btn btn-secondary' type='submit' name='submit' value='ADDHORARIO'/>";
+			echo '</td>';
+		*************************************************************/
+	}
+	
+	function botonesOpcion(){
+		//Implementar, si es necesario, en las vistas_SHOWALL.php 
+		// a poder ser acordaos de poenrlo btn-secondary en vez de btn-primary
+		/*************************** EJEMPLO ************************
+			if($this->showShowcurrent){
+				echo "<input class='btn btn-secondary' type='submit' name='submit' value='SHOWCURRENT'/>";
+			}
+		*************************************************************/
+	}
+	
 	// muestra por pantall html con los valores de los atributos de la clase
 	// y un hiperenlace para volver al script php que la invoca
 	function toString(){
@@ -35,6 +56,8 @@ class SHOWALL{
 				echo '<td class="celdaInvisible">';
 				echo "<input class='btn btn-primary' type='submit' name='submit' value='SEARCH'/>";
 				echo '</td>';
+				
+				$this->botonesArriba();
 			echo '</tr>';
 			echo '</form>';
 		echo '</table>';
@@ -74,15 +97,16 @@ class SHOWALL{
 				/*Se crean los botones para las acciones*/
 				//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
 					echo '<td class="celda">';
-					if($this->showEdit){
-						echo "<input class='btn btn-primary' type='submit' name='submit' value='EDIT'/>";
-					}
-					if($this->showDelete){
-						echo "<input class='btn btn-danger' type='submit' name='submit' value='DELETE'/>";
-					}
-					if($this->showShowcurrent){
-						echo "<input class='btn btn-primary' type='submit' name='submit' value='SHOWCURRENT'/>";
-					}
+						if($this->showEdit){
+							echo "<input class='btn btn-primary' type='submit' name='submit' value='EDIT'/>";
+						}
+						if($this->showDelete){
+							echo "<input class='btn btn-danger' type='submit' name='submit' value='DELETE'/>";
+						}
+						if($this->showShowcurrent){
+							echo "<input class='btn btn-primary' type='submit' name='submit' value='SHOWCURRENT'/>";
+						}
+						$this->botonesOpcion();
 					echo '</td>';
 					
 				echo '</tr>';
