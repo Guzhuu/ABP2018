@@ -68,14 +68,23 @@ class Horario{
 	
 	
 	function ADD(){//Para añadir a la BD
-		$sql = $this->mysqli->prepare("INSERT INTO horario (HoraInicio, HoraFin) VALUES (?, ?)");
-		$sql->bind_param("ss", $this->HoraInicio, $this->HoraFin);
-		$resultado = $sql->execute();
-	
-		if(!$resultado){
-			return 'Ha fallado el insertar el horario';
+		date_default_timezone_set("UTC");
+		//Strtotime admite desde 1901 hasta 2038, implica actualizar la pag en 20 años
+		$hi = (strtotime(str_replace("T", " ", $this->HoraInicio . ":00")));
+		$hf = (strtotime(str_replace("T", " ", $this->HoraFin . ":00")));
+		
+		if($hi < $hf){
+			$sql = $this->mysqli->prepare("INSERT INTO horario (HoraInicio, HoraFin) VALUES (?, ?)");
+			$sql->bind_param("ss", $this->HoraInicio, $this->HoraFin);
+			$resultado = $sql->execute();
+		
+			if(!$resultado){
+				return 'Ha fallado el insertar el horario';
+			}else{
+				return 'Inserción correcta';
+			}
 		}else{
-			return 'Inserción correcta';
+			return 'Formato de fecha erróneo o fuera de rango';
 		}
 	}
 	
