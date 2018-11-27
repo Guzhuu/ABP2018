@@ -50,7 +50,7 @@
 				</div>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link" href="../Functions/Desconectarse.php">Desconectarse</a>
+			  <a class="nav-link" href="../Functions/Desconectar.php">Desconectarse</a>
 			</li>
 		<?php
 		/************************************************************************FIN ADMIN*******************************************************************************************/
@@ -61,7 +61,7 @@
 			  <a class="nav-link" href="../Controllers/Controller_Reserva.php">Reservar pista</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link" href="../Functions/Desconectarse.php">Desconectarse</a>
+			  <a class="nav-link" href="../Functions/Desconectar.php">Desconectarse</a>
 			</li>
 		<?php
 		/************************************************************************FIN USUARIO*******************************************************************************************/
