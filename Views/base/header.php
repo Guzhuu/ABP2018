@@ -70,7 +70,7 @@
 			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=PERFIL">Mi perfil</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php">Inscribirse a un campeonato</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=INSCRIBIR">Inscribirse a un campeonato</a>
 			</li>
 			<li class="nav-item">
 			  <a class="nav-link text-nowrap" href="../Functions/Desconectar.php">Desconectarse</a>
