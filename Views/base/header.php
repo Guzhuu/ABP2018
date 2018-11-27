@@ -58,10 +58,22 @@
 		/************************************************************************HEADER USUARIO*******************************************************************************************/
 		?>
 			<li class="nav-item">
-			  <a class="nav-link" href="../Controllers/Controller_Reserva.php">Reservar pista</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Reserva.php">Reservar pista</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link" href="../Functions/Desconectar.php">Desconectarse</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Reserva.php?submit=VERRESERVAS">Mis reservas</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Pareja.php">Mis parejas</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=PERFIL">Mi perfil</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php">Inscribirse a un campeonato</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link text-nowrap" href="../Functions/Desconectar.php">Desconectarse</a>
 			</li>
 		<?php
 		/************************************************************************FIN USUARIO*******************************************************************************************/
