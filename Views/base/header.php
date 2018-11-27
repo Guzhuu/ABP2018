@@ -1,6 +1,7 @@
 <?php
 /* 
 	Header genérico
+	SELECT * FROM campeonato_consta_de_categorias WHERE campeonato_consta_de_categorias.Campeonato_Campeonato = 1 AND categoria.Categoria NOT IN (select campeonato_consta_de_categorias.Categoria_Categoria FROM campeonato_consta_de_categorias WHERE campeonato_consta_de_categorias.Campeonato_Campeonato = 1);
 */
 	if (session_status() == PHP_SESSION_NONE) {//Sino existe la sesion, se comienza
 		session_start();
