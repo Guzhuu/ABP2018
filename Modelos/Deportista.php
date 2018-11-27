@@ -11,17 +11,16 @@
 
 class Deportista
 {
-  public $dni;
-  public $edad;
-  public $nombre;
-  public $apellidos;
-  public $sexo;
+  public $DNI;
+  public $Edad;
+  public $Nombre;
+  public $Apellidos;
+  public $Sexo;
   public $Contrasenha;
-  public $cuota_socio;
+  public $Cuota_socio;
   public $rolAdmin;
   public $rolEntrenador;
-  private $db;
-  private $mysqli;
+  var $mysqli;
 
 	function __construct($DNI,$Edad,$Nombre,$Apellidos,$Sexo,$Contrasenha,$Cuota_socio,$rolAdmin,$rolEntrenador)
   {
@@ -34,79 +33,78 @@ class Deportista
   		$this->Cuota_socio = $Cuota_socio;
   		$this->rolAdmin = $rolAdmin;
   		$this->rolEntrenador = $rolEntrenador;
-      //$this->db = PDOConnection::getInstance();
 		include_once '../Functions/ConectarBD.php'; //Actualizar
 		$this->mysqli = ConectarBD();
 		
 	}
 
-  public function getDNI() {
+  public function _getDNI() {
     return $this->DNI;
   }
 
-  public function getEdad() {
+  public function _getEdad() {
     return $this->Edad;
   }
-  public function getNombre() {
+  public function _getNombre() {
     return $this->Nombre;
   }
 
-  public function getApellidos() {
+  public function _getApellidos() {
     return $this->Apellidos;
   }
-  public function getSexo() {
+  public function _getSexo() {
     return $this->Sexo;
   }
-  public function getContrasenha() {
+  public function _getContrasenha() {
     return $this->Contrasenha;
   }
-  public function getCuotaSocio() {
+  public function _getCuotaSocio() {
     return $this->Cuota_socio;
   }
-  public function getRolAdmin() {
+  public function _getRolAdmin() {
     return $this->rolAdmin;
   }
-  public function getRolEntrenador() {
+  public function _getRolEntrenador() {
     return $this->rolEntrenador;
   }    
 
 
-  public function setDNI ($DNI){
+  public function _setDNI ($DNI){
     $this->DNI = $DNI;
   }
 
-  public function setEdad ($Edad){
+  public function _setEdad ($Edad){
     $this->Edad = $Edad;
   }
-  public function setNombre($Nombre){
-	  $this->Nombre;
+  public function _setNombre($Nombre){
+	  $this->Nombre = $Nombre;
   }
 
-  public function setApellidos ($Apellidos){
+  public function _setApellidos ($Apellidos){
     $this->Apellidos = $Apellidos;
   }
 
-  public function setSexo ($Sexo){
+  public function _setSexo ($Sexo){
     $this->Sexo = $Sexo;
   }
 
-  public function setContrasenha ($Contrasenha){
+  public function _setContrasenha ($Contrasenha){
     $this->Contrasenha = $Contrasenha;
   }
 
-  public function setCuotaSocio ($Cuota_socio){
+  public function _setCuotaSocio ($Cuota_socio){
     $this->Cuota_socio = $Cuota_socio;
   }
 
-  public function setRolAdmin ($rolAdmin){
+  public function _setRolAdmin ($rolAdmin){
     $this->rolAdmin = $rolAdmin;
   } 
-  public function setRolEntrenador ($rolEntrenador){
+  public function _setRolEntrenador ($rolEntrenador){
     $this->rolEntrenador = $rolEntrenador;
   }  
 
 
-	public function comprobarDatos() {
+	/*public function comprobarDatos() {
 			$errors = array();
 
 			if (strlen(trim($this->id)) == 0 ) {
@@ -120,111 +118,37 @@ class Deportista
 			if (sizeof($errors)>0){
 				throw new ValidationException($errors, "Existen errores. No se puede registrar la tabla.");
 			}
-	}
+	}*/
 
+    function _getDatosGuardados(){//Para recuperar de la base de datos
+    if(($this->_getDNI() == '')){
+      return 'Deportista vacio, introduzca un deportista';
+    }else{
+      $sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE DNI = ?");
+      $sql->bind_param("s", $this->DNI);
+      $sql->execute();
 
-
-/*
-  public function findAll() {
-    $stmt = $this->db->query("SELECT * FROM Deportista");
-    $deportistas_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $deportistas = array();
-
-    foreach ($deportistas_db as $deportista) {
-      array_push($deportistas, new Deportista($deportista["DNI"],$deportista["Edad"], $deportista["Nombre"], $deportista["Apellidos"]
-      , $deportista["Sexo"], $deportista["Contrasenha"], $deportista["Cuota_socio"], $deportista["rolAdmin"], $deportista["rolEntrenador"]));
-    }
-
-    return $deportistas;
-  }
-
-
-  public function findByDNI($DNI){
-    $stmt = $this->db->prepare("SELECT * FROM Deportista WHERE DNI=?");
-    $stmt->execute(array($DNI));
-    $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($deportista != null) {
-      return new Deportista($deportista["DNI"],
-        $deportista["Edad"],
-        $deportista["Nombre"],
-        $deportista["Apellidos"],
-        $deportista["Sexo"],
-        $deportista["Contrasenha"],
-        $deportista["Cuota_socio"],
-        $deportista["rolAdmin"],
-        $deportista["rolEntrenador"]);
-    } else {
-      return NULL;
-    }
-  }
-/*
-  public function findByEscuela($codigoEscuela){
-    $stmt = $this->db->prepare("SELECT * FROM Clase WHERE codigoEscuela=?");
-    $stmt->execute(array($codigoEscuela));
-    $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($deportista != null) {
-      return new Clase(
-      $deportista["Clase"],
-      $deportista["Reserva_Reserva"],
-      $deportista["codigoEscuela"],
-      $deportista["Entrenador"]);
-    } else {
-      return NULL;
+      $resultado = $sql->get_result();
+      
+      if(!$resultado){
+        return 'No se ha podido conectar con la BD';
+      }else if($resultado->num_rows == 0){
+        return 'No existe el deportista';
+      }else{
+        $fila = $resultado->fetch_row();
+        
+        $this->_setEdad($fila[1]);
+        $this->_setNombre($fila[2]);
+        $this->_setApellidos($fila[3]);
+        $this->_setSexo($fila[4]);
+        $this->_setContrasenha($fila[5]);
+        $this->_setCuotaSocio($fila[6]);
+        $this->_setRolAdmin($fila[7]);
+        $this->_setRolEntrenador($fila[8]);
+      }
     }
   }
 
-  public function findByEntrenador($dniEntrenador){
-    $stmt = $this->db->prepare("SELECT * FROM Clase WHERE Entrenador=?");
-    $stmt->execute(array($dniEntrenador));
-    $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($deportista != null) {
-      return new Clase(
-      $deportista["Clase"],
-      $deportista["Reserva_Reserva"],
-      $deportista["codigoEscuela"],
-      $deportista["Entrenador"]);
-    } else {
-      return NULL;
-    }
-  }
-
-  public function exists($DNI){
-    $stmt = $this->db->prepare("SELECT * FROM Deportista WHERE DNI=?");
-    $stmt->execute(array($DNI));
-    $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($deportista != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-
-    public function save(Deportista $deportista) {
-      $stmt = $this->db->prepare("INSERT INTO Deportista(DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_socio, rolAdmin, rolEntrenador) values (?,?,?,?,?,?,?,?,?)");
-      $stmt->execute(array($deportista->getDNI(), $deportista->getEdad(), $deportista->getNombre(),$deportista->getApellidos(),$deportista->getSexo()
-        ,$deportista->getContrasenha(),$deportista->getCuotaSocio(),$deportista->getRolAdmin(),$deportista->getRolEntrenador()));
-      return $this->db->lastInsertId();
-    }
-
-
-    public function update(Deportista $deportista) {
-      $stmt = $this->db->prepare("UPDATE Deportista set DNI=?, Edad=?, Nombre=?, Apellidos=?, Sexo=?, Contrasenha=?, Cuota_socio=?,rolAdmin=?,rolEntrenador=? where DNI=?");
-      $stmt->execute(array($deportista->getDNI(), $deportista->getEdad(), $deportista->getNombre(),$deportista->getApellidos(),$deportista->getSexo()
-        ,$deportista->getContrasenha(),$deportista->getCuotaSocio(),$deportista->getRolAdmin(),$deportista->getRolEntrenador()));
-    }
-
-    public function delete(Deportista $deportista) {
-      $stmt = $this->db->prepare("DELETE from Deportista WHERE Deportista=?");
-      $stmt->execute(array($deportista->getDNI()));
-    }
-	*/
-	
 	function LOGIN(){
 		$sql = $this->mysqli->prepare("SELECT Contrasenha FROM deportista WHERE DNI = ?");
 		$sql->bind_param("i", $this->DNI);
@@ -264,4 +188,134 @@ class Deportista
 			}
 		}
 	}
+
+
+  function ADD(){//Para añadir a la BD
+
+    $sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE DNI = ?");
+    $sql->bind_param("s", $this->DNI);
+    $sql->execute();
+    
+    $resultado = $sql->get_result();
+    
+    if($resultado){
+      return 'Ya se ha añadido un deportista con ese DNI';
+    }else{
+
+    $sql = $this->mysqli->prepare("INSERT INTO deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha,Cuota_socio
+      ,rolAdmin, rolEntrenador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $sql->bind_param("sissssiii", $this->DNI, $this->Edad, $this->Nombre,$this->Apellidos, $this->Sexo, $this->Contrasenha,  $this->Cuota_socio, $this->rolAdmin, $this->rolEntrenador);
+    $resultado = $sql->execute();
+  
+    if(!$resultado){
+      return 'Ha fallado el insertar el deportista';
+    }else{
+      return 'Inserción correcta';
+    }
   }
+  }
+  
+  function EDIT(){//Para editar de la BD
+    if(($this->DNI == '')){
+      return 'Deportista vacio, introduzca un DNI';
+    }else{
+      $sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE DNI = ?");
+      $sql->bind_param("s", $this->DNI);
+      $sql->execute();
+      
+      $resultado = $sql->get_result();
+      
+      if(!$resultado){
+        return 'No se ha podido conectar con la BD';
+      }else if($resultado->num_rows == 1){
+        $sql = $this->mysqli->prepare("UPDATE deportista SET Nombre = ?, Edad = ?, Apellidos = ?, Contrasenha = ?, Cuota_socio=?, rolAdmin = ?, rolEntrenador = ?, Sexo=? WHERE DNI = ?");
+        $sql->bind_param("sissiiiss", $this->Nombre, $this->Edad, $this->Apellidos, $this->Contrasenha, $this->Cuota_socio,$this->rolAdmin,$this->rolEntrenador, $this->Sexo,$this->DNI);
+        $resultado = $sql->execute();
+        
+        if(!$resultado){
+          return 'Ha fallado la actualización de deportista';
+        }else{
+          return 'Modificación correcta';
+        }
+      }else{
+        return 'Deportista no existe en la base de datos';
+      }
+    }
+  }
+
+
+  
+  function SEARCH(){
+    $sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE ((DNI LIKE ?) AND (Edad LIKE ?) AND (Nombre LIKE ?) AND (Apellidos LIKE ?) AND (Sexo LIKE ?) AND (Cuota_socio LIKE ?) AND (rolEntrenador LIKE ?))"); //No funciona
+    $likeDNI = "%" . $this->_getDNI() . "%";
+    $likeEdad = "%" . $this->_getEdad() . "%";
+    $likeNombre = "%" . $this->_getNombre() . "%";
+    $likeApellidos = "%" . $this->_getApellidos() . "%";
+    $likeSexo = "%" . $this->_getSexo() . "%";
+    $likeCuota_socio = "%" . $this->_getCuotaSocio() . "%";
+    $likeRolEntrenador = "%" . $this->_getRolEntrenador() . "%";
+    $sql->bind_param("sssssss", $likeDNI,$likeEdad,$likeNombre,$likeApellidos,$likeSexo,$likeCuota_socio,$likeRolEntrenador); //Puede dar fallo facil
+    $sql->execute();
+    
+    $resultado = $sql->get_result();
+    
+    if(!$resultado || $resultado->num_rows == 0){
+      return 'No se ha encontrado ningun dato';
+    }else{
+      return $resultado;
+    }
+  }
+  
+  function DELETE(){//Para eliminar de la BD
+    $sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE DNI = ?");
+    $sql->bind_param("s", $this->DNI);
+    $sql->execute();
+    
+    $resultado = $sql->get_result();
+    
+    if(!$resultado){
+      return 'No se ha podido conectar con la BD';
+    }else if($resultado->num_rows == 0){
+      return 'No se ha encontrado deportista';
+    }else{
+      $sql = $this->mysqli->prepare("DELETE FROM deportista WHERE DNI = ?");
+      $sql->bind_param("s", $this->DNI);
+      $resultado = $sql->execute();
+    
+      if(!$resultado){
+        return 'Fallo al eliminar la tupla';
+      }else{
+        return 'Deportista eliminado correctamente';
+      }
+    }
+  }
+  
+  function SHOWCURRENT(){//Para mostrar de la base de datos
+    $sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE DNI = ?");
+    $sql->bind_param("s", $this->DNI);
+    $sql->execute();
+    
+    $resultado = $sql->get_result();
+    
+    if(!$resultado){
+      return 'No se ha podido conectar con la BD';
+    }else if($resultado->num_rows == 0){
+      return 'No existe deportista';
+    }else{
+      return $resultado;
+    }
+  }
+  
+  function SHOWALL(){//Para mostrar la BD
+    $sql = "SELECT * FROM deportista";
+    
+    $resultado = $this->mysqli->query($sql);
+    
+    if(!$resultado){
+      return 'No se ha podido conectar con la BD';
+    }else{
+      return $resultado;
+    }
+  }
+}
+?>
