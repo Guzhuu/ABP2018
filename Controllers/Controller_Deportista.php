@@ -130,7 +130,7 @@ switch ($_REQUEST['submit']){
 		if(isEntrenador()){ //Este if en teoría es innecesario aka imposible de ser falso
 			$deportista = new Deportista($_SESSION['DNI'],'','','','','','','','');//No necesitamos deportista para buscar (pero sí para acceder a la BD)
 			$respuesta = $deportista->SHOWAGENDA();//Todos los datos de la BD estarán aqúi
-			new Deportista_SHOWAGENDA($respuesta);//Le pasamos todos los datos de la BD
+			new Deportista_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		}else{
 			new Mensaje("Permisos insuficientes", '../Controllers/Controller_Deportista.php');//Mensaje de error, que hay muchos
 		}
