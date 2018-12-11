@@ -208,38 +208,6 @@ class Deportista
 			}
 		}
 	}
-	
-	function SHOWAGENDA(){
-		/* EL ENTRENADOR DEBE PODER: 
-		* Anular clase
-		* Crear clases particulares (hora concreta hablarlo con alumno)
-		* Crear clases grupales
-		* Anular curso
-		* Ver alumnos apuntados, por si acaso no va nadie
-		* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular)
-		
-		Crear controller_clase, mejor
-		
-		*/
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, 
-												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 
-										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
-										WHERE 	clase.Entrenador = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
-												reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = horario.Horario 
-												AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista AND clase.codigoEscuela = escuela.codigoEscuela;");
-		$sql->bind_param("s", $this->DNI);
-		$sql->execute();
-		
-		$resultado = $sql->get_result();
-		
-		if(!$resultado){
-			return 'No se ha podido conectar con la BD';
-		}else if($resultado->num_rows == 0){
-			return "No tienes clases asignadas";
-		}else{
-			return $resultado;
-		}
-	}
 
 
   function ADD(){//Para añadir a la BD

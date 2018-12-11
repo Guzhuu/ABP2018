@@ -4,7 +4,7 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	if(!isAdmin() || !isEntrenador()){
+	if(!(isAdmin() || isEntrenador())){
 		header('Location: ../index.php');
 	}
 	
@@ -31,7 +31,15 @@ function get_data_form(){
 	
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
-	$_REQUEST['submit'] = 'SHOWALL';
+	if(isAdmin()){
+		$_REQUEST['submit'] = 'SHOWALL';
+	}else{
+		if(isset($_SESSION['DNI'])){
+			$_REQUEST['submit'] = 'SHOWALL';
+		}else{
+			new Mensaje("Error de login", '../index.php');
+		}
+	}
 }
 
 switch ($_REQUEST['submit']){
@@ -97,8 +105,14 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	case 'SHOWALL':
-		$clase = new Clase('','','','');//No necesitamos clase para buscar (pero sí para acceder a la BD)
-		$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
+		$respuesta = null;
+		if(!isAdmin()){
+			$clase = new Clase('','','',$_SESSION['DNI']);//No necesitamos clase para buscar (pero sí para acceder a la BD)
+			$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
+		}else{
+			$clase = new Clase('','','','');//No necesitamos clase para buscar (pero sí para acceder a la BD)
+			$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
+		}
 		new Clase_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		break;
 		

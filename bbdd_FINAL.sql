@@ -255,7 +255,7 @@ ENGINE = InnoDB;
 -- `AWGP`.`Escuela`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Escuela` (
-  `codigoEscuela` INT NOT NULL,
+  `codigoEscuela` INT NOT NULL AUTO_INCREMENT,
   `nombreEscuela` VARCHAR(45) NULL,
   PRIMARY KEY (`codigoEscuela`))
 ENGINE = InnoDB;

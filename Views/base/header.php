@@ -47,6 +47,8 @@
 					<a class="dropdown-item" href="../Controllers/Controller_Categoria.php">Categoria</a>
 					<a class="dropdown-item" href="../Controllers/Controller_Grupo.php">Grupo</a>
 					<a class="dropdown-item" href="../Controllers/Controller_Enfrentamiento.php">Enfrentamiento</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Escuela.php">Escuela</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Clase.php">Clase</a>
 				  </div>
 				</div>
 			</li>
@@ -77,7 +79,7 @@
 			if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
 				?>
 				<li class="nav-item">
-				  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=AGENDA">Agenda de clases</a>
+				  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php">Agenda de clases</a>
 				</li>
 				<?php
 			}

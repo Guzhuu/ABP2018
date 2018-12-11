@@ -9,16 +9,14 @@
 
 
 
-class Deportista
-{
-  public $Clase;
-  public $Reserva_Reserva;
-  public $codigoEscuela;
-  public $Entrenador;
-  var $mysqli;
+class Clase{
+	public $Clase;
+	public $Reserva_Reserva;
+	public $codigoEscuela;
+	public $Entrenador;
+	var $mysqli;
 
-	function __construct($Clase, $Reserva_Reserva, $codigoEscuela, $Entrenador)
-  {
+	function __construct($Clase, $Reserva_Reserva, $codigoEscuela, $Entrenador){
   		$this->Clase = $Clase;
   		$this->Reserva_Reserva = $Reserva_Reserva;
   		$this->codigoEscuela = $codigoEscuela;
@@ -27,38 +25,38 @@ class Deportista
 		$this->mysqli = ConectarBD();
 	}
 
-  public function _getClase() {
-    return $this->Clase;
-  }
+	public function _getClase(){
+		return $this->Clase;
+	}
 
-  public function _getReserva() {
-    return $this->Reserva_Reserva;
-  }
+	public function _getReserva(){
+		return $this->Reserva_Reserva;
+	}
   
-  public function _getEscuela() {
-    return $this->codigoEscuela;
-  }
+	public function _getEscuela(){
+		return $this->codigoEscuela;
+	}
 
-  public function _getEntrenador() {
-    return $this->Entrenador;
-  }
+	public function _getEntrenador(){
+		return $this->Entrenador;
+	}
 
 
-  public function _setClase($Clase){
-    $this->Clase = $Clase;
-  }
+	public function _setClase($Clase){
+		$this->Clase = $Clase;
+	}
 
-  public function _setReserva($Reserva){
-    $this->Reserva_Reserva = $Reserva;
-  }
+	public function _setReserva($Reserva){
+		$this->Reserva_Reserva = $Reserva;
+	}
   
-  public function _setEscuela($codigoEscuela){
-	  $this->codigoEscuela = $codigoEscuela;
-  }
+	public function _setEscuela($codigoEscuela){
+		$this->codigoEscuela = $codigoEscuela;
+	}
 
-  public function _setEntrenador($Entrenador){
-    $this->Entrenador = $Entrenador;
-  }
+	public function _setEntrenador($Entrenador){
+		$this->Entrenador = $Entrenador;
+	}
 
 
     function _getDatosGuardados(){//Para recuperar de la base de datos
@@ -87,25 +85,15 @@ class Deportista
 
 
 	function ADD(){//Para añadir a la BD
-			$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE Clase = ?");
-			$sql->bind_param("i", $this->Clase);
-			$sql->execute();
-			
-			$resultado = $sql->get_result();
-    
-			if($resultado){
-				return 'Ya se ha añadido un clase con ese codigo';
-			}else{
-				$sql = $this->mysqli->prepare("INSERT INTO clase (Clase, Reserva_Reserva, codigoEscuela, Entrenador) VALUES (?, ?, ?, ?)");
-				$sql->bind_param("iiis", $this->Clase, $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador);
-				
-				$resultado = $sql->execute();
-  
-			if(!$resultado){
-				return 'Ha fallado el insertar la clase';
-			}else{
-				return 'Inserción correcta';
-			}
+		$sql = $this->mysqli->prepare("INSERT INTO clase (Reserva_Reserva, codigoEscuela, Entrenador) VALUES (?, ?, ?)");
+		$sql->bind_param("iis", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador);
+		
+		$resultado = $sql->execute();
+
+		if(!$resultado){
+			return 'Ha fallado el insertar la clase';
+		}else{
+			return 'Inserción correcta';
 		}
 	}
   
@@ -127,15 +115,13 @@ class Deportista
 				
 				$resultado = $sql->execute();
 			}else{
-				return 'Error grave de clave de clase';
+				return 'Clase no existe en la base de datos';
 			}
 			
 			if(!$resultado){
 				return 'Ha fallado la actualización de clase';
 			}else{
 				return 'Modificación correcta';
-			}else{
-				return 'Clase no existe en la base de datos';
 			}
 		}
 	}
