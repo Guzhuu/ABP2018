@@ -85,7 +85,7 @@ switch ($_REQUEST['submit']){
 			$clase->_getDatosGuardados();//Rellenar datos
 			new Clase_DELETE($clase);//Mostrar vissta 
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_POST['DNI'],'', '', '', '', '', '', '', '');//Clave
+			$clase = new Clase($_POST['Clase'],'','','');//Clave
 			$respuesta = $clase->DELETE();//Borrar clase con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 		}
