@@ -27,6 +27,12 @@ if(!isset($_REQUEST['DNI']) && (!isset($_REQUEST['contrasenha']))){//Si no se ha
 		}else{
 			$_SESSION['rolAdmin'] = false;
 		}
+		if($deportista->ENTRENADOR()){
+			$_SESSION['rolEntrenador'] = true;
+		}else{
+			$_SESSION['rolEntrenador'] = false;
+		}
+		var_dump($_SESSION['rolEntrenador']);
 		header('Location: ../index.php');//Ahora que se ha logeado se vuelve al index
 	}else{//Sino
 		include '../Views/MESSAGE.php';

@@ -4,7 +4,11 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	if(!autenticado()){
+	if(autenticado()){
+		if(!isAdmin()){
+			$_REQUEST['submit'] = 'INSCRIBIR';
+		}
+	}else{
 		header('Location: ../index.php');
 	}
 	
@@ -97,32 +101,25 @@ switch ($_REQUEST['submit']){
 		break;
 		
 
-		case 'ADDCATEGORIA':
-
-if(!$_POST){//Si GET
+	case 'ADDCATEGORIA':
+		if(!$_POST){//Si GET
 			$categoriasyCampeonatos = new Campeonato_consta_de_categorias('',$_REQUEST['Campeonato'],'');
 			$categoriasyCampeonatos = $categoriasyCampeonatos->CATEGORIASYCAMPEONATOS_UNSET();
-			if(is_string($categoriasyCampeonatos)){
-				new Mensaje($categoriasyCampeonatos, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
-			}else{
-				$muestraADDCAMPEONATO = new Campeonato_ADDCATEGORIA($categoriasyCampeonatos);//Mostrar vista addcategoria
-			}
+		if(is_string($categoriasyCampeonatos)){
+			new Mensaje($categoriasyCampeonatos, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 		}else{
-			if(!isset($_REQUEST['Categoria'])){
-				new Mensaje('No está indicado el codigo de la categoria', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
-			}else{
-				$categoriasyCampeonatos = new Campeonato_consta_de_categorias('',$_REQUEST['Campeonato'], $_REQUEST['Categoria']);//Si post cogemos Pista
-				$respuesta = $categoriasyCampeonatos->ADD();//Y lo añadimos
-				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
-			}
+			$muestraADDCAMPEONATO = new Campeonato_ADDCATEGORIA($categoriasyCampeonatos);//Mostrar vista addcategoria
 		}
-
-		break;
-		
-
-
-
-
+	}else{
+		if(!isset($_REQUEST['Categoria'])){
+			new Mensaje('No está indicado el codigo de la categoria', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$categoriasyCampeonatos = new Campeonato_consta_de_categorias('',$_REQUEST['Campeonato'], $_REQUEST['Categoria']);//Si post cogemos Pista
+			$respuesta = $categoriasyCampeonatos->ADD();//Y lo añadimos
+			new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}
+	}
+	break;
 
 	case 'SHOWALL':
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)

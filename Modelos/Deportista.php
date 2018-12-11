@@ -151,7 +151,7 @@ class Deportista
 
 	function LOGIN(){
 		$sql = $this->mysqli->prepare("SELECT Contrasenha FROM deportista WHERE DNI = ?");
-		$sql->bind_param("i", $this->DNI);
+		$sql->bind_param("s", $this->DNI);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();
@@ -171,7 +171,7 @@ class Deportista
 	
 	function ADMIN(){
 		$sql = $this->mysqli->prepare("SELECT rolAdmin FROM deportista WHERE DNI = ?");
-		$sql->bind_param("i", $this->DNI);
+		$sql->bind_param("s", $this->DNI);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();
@@ -182,6 +182,26 @@ class Deportista
 			return false;
 		}else{
 			if($resultado->fetch_assoc()["rolAdmin"]){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}
+	
+	function ENTRENADOR(){
+		$sql = $this->mysqli->prepare("SELECT rolEntrenador FROM deportista WHERE DNI = ?");
+		$sql->bind_param("s", $this->DNI);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return false;
+		}else{
+			if($resultado->fetch_assoc()["rolEntrenador"]){
 				return true;
 			}else{
 				return false;

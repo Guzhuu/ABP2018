@@ -73,6 +73,15 @@
 			<li class="nav-item">
 			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=INSCRIBIR">Inscribirse a un campeonato</a>
 			</li>
+			<?php
+			if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
+				?>
+				<li class="nav-item">
+				  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=AGENDA">Agenda de clases</a>
+				</li>
+				<?php
+			}
+			?>
 			<li class="nav-item">
 			  <a class="nav-link text-nowrap" href="../Functions/Desconectar.php">Desconectarse</a>
 			</li>

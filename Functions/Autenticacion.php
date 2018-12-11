@@ -17,4 +17,12 @@ function isAdmin(){
 		return false;
 	}
 }
+
+function isEntrenador(){
+	if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
+		return true;
+	}else{
+		return false;
+	}
+}
 ?>
