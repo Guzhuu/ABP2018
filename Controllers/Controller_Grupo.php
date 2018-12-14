@@ -101,6 +101,14 @@ switch ($_REQUEST['submit']){
 		}
 		break;
 		
+		case 'GENERAR_CALENDARIO':
+	
+
+
+
+
+
+
 	case 'SHOWALL':
 		$Grupo = new Grupo('','','','');//No necesitamos Grupo para buscar (pero sí para acceder a la BD)
 		$respuesta = $Grupo->SHOWALL();//Todos los datos del BD estarán aqúi

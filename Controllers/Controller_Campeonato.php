@@ -20,6 +20,7 @@
 	include '../Views/Campeonato/Campeonato_SHOWCURRENT.php';
 	include '../Views/Campeonato/Campeonato_SHOWALL.php';
 	include '../Modelos/Campeonato_consta_de_categorias.php';
+	include '../Views/Campeonato/Campeonato_ADDCATEGORIA.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){

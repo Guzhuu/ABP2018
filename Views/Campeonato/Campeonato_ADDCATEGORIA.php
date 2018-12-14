@@ -13,13 +13,14 @@ class Campeonato_ADDCATEGORIA{
 	
 	function __construct($categoriasyCampeonatos){
 		$this->controlador = 'Controller_Campeonato.php';
+		var_dump($categoriasyCampeonatos->fetch_fields());
 		$this->campos = array(
 					"Campeonato" => "Codigo del campeonato",
 					"Categoria" => "codigo de la categoria",
 					"Nivel" => "nivel de la pista",
 					"Sexo" => "Sexo de la categoria",
-					"FechaInicio" => "Fecha de inicio del campeonato");
-					"FechaFecha" => "Fecha de fin de campeonato");
+					"FechaInicio" => "Fecha de inicio del campeonato",
+					"FechaFinal" => "Fecha de fin de campeonato",
 					"Nombre" => "Nombre del campeonato");
 
 		$this->categoriasyCampeonatos = $categoriasyCampeonatos;
@@ -34,6 +35,7 @@ class Campeonato_ADDCATEGORIA{
 		}
 	}
 	
+
 	// muestra por pantall html con los valores de los atributos de la clase
 	// y un hiperenlace para volver al script php que la invoca
 	function toString(){
@@ -50,23 +52,24 @@ class Campeonato_ADDCATEGORIA{
 						echo '</td>';
 						
 						echo '<td class="mensaje">';
-							echo $fila[1];
+							echo $fila[3];
 						echo '</td>';
 					echo '</tr>';
 					$i++;
 					echo '<tr class="'; echo $this->_getTr($i); echo'">';
 						echo '<td class="formularioTd">';
-							echo $this->campos['Categoria'];
+							//echo $this->campos['Categoria'];
 						echo '</td>';
 					echo '<td class="mensaje">';
 				}
 				echo '<form method="POST" accept-charset="UTF-8" id="addCategoria'; echo $i; echo '" name="addCategoria'; echo $i; echo '" action="../Controllers/'; echo $this->controlador; echo '">';
-				echo '<b class="lblBtCategoria"> Desde las ' . $fila[3] . ' hasta las ' . $fila[4] . '</b>';
-				echo '<input type="hidden" name="Campeonato" value="'; echo $fila[0]; echo '"/>';
-				echo '<input type="hidden" name="Categoria" value="'; echo $fila[2]; echo '"/>';
+				echo '<b class="lblBtCategoria"> Nivel ' . $fila[5] . ' Sexo ' . $fila[6] . '</b>';
+				echo '<input type="hidden" name="Campeonato" value="'; echo $fila[5]; echo '"/>';
+				echo '<input type="hidden" name="Categoria" value="'; echo $fila[6]; echo '"/>';
 				echo '<input type="submit" name="submit" style="width:100%" value="ADDCATEGORIA"/><br/><br/>';
 				$i++;
 				echo '</form>';
+			
 			}
 			echo '</td>';
 			echo '</tr>';

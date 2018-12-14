@@ -41,7 +41,8 @@ class Campeonato_consta_de_categorias
   }
 function ADD(){//Para añadir a la BD
 		$sql = $this->mysqli->prepare("INSERT INTO Campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria) VALUES (?,?)");
-		$sql->bind_param("ii", $this->getCampeonato_Campeonato(), $this->getCategoria_Categoria());
+		
+			$sql->bind_param("ii", $this->Campeonato_Campeonato, $this->Categoria_Categoria);
 		$sql->execute();
 		
 		$resultado = $sql->fetch();
@@ -95,6 +96,28 @@ function ADD(){//Para añadir a la BD
 			}
 		}
 	}
+
+function CATEGORIASYCAMPEONATOS_UNSET(){ //horaios que no tenga pìst asignada
+		$sql = $this->mysqli->prepare("	SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, Categoria.Categoria, Categoria.Nivel, Categoria.Sexo
+
+										FROM Campeonato, Categoria WHERE Campeonato.Campeonato = ? 
+											AND CONCAT(Campeonato.Campeonato,'', Categoria.Categoria) 
+												NOT IN (SELECT CONCAT(Campeonato_consta_de_categorias.Campeonato_Campeonato,'',Campeonato_consta_de_categorias.Categoria_Categoria) FROM Campeonato_consta_de_categorias) 
+										ORDER BY Campeonato.Campeonato, Categoria.Categoria;");
+		$sql->bind_param("i", $this->Campeonato_Campeonato);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'No se han encontrado categorias libres para el campeonato';
+		}else{
+			return $resultado;
+		}
+	}
+
 	
 	function SHOWALL(){//Para mostrar la BD
 		$sql = "SELECT * FROM Campeonato_consta_de_categorias";
