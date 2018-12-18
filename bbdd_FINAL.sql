@@ -269,6 +269,7 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Clase` (
   `Reserva_Reserva` INT NOT NULL,
   `codigoEscuela` INT NOT NULL,
   `Entrenador` VARCHAR(9) NOT NULL,
+  `Curso` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Clase`),
   INDEX `fk_Clase_Reserva1_idx` (`Reserva_Reserva` ASC),
   INDEX `fk_Clase_Escuela1_idx` (`codigoEscuela` ASC),
@@ -658,39 +659,39 @@ DNI_Deportista3,DNI_Deportista4,Partido_Partido)
 VALUES ('93407187R','57768016C','12345678A','53495571D','8');
 
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('1','Clases Particulares Intermedias');
+VALUES ('1','Escuela EI');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('3','Clases Particulares Intermedias');
+VALUES ('2','ESEI');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('4','Clases Particulares Básicas');
+VALUES ('3','Padel Ourense');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('5','Clases Particulares Avanzadas');
+VALUES ('4','Pedales Ourense');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('6','Clases Mensuales Intermedias');
+VALUES ('5','AWGP PADEL');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('7','Clases Mensuales Avanzadas');
+VALUES ('6','JUVIPADEL escuelas');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('8','Clases Mensuales Básicas');
+VALUES ('7','EASE');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('9','Clases Magistrales Colectivas');
+VALUES ('8','ESEA');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('10','Clases Particulares Intermedias');
+VALUES ('9','ENEAESEA');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
-VALUES ('2','Clases Particulares Intermedias');
+VALUES ('10','La familia');
 
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('3','1','6', '99185554D');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('2','1','5', '02793268X');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('1','10','4', '67721782F');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('5','1','3', '53495571D');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('6','9','2', '99185554D');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('7','8','1', '99185554D');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador)
-VALUES ('4','2','1', '67721782F');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('3','1','6', '99185554D', 'Tacticas secretas');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('2','1','5', '02793268X', 'Resistencia');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('1','10','4', '67721782F', 'Resistencia');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('5','1','3', '53495571D', 'Resistencia');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('6','9','2', '99185554D', 'Resistencia');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('7','8','1', '99185554D', 'Boleas');
+INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('4','2','1', '67721782F', 'Boleas');
 
 GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";

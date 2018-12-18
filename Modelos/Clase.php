@@ -16,11 +16,12 @@ class Clase{
 	public $Entrenador;
 	var $mysqli;
 
-	function __construct($Clase, $Reserva_Reserva, $codigoEscuela, $Entrenador){
+	function __construct($Clase, $Reserva_Reserva, $codigoEscuela, $Entrenador, $Curso){
   		$this->Clase = $Clase;
   		$this->Reserva_Reserva = $Reserva_Reserva;
   		$this->codigoEscuela = $codigoEscuela;
   		$this->Entrenador = $Entrenador;
+		$this->Curso = $Curso;
 		include_once '../Functions/ConectarBD.php'; //Actualizar
 		$this->mysqli = ConectarBD();
 	}
@@ -40,6 +41,10 @@ class Clase{
 	public function _getEntrenador(){
 		return $this->Entrenador;
 	}
+	
+	public function _getCurso(){
+		return $this->Curso;
+	}
 
 
 	public function _setClase($Clase){
@@ -56,6 +61,10 @@ class Clase{
 
 	public function _setEntrenador($Entrenador){
 		$this->Entrenador = $Entrenador;
+	}
+
+	public function _setCurso($Curso){
+		$this->Curso = $Curso;
 	}
 
 
@@ -79,14 +88,15 @@ class Clase{
 				$this->_setReserva($fila[1]);
 				$this->_setEscuela($fila[2]);
 				$this->_setEntrenador($fila[3]);
+				$this->_setCurso($fila[4]);
 			}
 		}
 	}
 
 
 	function ADD(){//Para añadir a la BD
-		$sql = $this->mysqli->prepare("INSERT INTO clase (Reserva_Reserva, codigoEscuela, Entrenador) VALUES (?, ?, ?)");
-		$sql->bind_param("iis", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador);
+		$sql = $this->mysqli->prepare("INSERT INTO clase (Reserva_Reserva, codigoEscuela, Entrenador, Curso) VALUES (?, ?, ?, ?)");
+		$sql->bind_param("iiss", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso);
 		
 		$resultado = $sql->execute();
 
@@ -110,8 +120,8 @@ class Clase{
 			if(!$resultado){
 				return 'No se ha podido conectar con la BD';
 			}else if($resultado->num_rows == 1){
-				$sql = $this->mysqli->prepare("UPDATE clase SET Reserva_Reserva = ?, codigoEscuela = ?, Entrenador = ? WHERE Clase = ?");
-				$sql->bind_param("iiis", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Clase);
+				$sql = $this->mysqli->prepare("UPDATE clase SET Reserva_Reserva = ?, codigoEscuela = ?, Entrenador = ?, Curso = ? WHERE Clase = ?");
+				$sql->bind_param("iiis", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Clase);
 				
 				$resultado = $sql->execute();
 			}else{
@@ -129,13 +139,14 @@ class Clase{
 
   
 	function SEARCH(){
-		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE ((Clase LIKE ?) AND (Reserva_Reserva LIKE ?) AND (codigoEscuela LIKE ?) AND (Entrenador LIKE ?))");
+		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE ((Clase LIKE ?) AND (Reserva_Reserva LIKE ?) AND (codigoEscuela LIKE ?) AND (Entrenador LIKE ?) AND (Curso LIKE ?))");
 		$likeClase = "%" . $this->_getClase() . "%";
 		$likeReserva = "%" . $this->_getReserva() . "%";
 		$likeEscuela = "%" . $this->_getEscuela() . "%";
 		$likeEntrenador = "%" . $this->_getEntrenador() . "%";
+		$likeCurso = "%" . $this->_getCurso() . "%";
 		
-		$sql->bind_param("ssss", $likeClase, $likeReserva, $likeEscuela, $likeEntrenador);
+		$sql->bind_param("ssss", $likeClase, $likeReserva, $likeEscuela, $likeEntrenador, $likeCurso);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();
@@ -167,6 +178,44 @@ class Clase{
 				return 'Fallo al eliminar la tupla';
 			}else{
 				return 'Clase eliminada correctamente';
+			}
+		}
+	}
+	
+	function CURSO(){
+		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE Curso = ?");
+		$sql->bind_param("s", $this->Curso);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'No se ha encontrado el curso';
+		}else{
+			return $resultado;
+		}
+	}
+	
+	function ANULARCURSO(){
+		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE Curso = ?");
+		$sql->bind_param("s", $this->Curso);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else{
+			$sql = $this->mysqli->prepare("DELETE FROM clase WHERE Curso = ?");
+			$sql->bind_param("s", $this->Clase);
+			$resultado = $sql->execute();
+			
+			if(!$resultado){
+				return 'Fallo al eliminar el curso';
+			}else{
+				return 'Curso eliminada correctamente';
 			}
 		}
 	}
@@ -211,7 +260,7 @@ class Clase{
 			Crear controller_clase, mejor
 		
 		*/
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, 
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso,
 												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Entrenador = ? AND clase.Reserva_Reserva = reserva.Reserva AND 

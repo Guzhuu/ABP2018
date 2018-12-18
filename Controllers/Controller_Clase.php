@@ -13,18 +13,22 @@
 	include '../Views/Clase/Clase_EDIT.php';
 	include '../Views/Clase/Clase_SEARCH.php';
 	include '../Views/Clase/Clase_DELETE.php';
+	include '../Views/Clase/Clase_ANULARCURSO.php';
 	include '../Views/Clase/Clase_SHOWCURRENT.php';
 	include '../Views/Clase/Clase_ADD.php';
 	include '../Views/Clase/Clase_SHOWALL.php';
+	include '../Views/Clase/Clase_SHOWALLFROM.php';
 	include '../Views/MESSAGE.php';
+	
 	
 function get_data_form(){
 	$Clase = $_REQUEST['Clase'];
 	$Reserva = $_REQUEST['Reserva_Reserva'];
 	$codigoEscuela = $_REQUEST['codigoEscuela'];
 	$Entrenador = $_REQUEST['Entrenador'];
+	$Curso = $_REQUEST['Curso'];
 
-	$clase = new Clase($Clase, $Reserva, $codigoEscuela, $Entrenador);
+	$clase = new Clase($Clase, $Reserva, $codigoEscuela, $Entrenador, $Curso);
  
 	return $clase;
 }
@@ -34,8 +38,11 @@ if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array 
 	if(isAdmin()){
 		$_REQUEST['submit'] = 'SHOWALL';
 	}else{
+		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE");
 		if(isset($_SESSION['DNI'])){
-			$_REQUEST['submit'] = 'SHOWALL';
+			if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasEntrenador)){
+				$_REQUEST['submit'] = 'SHOWALL';
+			}
 		}else{
 			new Mensaje("Error de login", '../index.php');
 		}
@@ -55,7 +62,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'EDIT':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','');//Editar clase seleccionado
+			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Editar clase seleccionado
 			$clase->_getDatosGuardados();//Rellenar con los datos de la BD
 			new Clase_EDIT($clase);//Mostrar vista
 		}else{
@@ -81,19 +88,42 @@ switch ($_REQUEST['submit']){
 		
 	case 'DELETE':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','');//Coger clase guardado a eliminar
+			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Coger clase guardado a eliminar
 			$clase->_getDatosGuardados();//Rellenar datos
 			new Clase_DELETE($clase);//Mostrar vissta 
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_POST['Clase'],'','','');//Clave
+			$clase = new Clase($_POST['Clase'],'','','', '');//Clave
 			$respuesta = $clase->DELETE();//Borrar clase con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 		}
 	break;
 		
+	case 'ANULARCURSO':
+		if(!$_POST){//Si GET
+			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Coger clase guardado a eliminar
+			$clase->_getDatosGuardados();//Rellenar datos
+			$respuesta = $clase->CURSO();
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//Mensaje de error, que hay muchos
+			}else{
+				new Clase_ANULARCURSO($clase->CURSO());//Mostrar vissta 
+			}
+		}else{//Si confirma borrado llega por post
+			$clase = new Clase($_POST['Clase'],'','','', '');//Clave
+			$respuesta = $clase->ANULARCURSO();//Borrar curso con dicha clave
+			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+		}
+		break;
+		
+	case 'ANULARCLASE':
+		break;
+		
+	case 'EDITHORARIO':
+		break;
+		
 	case 'SHOWCURRENT':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','');//Coger clave del clase
+			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Coger clave del clase
 			$respuesta = $clase->SHOWCURRENT();
 			if(!is_string($respuesta)){//NO debería ser posible pedir un showcurrent de algo no existente pero si esp osible retornará un string, así que si no es un string es un clase
 				$clase->_getDatosGuardados();
@@ -107,19 +137,19 @@ switch ($_REQUEST['submit']){
 	case 'SHOWALL':
 		$respuesta = null;
 		if(!isAdmin()){
-			$clase = new Clase('','','',$_SESSION['DNI']);//No necesitamos clase para buscar (pero sí para acceder a la BD)
-			$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
+			$clase = new Clase('','','',$_SESSION['DNI'], '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
+			$respuesta = $clase->SHOWALLFROM();//Todos los datos de la BD que tenga su dni
+		new Clase_SHOWALLFROM($respuesta);//Le pasamos todos los datos de la BD
 		}else{
-			$clase = new Clase('','','','');//No necesitamos clase para buscar (pero sí para acceder a la BD)
+			$clase = new Clase('','','','', '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
 			$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
-		}
 		new Clase_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
+		}
 		break;
+	
 		
 	default:
-		$clase = new Clase('','','','');//No necesitamos clase para buscar (pero sí para acceder a la BD)
-		$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
-		new Clase_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
+		new Mensaje("Error de login", '../index.php');
 		break;
 }
 ?>
