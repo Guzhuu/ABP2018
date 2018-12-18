@@ -250,15 +250,12 @@ class Clase{
 	
 	function SHOWALLFROM(){
 		/* EL ENTRENADOR DEBE PODER: 
-			* Anular clase
-			* Crear clases particulares (hora concreta hablarlo con alumno)
-			* Crear clases grupales
-			* Anular curso
-			* Ver alumnos apuntados, por si acaso no va nadie
-			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular)
-			
-			Crear controller_clase, mejor
-		
+			* Anular clase (FALTA VISTA)
+			* Crear clases particulares (hora concreta hablarlo con alumno) (FALTA VISTA)
+			* Crear clases grupales (FALTA VISTA)
+			* Anular curso (FALTA VISTA)
+			* Ver alumnos apuntados, por si acaso no va nadie (HACER BOTON Y POCO MÁS)
+			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular) (FALTA VISTA)
 		*/
 		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso,
 												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 
@@ -273,8 +270,6 @@ class Clase{
 		
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
-		}else if($resultado->num_rows == 0){
-			return "No tienes clases asignadas";
 		}else{
 			return $resultado;
 		}

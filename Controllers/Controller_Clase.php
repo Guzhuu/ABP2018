@@ -139,11 +139,15 @@ switch ($_REQUEST['submit']){
 		if(!isAdmin()){
 			$clase = new Clase('','','',$_SESSION['DNI'], '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
 			$respuesta = $clase->SHOWALLFROM();//Todos los datos de la BD que tenga su dni
-		new Clase_SHOWALLFROM($respuesta);//Le pasamos todos los datos de la BD
+			if(!is_string($respuesta)){
+				new Clase_SHOWALLFROM($respuesta);//Le pasamos todos los datos de la BD
+			}else{
+				new Clase_SHOWALLFROM($respuesta);
+			}
 		}else{
 			$clase = new Clase('','','','', '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
 			$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
-		new Clase_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
+			new Clase_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		}
 		break;
 	
