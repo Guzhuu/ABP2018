@@ -1,6 +1,6 @@
 <?php
 /* 
-	Controller de clases
+	Controller de clases hola
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
