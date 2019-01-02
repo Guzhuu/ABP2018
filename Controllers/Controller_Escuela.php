@@ -19,6 +19,9 @@
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
+	if(!isset($_REQUEST['codigoEscuela'])){
+		$_REQUEST['codigoEscuela'] = null;
+	}
 	$Escuela = $_REQUEST['codigoEscuela'];
 	$Nombre = $_REQUEST['nombreEscuela'];
 

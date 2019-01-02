@@ -1,13 +1,13 @@
 <?php
 /* 
-	Vista para anular un curso
+	Vista para anular una clase
 */
 	
-class Clase_ANULARCURSO{
+class Clase_ANULARCLASE{
 	var $controller;
 	
 	var $resultado;//Las tuplas a mostrar
-	var $Clase = 'Clases';
+	var $Clase = 'Clase';
 	var $Eliminar = 'Eliminar';
 	var $Volver = 'Volver';
 	
@@ -68,14 +68,14 @@ class Clase_ANULARCURSO{
 		echo '</tr>';
 		$i++;
 		
-		/*Fila para ANULARCURSO*/
+		/*Fila para ANULARCLASE*/
 		echo '<tr class="'; echo $this->_getTr($i); echo'">';
 			echo '<td class="formularioTd">';
 				echo $this->Eliminar;
 			echo '</td>';
 			
 			echo '<td class="formularioTd">';
-				echo '<input class="btn btn-danger" type="submit" name="submit" value="ANULARCURSO"/>';
+				echo '<input class="btn btn-danger" type="submit" name="submit" value="ANULARCLASE"/>';
 			echo '</td>';
 		echo '</tr>';
 		$i++;

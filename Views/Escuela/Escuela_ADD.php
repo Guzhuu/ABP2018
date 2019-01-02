@@ -13,7 +13,7 @@ class Escuela_ADD{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"nombre" => "Nombre de la pista");
+					"nombreEscuela" => "Nombre de la pista");
 		$this->controller = 'Controller_Escuela.php';
 		$this->toString();
 	} // fin del constructor
@@ -40,11 +40,11 @@ class Escuela_ADD{  // declaración de clase
 			/*Fila para nombre*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['nombre'];
+					echo $this->campos['nombreEscuela'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="nombre">';
+					echo '<input type="text" name="nombreEscuela">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';

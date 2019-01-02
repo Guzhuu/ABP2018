@@ -21,11 +21,11 @@ class Clase_SHOWALL extends SHOWALL{  // declaracion de clase
 		if($this->showEditHorario){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='EDITHORARIO'/>";
 		}
-		if($this->showAnularCurso){
-			echo "<input class='btn btn-danger' type='submit' name='submit' value='ANULARCURSO'/>";
-		}
 		if($this->showAnular){
 			echo "<input class='btn btn-danger' type='submit' name='submit' value='ANULARCLASE'/>";
+		}
+		if($this->showAnularCurso){
+			echo "<input class='btn btn-danger' type='submit' name='submit' value='ANULARCURSO'/>";
 		}
 	}
 } 

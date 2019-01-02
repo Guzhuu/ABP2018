@@ -13,6 +13,7 @@
 	include '../Views/Clase/Clase_EDIT.php';
 	include '../Views/Clase/Clase_SEARCH.php';
 	include '../Views/Clase/Clase_DELETE.php';
+	include '../Views/Clase/Clase_ANULARCLASE.php';
 	include '../Views/Clase/Clase_ANULARCURSO.php';
 	include '../Views/Clase/Clase_SHOWCURRENT.php';
 	include '../Views/Clase/Clase_ADD.php';
@@ -98,24 +99,40 @@ switch ($_REQUEST['submit']){
 		}
 	break;
 		
+	case 'ANULARCLASE':
+		if(!$_POST){//Si GET
+			$clase = new Clase($_REQUEST['Clase'],'','','','');//Coger clase guardado a eliminar
+			$clase->_getDatosGuardados();//Rellenar datos
+			$respuesta = $clase->DETALLES();
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//Mensaje de error, que hay muchos
+			}else{
+				new Clase_ANULARCLASE($respuesta);//Mostrar vissta 
+			}
+		}else{//Si confirma borrado llega por post
+			$clase = new Clase($_POST['Clase'],'','','','');//Clave
+			$clase->_getDatosGuardados();
+			$respuesta = $clase->ANULARCLASE();//Borrar curso con dicha clave
+			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+		}
+		break;
+		
 	case 'ANULARCURSO':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Coger clase guardado a eliminar
+			$clase = new Clase($_REQUEST['Clase'],'','','','');//Coger clase guardado a eliminar
 			$clase->_getDatosGuardados();//Rellenar datos
 			$respuesta = $clase->CURSO();
 			if(is_string($respuesta)){
 				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//Mensaje de error, que hay muchos
 			}else{
-				new Clase_ANULARCURSO($clase->CURSO());//Mostrar vissta 
+				new Clase_ANULARCURSO($respuesta);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_POST['Clase'],'','','', '');//Clave
+			$clase = new Clase($_POST['Clase'],'','','','');//Clave
+			$clase->_getDatosGuardados();
 			$respuesta = $clase->ANULARCURSO();//Borrar curso con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 		}
-		break;
-		
-	case 'ANULARCLASE':
 		break;
 		
 	case 'EDITHORARIO':

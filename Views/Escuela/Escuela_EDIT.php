@@ -15,7 +15,7 @@ class Escuela_EDIT{  // declaración de clase
 	function __construct($pista){
 		$this->pista = $pista;
 		$this->campos = array(
-					"nombre" => "Nombre de la pista");
+					"nombreEscuela" => "Nombre de la pista");
 		$this->controller = 'Controller_Escuela.php';
 		$this->toString();
 	} // fin del constructor
@@ -39,14 +39,14 @@ class Escuela_EDIT{  // declaración de clase
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioEdit" name="formularioEdit" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
 			echo '<input type="hidden" name="codigoEscuela" value="'; echo $this->pista->codigoEscuela; echo '">';
-			/*Fila para nombre*/
+			/*Fila para nombreEscuela*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['nombre'];
+					echo $this->campos['nombreEscuela'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="nombre" value="'; echo $this->pista->nombre; echo '">';
+					echo '<input type="text" name="nombreEscuela" value="'; echo $this->pista->nombreEscuela; echo '">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';

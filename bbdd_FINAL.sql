@@ -682,16 +682,16 @@ VALUES ('10','La familia');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
 VALUES ('3','1','6', '99185554D', 'Tacticas secretas');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('2','1','5', '02793268X', 'Resistencia');
+VALUES ('2','2','5', '02793268X', 'Resistencia');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('1','10','4', '67721782F', 'Resistencia');
+VALUES ('1','3','4', '67721782F', 'Resistencia');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('5','1','3', '53495571D', 'Resistencia');
+VALUES ('5','4','3', '53495571D', 'Resistencia');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('6','9','2', '99185554D', 'Resistencia');
+VALUES ('6','5','2', '99185554D', 'Resistencia');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('7','8','1', '99185554D', 'Boleas');
+VALUES ('7','6','1', '99185554D', 'Boleas');
 INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('4','2','1', '67721782F', 'Boleas');
+VALUES ('4','7','1', '67721782F', 'Boleas');
 
 GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";

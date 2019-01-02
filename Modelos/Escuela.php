@@ -57,8 +57,7 @@ class Escuela{
 			}else{
 				$fila = $resultado->fetch_row();
 			
-				$this->_setCodigoEscuela($fila[1]);
-				$this->_setNombreEscuela($fila[2]);
+				$this->_setNombreEscuela($fila[1]);
 			}
 		}
 	}
