@@ -1,6 +1,6 @@
 <?php
 /* 
-	Vista para buscar un pista
+	Vista para buscar un clase
 */
 	
 class Clase_SEARCH{  // declaración de clase
@@ -13,8 +13,11 @@ class Clase_SEARCH{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"codigoClase" => "Codigo de la pista", 
-					"nombre" => "Nombre de la pista");
+					"Clase" => "Codigo de la clase", 
+					"Reserva_Reserva" => "Codigo de la reserva",
+					"codigoEscuela" => "Codigo de la escuela",
+					"Entrenador" => "DNI del entrenador",
+					"Curso" => "Nombre del curso");
 		$this->controller = 'Controller_Clase.php';
 		$this->toString();
 	} // fin del constructor
@@ -41,24 +44,63 @@ class Clase_SEARCH{  // declaración de clase
 			/*Fila para codigo*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['codigoClase'];
+					echo $this->campos['Clase'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="codigoClase" >';
+					echo '<input type="text" name="Clase" >';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;
 			
-			/*Fila para nombre*/
+			/*Fila para reserva*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['nombre'];
+					echo $this->campos['Reserva_Reserva'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="nombre" >';
+					echo '<input type="text" name="Reserva_Reserva" >';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para codigoEscuela*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['codigoEscuela'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="codigoEscuela" >';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para Entrenador*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Entrenador'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Entrenador" >';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para Curso*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Curso'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Curso" >';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';

@@ -157,7 +157,7 @@ class Clase{
 		$likeEntrenador = "%" . $this->_getEntrenador() . "%";
 		$likeCurso = "%" . $this->_getCurso() . "%";
 		
-		$sql->bind_param("ssss", $likeClase, $likeReserva, $likeEscuela, $likeEntrenador, $likeCurso);
+		$sql->bind_param("sssss", $likeClase, $likeReserva, $likeEscuela, $likeEntrenador, $likeCurso);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();
