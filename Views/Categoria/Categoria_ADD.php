@@ -7,6 +7,7 @@ class Categoria_ADD{  // declaración de clase
 	var $campos;
 	var $controller;
 	var $submit = 'ADD';
+	var $Volver = "Volver";
 
 	// declaración constructor de la clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
@@ -80,11 +81,24 @@ class Categoria_ADD{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-success" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;
+			
+			/*Fila para volver*/
+			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+				echo '<td class="formularioTd">';
+					echo $this->Volver;
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<a href="'; echo $this->controller; echo '">';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
+					echo '</a>';
+				echo '</td>';
+			echo '</tr>';
 		echo '</table>';
 		echo '</form>';
 		include_once '../Views/base/footer.php';
