@@ -58,7 +58,7 @@ class Escuela_SEARCH{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="nombre" >';
+					echo '<input type="text" name="nombreEscuela" >';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';

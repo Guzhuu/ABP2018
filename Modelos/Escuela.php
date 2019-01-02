@@ -1,14 +1,4 @@
 <?php
-
-
-// file: model/ExerciseMapper.php
-//require_once(__DIR__."/../core/PDOConnection.php");
-
-//require_once(__DIR__."/../model/User.php");
-//require_once(__DIR__."/../model/Ejercicio.php");
-
-
-
 class Escuela{
 	public $codigoEscuela;
 	public $nombreEscuela;
@@ -112,7 +102,7 @@ class Escuela{
 		$likeCodigoEscuela = "%" . $this->_getCodigoEscuela() . "%";
 		$likeNombreEscuela = "%" . $this->_getNombreEscuela() . "%";
 		
-		$sql->bind_param("ssss", $likeCodigoEscuela, $likeNombreEscuela);
+		$sql->bind_param("ss", $likeCodigoEscuela, $likeNombreEscuela);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();

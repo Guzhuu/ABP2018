@@ -1,6 +1,6 @@
 <?php
 /* 
-	Vista para añadir un pista
+	Vista para añadir un escuela
 */
 	
 class Escuela_ADD{  // declaración de clase
@@ -13,7 +13,7 @@ class Escuela_ADD{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"nombreEscuela" => "Nombre de la pista");
+					"nombreEscuela" => "Nombre de la escuela");
 		$this->controller = 'Controller_Escuela.php';
 		$this->toString();
 	} // fin del constructor

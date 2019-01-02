@@ -16,6 +16,7 @@
 	include '../Views/Clase/Clase_ANULARCLASE.php';
 	include '../Views/Clase/Clase_ANULARCURSO.php';
 	include '../Views/Clase/Clase_SHOWCURRENT.php';
+	include '../Views/Clase/Clase_EDITHORARIO.php';
 	include '../Views/Clase/Clase_ADD.php';
 	include '../Views/Clase/Clase_SHOWALL.php';
 	include '../Views/Clase/Clase_SHOWALLFROM.php';
@@ -93,7 +94,7 @@ switch ($_REQUEST['submit']){
 			$clase->_getDatosGuardados();//Rellenar datos
 			new Clase_DELETE($clase);//Mostrar vissta 
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_POST['Clase'],'','','', '');//Clave
+			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Clave
 			$respuesta = $clase->DELETE();//Borrar clase con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 		}
@@ -110,7 +111,7 @@ switch ($_REQUEST['submit']){
 				new Clase_ANULARCLASE($respuesta);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_POST['Clase'],'','','','');//Clave
+			$clase = new Clase($_REQUEST['Clase'],'','','','');//Clave
 			$clase->_getDatosGuardados();
 			$respuesta = $clase->ANULARCLASE();//Borrar curso con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
@@ -128,7 +129,7 @@ switch ($_REQUEST['submit']){
 				new Clase_ANULARCURSO($respuesta);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_POST['Clase'],'','','','');//Clave
+			$clase = new Clase($_REQUEST['Clase'],'','','','');//Clave
 			$clase->_getDatosGuardados();
 			$respuesta = $clase->ANULARCURSO();//Borrar curso con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
@@ -136,6 +137,41 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	case 'EDITHORARIO':
+		if(!$_POST){//Si GET
+			$clase = new Clase($_REQUEST['Clase'],'','','','');//Coger clase guardado a eliminar
+			$clase->_getDatosGuardados();//Rellenar datos
+			$horarios = $clase->HORARIOSLIBRES();
+			if(is_string($horarios)){
+				new Mensaje($horarios, '../Controllers/Controller_Clase.php');//Mensaje de error, que hay muchos
+			}else{
+				new Clase_EDITHORARIO($horarios, $clase);//Mostrar vissta 
+			}
+		}else{//Si confirma borrado llega por post
+			/**	Explicación:
+				* En vez de borrar la reserva y hacer una nueva con la nueva pista y el nuevo horario, se edita la pista y horario de la reserva que ya tiene
+				**/
+			if(!isset($_REQUEST['codigoPistayHorario']) || !isset($_SESSION['DNI'])){
+				new Mensaje("Error al seleccionar pista y horario", '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+			}else{
+				$clase = new Clase($_REQUEST['Clase'],'','','','');//Clave
+				$clase->_getDatosGuardados();
+				if($_REQUEST['codigoPistayHorario'] != $clase->_getCodigoPistayHorario()){
+					include_once '../Modelos/Reserva.php';
+					$reserva = new Reserva($_REQUEST['Reserva_Reserva'], $_REQUEST['codigoPistayHorario'], $_SESSION['DNI']);
+					$respuestaReserva = $reserva->EDIT();
+					if($respuestaReserva == 'Modificado correcto'){
+						$clase->_setReserva($_REQUEST['Reserva_Reserva']);
+						
+						$respuesta = $clase->EDIT();
+						new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+					}else{
+						new Mensaje("Error al crear nueva reserva", '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+					}
+				}else{
+					new Mensaje("No se ha seleccionado un nuevo horario", '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+				}
+			}
+		}
 		break;
 		
 	case 'SHOWCURRENT':

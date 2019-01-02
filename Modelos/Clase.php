@@ -1,14 +1,4 @@
 <?php
-
-
-// file: model/ExerciseMapper.php
-//require_once(__DIR__."/../core/PDOConnection.php");
-
-//require_once(__DIR__."/../model/User.php");
-//require_once(__DIR__."/../model/Ejercicio.php");
-
-
-
 class Clase{
 	var $Clase;
 	var $Reserva_Reserva;
@@ -45,6 +35,26 @@ class Clase{
 	
 	public function _getCurso(){
 		return $this->Curso;
+	}
+	
+	public function _getCodigoPistayHorario(){
+		if(($this->_getClase() == '')){
+			return '';
+		}else{
+			$sql = $this->mysqli->prepare("SELECT reserva.codigoPistayHorario FROM reserva WHERE Reserva = ?");
+			$sql->bind_param("i", $this->Reserva_Reserva);
+			$sql->execute();
+
+			$resultado = $sql->get_result();
+			  
+			if(!$resultado){
+				return '';
+			}else if($resultado->num_rows == 0){
+				return '';
+			}else{
+				return $resultado->fetch_row()[0];
+			}
+		}
 	}
 
 
@@ -122,17 +132,17 @@ class Clase{
 				return 'No se ha podido conectar con la BD';
 			}else if($resultado->num_rows == 1){
 				$sql = $this->mysqli->prepare("UPDATE clase SET Reserva_Reserva = ?, codigoEscuela = ?, Entrenador = ?, Curso = ? WHERE Clase = ?");
-				$sql->bind_param("iiis", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Clase);
+				$sql->bind_param("iissi", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Clase);
 				
 				$resultado = $sql->execute();
 			}else{
-				return 'Clase no existe en la base de datos';
+				return 'La clase no existe en la base de datos';
 			}
 			
 			if(!$resultado){
-				return 'Ha fallado la actualización de clase';
+				//return 'Ha fallado la actualización de clase';
 			}else{
-				return 'Modificación correcta';
+				return 'Actualización correcta de la clase';
 			}
 		}
 	}
@@ -184,8 +194,8 @@ class Clase{
 	}
 	
 	function DETALLES(){
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso,
-												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso,
+												horario.HoraInicio, horario.HoraFin, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Clase = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
 												reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = horario.Horario 
@@ -199,7 +209,7 @@ class Clase{
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
 		}else if($resultado->num_rows == 0){
-			return 'No se ha encontrado clase';
+			return 'No se ha encontrado la clase';
 		}else{
 			return $resultado;
 		}
@@ -216,7 +226,7 @@ class Clase{
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
 		}else if($resultado->num_rows == 0){
-			return 'No se ha encontrado clase';
+			return 'No se ha encontrado la clase';
 		}else{
 			$sql = $this->mysqli->prepare("DELETE FROM Reserva WHERE Reserva = ?");
 			$sql->bind_param("i", $this->Reserva_Reserva);
@@ -231,7 +241,13 @@ class Clase{
 	}
 	
 	function CURSO(){
-		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE Curso = ?");
+		$sql = $this->mysqli->prepare("SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso,
+												horario.HoraInicio, horario.HoraFin, pista.nombre 
+										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
+										WHERE 	clase.Curso = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
+												reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = horario.Horario 
+												AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista AND clase.codigoEscuela = escuela.codigoEscuela
+										ORDER BY Curso");
 		$sql->bind_param("s", $this->Curso);
 		$sql->execute();
 		
@@ -305,12 +321,12 @@ class Clase{
 	
 	function SHOWALLFROM(){
 		/* EL ENTRENADOR DEBE PODER: 
-			* Anular clase (FALTA VISTA)
+			* Anular clase (CHECK)
+			* Anular curso (CHECK)
+			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular) (FALTA VISTA)
 			* Crear clases particulares (hora concreta hablarlo con alumno) (FALTA VISTA)
 			* Crear clases grupales (FALTA VISTA)
-			* Anular curso (FALTA VISTA)
 			* Ver alumnos apuntados, por si acaso no va nadie (HACER BOTON Y POCO MÁS)
-			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular) (FALTA VISTA)
 		*/
 		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso,
 												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 
@@ -326,6 +342,25 @@ class Clase{
 		
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
+		}else{
+			return $resultado;
+		}
+	}
+	
+	function HORARIOSLIBRES(){
+		$sql = $this->mysqli->prepare("SELECT pista_tiene_horario.codigoPistayHorario, pista_tiene_horario.Pista_codigoPista, pista.nombre, pista_tiene_horario.Horario_Horario, horario.HoraInicio, horario.HoraFin 
+										FROM pista_tiene_horario, pista, horario 
+										WHERE pista_tiene_horario.codigoPistayHorario NOT IN(SELECT reserva.codigoPistayHorario FROM reserva) 
+											AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista 
+											AND pista_tiene_horario.Horario_Horario = horario.Horario ;");
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'No hay horarios libres';
 		}else{
 			return $resultado;
 		}
