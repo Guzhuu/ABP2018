@@ -143,7 +143,7 @@ class Clase{
 				return 'No se ha podido conectar con la BD';
 			}else if($resultado->num_rows == 1){
 				$sql = $this->mysqli->prepare("UPDATE clase SET Reserva_Reserva = ?, codigoEscuela = ?, Entrenador = ?, Curso = ?, Particulares = ? WHERE Clase = ?");
-				$sql->bind_param("iissi", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Clase, $this->Particulares);
+				$sql->bind_param("iissii", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Particulares, $this->Clase);
 				
 				$resultado = $sql->execute();
 			}else{
@@ -206,7 +206,7 @@ class Clase{
 	}
 	
 	function DETALLES(){
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares,
 												horario.HoraInicio, horario.HoraFin, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Clase = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
@@ -253,7 +253,7 @@ class Clase{
 	}
 	
 	function CURSO(){
-		$sql = $this->mysqli->prepare("SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares
+		$sql = $this->mysqli->prepare("SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares,
 												horario.HoraInicio, horario.HoraFin, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Curso = ? AND clase.Reserva_Reserva = reserva.Reserva AND 

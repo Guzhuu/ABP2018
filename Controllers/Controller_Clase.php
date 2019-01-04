@@ -29,6 +29,9 @@ function get_data_form(){
 	}else{
 		$Clase = 0;
 	}
+	if(!isset($_REQUEST['Reserva_Reserva'])){
+		$_REQUEST['Reserva_Reserva'] = null;
+	}
 	$Reserva = $_REQUEST['Reserva_Reserva'];
 	$codigoEscuela = $_REQUEST['codigoEscuela'];
 	if(!isAdmin()){
@@ -36,6 +39,9 @@ function get_data_form(){
 	}
 	$Entrenador = $_REQUEST['Entrenador'];
 	$Curso = $_REQUEST['Curso'];
+	if($Curso === ''){
+		$Curso = 'Ningún curso';
+	}
 	$Particulares = $_REQUEST['Particulares'];
 
 	$clase = new Clase($Clase, $Reserva, $codigoEscuela, $Entrenador, $Curso, $Particulares);
@@ -77,13 +83,16 @@ switch ($_REQUEST['submit']){
 			$clase = new Clase('','','','','','');
 			$Escuelas = $clase->ESCUELAS();
 			$Cursos = $clase->CURSOS();
-			var_dump($Reservas);
-			var_dump($Entrenadores);
 			$muestraADD = new Clase_ADD($Reservas, $Escuelas, $Cursos, $Entrenadores);//Mostrar vista add
 		}else{
 			$clase = get_data_form();//Si post cogemos clase
-			$respuesta = $clase->ADD();//Y lo añadimos
-			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');// y a ver qué ha pasado en la BD
+			if($clase->_getReserva() != null){
+				$respuesta = $clase->ADD();//Y lo añadimos
+				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');// y a ver qué ha pasado en la BD
+			}else{
+				$respuesta = $clase->ADD();//Y lo añadimos
+				new Mensaje("Haga una reserva", '../Controllers/Controller_Clase.php');// y a ver qué ha pasado en la BD
+			}
 		}
 		break;
 		

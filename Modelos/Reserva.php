@@ -197,8 +197,8 @@ class Reserva{
 	}
 	
 	function RESERVASDE(){
-		$sql = $this->mysqli->prepare("SELECT * FROM reserva WHERE DNI_Deportista = ?");
-		$sql->bind_param("s", $this->DNI_Deportista);
+		$sql = $this->mysqli->prepare("SELECT * FROM reserva WHERE DNI_Deportista = ? AND reserva.Reserva NOT IN (SELECT clase.Reserva_Reserva FROM clase WHERE DNI_Deportista = ?)");
+		$sql->bind_param("ss", $this->DNI_Deportista, $this->DNI_Deportista);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();
