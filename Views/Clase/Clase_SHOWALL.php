@@ -10,6 +10,7 @@ class Clase_SHOWALL extends SHOWALL{  // declaracion de clase
 	var $showAnularCurso = true;
 	var $showEditHorario = true; //Editar clase
 	var $showAnular = true; //Anular
+	var $showVerAlumnos = true;
 	
 	function __construct($respuesta){
 		$this->controlador = 'Controller_Clase.php';
@@ -20,6 +21,9 @@ class Clase_SHOWALL extends SHOWALL{  // declaracion de clase
 	function botonesOpcion(){
 		if($this->showEditHorario){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='EDITHORARIO'/>";
+		}
+		if($this->showVerAlumnos){
+			echo "<input class='btn btn-secondary' type='submit' name='submit' value='VERALUMNOS'/>";
 		}
 		if($this->showAnular){
 			echo "<input class='btn btn-danger' type='submit' name='submit' value='ANULARCLASE'/>";

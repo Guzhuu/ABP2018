@@ -8,6 +8,7 @@ class Clase_SHOWALLFROM{
 	var $showAnularCurso = true;
 	var $showEditHorario = true; //Editar clase
 	var $showAnular = true; //Anular
+	var $showVerAlumnos = true;
 	
 	//Obligatorio ponerlo. Indica el controlador al que ir al hacer una petición
 	var $controlador;
@@ -36,6 +37,9 @@ class Clase_SHOWALLFROM{
 	function botonesOpcion(){
 		if($this->showEditHorario){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='EDITHORARIO'/>";
+		}
+		if($this->showVerAlumnos){
+			echo "<input class='btn btn-danger' type='submit' name='submit' value='VERALUMNOS'/>";
 		}
 		if($this->showAnularCurso){
 			echo "<input class='btn btn-danger' type='submit' name='submit' value='ANULARCURSO'/>";

@@ -270,6 +270,7 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Clase` (
   `codigoEscuela` INT NOT NULL,
   `Entrenador` VARCHAR(9) NOT NULL,
   `Curso` VARCHAR(45) NOT NULL,
+  `Particulares` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`Clase`),
   INDEX `fk_Clase_Reserva1_idx` (`Reserva_Reserva` ASC),
   INDEX `fk_Clase_Escuela1_idx` (`codigoEscuela` ASC),

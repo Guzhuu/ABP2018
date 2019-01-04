@@ -180,5 +180,36 @@ class Reserva{
 			return $resultado;
 		}
 	}
+	
+	function RESERVAS(){
+		$sql = $this->mysqli->prepare("SELECT * FROM reserva");
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return array();
+		}else if($resultado->num_rows == 0){
+			return array();
+		}else{
+			return $resultado->fetch_all();
+		}
+	}
+	
+	function RESERVASDE(){
+		$sql = $this->mysqli->prepare("SELECT * FROM reserva WHERE DNI_Deportista = ?");
+		$sql->bind_param("s", $this->DNI_Deportista);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return array();
+		}else if($resultado->num_rows == 0){
+			return array();
+		}else{
+			return $resultado->fetch_all();
+		}
+	}
 }
 ?>

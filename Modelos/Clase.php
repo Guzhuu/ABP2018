@@ -5,14 +5,16 @@ class Clase{
 	var $codigoEscuela;
 	var $Entrenador;
 	var $Curso;
+	var $Particulares;
 	var $mysqli;
 
-	function __construct($Clase, $Reserva_Reserva, $codigoEscuela, $Entrenador, $Curso){
+	function __construct($Clase, $Reserva_Reserva, $codigoEscuela, $Entrenador, $Curso, $Particulares){
   		$this->Clase = $Clase;
   		$this->Reserva_Reserva = $Reserva_Reserva;
   		$this->codigoEscuela = $codigoEscuela;
   		$this->Entrenador = $Entrenador;
 		$this->Curso = $Curso;
+		$this->Particulares = $Particulares;
 		include_once '../Functions/ConectarBD.php'; //Actualizar
 		$this->mysqli = ConectarBD();
 	}
@@ -35,6 +37,10 @@ class Clase{
 	
 	public function _getCurso(){
 		return $this->Curso;
+	}
+	
+	public function _getParticulares(){
+		return $this->Particulares;
 	}
 	
 	public function _getCodigoPistayHorario(){
@@ -78,6 +84,10 @@ class Clase{
 		$this->Curso = $Curso;
 	}
 
+	public function _setParticulares($Particulares){
+		$this->Particulares = $Particulares;
+	}
+
 
     function _getDatosGuardados(){//Para recuperar de la base de datos
 		if(($this->_getClase() == '')){
@@ -100,14 +110,15 @@ class Clase{
 				$this->_setEscuela($fila[2]);
 				$this->_setEntrenador($fila[3]);
 				$this->_setCurso($fila[4]);
+				$this->_setParticulares($fila[5]);
 			}
 		}
 	}
 
 
 	function ADD(){//Para añadir a la BD
-		$sql = $this->mysqli->prepare("INSERT INTO clase (Reserva_Reserva, codigoEscuela, Entrenador, Curso) VALUES (?, ?, ?, ?)");
-		$sql->bind_param("iiss", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso);
+		$sql = $this->mysqli->prepare("INSERT INTO clase (Reserva_Reserva, codigoEscuela, Entrenador, Curso, Particulares) VALUES (?, ?, ?, ?, ?)");
+		$sql->bind_param("iissi", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Particulares);
 		
 		$resultado = $sql->execute();
 
@@ -131,8 +142,8 @@ class Clase{
 			if(!$resultado){
 				return 'No se ha podido conectar con la BD';
 			}else if($resultado->num_rows == 1){
-				$sql = $this->mysqli->prepare("UPDATE clase SET Reserva_Reserva = ?, codigoEscuela = ?, Entrenador = ?, Curso = ? WHERE Clase = ?");
-				$sql->bind_param("iissi", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Clase);
+				$sql = $this->mysqli->prepare("UPDATE clase SET Reserva_Reserva = ?, codigoEscuela = ?, Entrenador = ?, Curso = ?, Particulares = ? WHERE Clase = ?");
+				$sql->bind_param("iissi", $this->Reserva_Reserva, $this->codigoEscuela, $this->Entrenador, $this->Curso, $this->Clase, $this->Particulares);
 				
 				$resultado = $sql->execute();
 			}else{
@@ -150,14 +161,15 @@ class Clase{
 
   
 	function SEARCH(){
-		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE ((Clase LIKE ?) AND (Reserva_Reserva LIKE ?) AND (codigoEscuela LIKE ?) AND (Entrenador LIKE ?) AND (Curso LIKE ?))");
+		$sql = $this->mysqli->prepare("SELECT * FROM clase WHERE ((Clase LIKE ?) AND (Reserva_Reserva LIKE ?) AND (codigoEscuela LIKE ?) AND (Entrenador LIKE ?) AND (Curso LIKE ?) AND (Particulares LIKE ?))");
 		$likeClase = "%" . $this->_getClase() . "%";
 		$likeReserva = "%" . $this->_getReserva() . "%";
 		$likeEscuela = "%" . $this->_getEscuela() . "%";
 		$likeEntrenador = "%" . $this->_getEntrenador() . "%";
 		$likeCurso = "%" . $this->_getCurso() . "%";
+		$likeParticulares = "%" . $this->_getParticulares() . "%";
 		
-		$sql->bind_param("sssss", $likeClase, $likeReserva, $likeEscuela, $likeEntrenador, $likeCurso);
+		$sql->bind_param("ssssss", $likeClase, $likeReserva, $likeEscuela, $likeEntrenador, $likeCurso, $likeParticulares);
 		$sql->execute();
 		
 		$resultado = $sql->get_result();
@@ -194,7 +206,7 @@ class Clase{
 	}
 	
 	function DETALLES(){
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso,
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares
 												horario.HoraInicio, horario.HoraFin, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Clase = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
@@ -241,7 +253,7 @@ class Clase{
 	}
 	
 	function CURSO(){
-		$sql = $this->mysqli->prepare("SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso,
+		$sql = $this->mysqli->prepare("SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares
 												horario.HoraInicio, horario.HoraFin, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Curso = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
@@ -259,6 +271,21 @@ class Clase{
 			return 'No se ha encontrado el curso';
 		}else{
 			return $resultado;
+		}
+	}
+	
+	function CURSOS(){
+		$sql = $this->mysqli->prepare("SELECT DISTINCT clase.Curso FROM clase ORDER BY Curso");
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return array();
+		}else if($resultado->num_rows == 0){
+			return array();
+		}else{
+			return $resultado->fetch_all();
 		}
 	}
 	
@@ -323,12 +350,12 @@ class Clase{
 		/* EL ENTRENADOR DEBE PODER: 
 			* Anular clase (CHECK)
 			* Anular curso (CHECK)
-			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular) (FALTA VISTA)
+			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular) (CHECK)
+			* Ver alumnos apuntados, por si acaso no va nadie (CHECK maomeno)
 			* Crear clases particulares (hora concreta hablarlo con alumno) (FALTA VISTA)
 			* Crear clases grupales (FALTA VISTA)
-			* Ver alumnos apuntados, por si acaso no va nadie (HACER BOTON Y POCO MÁS)
 		*/
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso,
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso, clase.Particulares,
 												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Entrenador = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
@@ -363,6 +390,21 @@ class Clase{
 			return 'No hay horarios libres';
 		}else{
 			return $resultado;
+		}
+	}
+	
+	function ESCUELAS(){
+		$sql = $this->mysqli->prepare("SELECT * FROM escuela ORDER BY 1");
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return array();
+		}else if($resultado->num_rows == 0){
+			return array();
+		}else{
+			return $resultado->fetch_all();
 		}
 	}
 }

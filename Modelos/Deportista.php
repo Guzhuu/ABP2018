@@ -337,5 +337,20 @@ class Deportista
       return $resultado;
     }
   }
+  
+	function ENTRENADORES(){
+		$sql = $this->mysqli->prepare("SELECT * FROM deportista WHERE rolEntrenador = 1");
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+		  return array();
+		}else if($resultado->num_rows == 0){
+		  return array();
+		}else{
+		  return $resultado->fetch_all();
+		}
+	}
 }
 ?>

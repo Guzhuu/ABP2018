@@ -1,6 +1,6 @@
 <?php
 /* 
-	Controller de clases hola
+	Controller de clases
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
@@ -24,13 +24,21 @@
 	
 	
 function get_data_form(){
-	$Clase = $_REQUEST['Clase'];
+	if(isset($_REQUEST['Clase'])){
+		$Clase = $_REQUEST['Clase'];
+	}else{
+		$Clase = 0;
+	}
 	$Reserva = $_REQUEST['Reserva_Reserva'];
 	$codigoEscuela = $_REQUEST['codigoEscuela'];
+	if(!isAdmin()){
+		$_REQUEST['Entrenador'] = $_SESSION['DNI'];
+	}
 	$Entrenador = $_REQUEST['Entrenador'];
 	$Curso = $_REQUEST['Curso'];
+	$Particulares = $_REQUEST['Particulares'];
 
-	$clase = new Clase($Clase, $Reserva, $codigoEscuela, $Entrenador, $Curso);
+	$clase = new Clase($Clase, $Reserva, $codigoEscuela, $Entrenador, $Curso, $Particulares);
  
 	return $clase;
 }
@@ -40,7 +48,7 @@ if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array 
 	if(isAdmin()){
 		$_REQUEST['submit'] = 'SHOWALL';
 	}else{
-		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE");
+		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE", "VERALUMNOS");
 		if(isset($_SESSION['DNI'])){
 			if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasEntrenador)){
 				$_REQUEST['submit'] = 'SHOWALL';
@@ -54,7 +62,24 @@ if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array 
 switch ($_REQUEST['submit']){
 	case 'ADD':
 		if(!$_POST){//Si GET
-			$muestraADD = new Clase_ADD();//Mostrar vista add
+			include_once '../Modelos/Reserva.php';
+			if(isAdmin()){
+				$reserva = new Reserva('', '', '');
+				$Reservas = $reserva->RESERVAS();
+				include_once '../Modelos/Deportista.php';
+				$aux = new Deportista('','','','','','','','','');
+				$Entrenadores = $aux->ENTRENADORES();
+			}else{
+				$reserva = new Reserva('', '', $_SESSION['DNI']);
+				$Reservas = $reserva->RESERVASDE();
+				$Entrenadores = '';
+			}
+			$clase = new Clase('','','','','','');
+			$Escuelas = $clase->ESCUELAS();
+			$Cursos = $clase->CURSOS();
+			var_dump($Reservas);
+			var_dump($Entrenadores);
+			$muestraADD = new Clase_ADD($Reservas, $Escuelas, $Cursos, $Entrenadores);//Mostrar vista add
 		}else{
 			$clase = get_data_form();//Si post cogemos clase
 			$respuesta = $clase->ADD();//Y lo añadimos
@@ -64,7 +89,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'EDIT':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Editar clase seleccionado
+			$clase = new Clase($_REQUEST['Clase'],'','','', '', '');//Editar clase seleccionado
 			$clase->_getDatosGuardados();//Rellenar con los datos de la BD
 			new Clase_EDIT($clase);//Mostrar vista
 		}else{
@@ -90,7 +115,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'DELETE':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Coger clase guardado a eliminar
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Coger clase guardado a eliminar
 			$clase->_getDatosGuardados();//Rellenar datos
 			new Clase_DELETE($clase);//Mostrar vissta 
 		}else{//Si confirma borrado llega por post
@@ -102,7 +127,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'ANULARCLASE':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','','');//Coger clase guardado a eliminar
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Coger clase guardado a eliminar
 			$clase->_getDatosGuardados();//Rellenar datos
 			$respuesta = $clase->DETALLES();
 			if(is_string($respuesta)){
@@ -111,7 +136,7 @@ switch ($_REQUEST['submit']){
 				new Clase_ANULARCLASE($respuesta);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_REQUEST['Clase'],'','','','');//Clave
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
 			$clase->_getDatosGuardados();
 			$respuesta = $clase->ANULARCLASE();//Borrar curso con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
@@ -120,7 +145,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'ANULARCURSO':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','','');//Coger clase guardado a eliminar
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Coger clase guardado a eliminar
 			$clase->_getDatosGuardados();//Rellenar datos
 			$respuesta = $clase->CURSO();
 			if(is_string($respuesta)){
@@ -129,7 +154,7 @@ switch ($_REQUEST['submit']){
 				new Clase_ANULARCURSO($respuesta);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_REQUEST['Clase'],'','','','');//Clave
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
 			$clase->_getDatosGuardados();
 			$respuesta = $clase->ANULARCURSO();//Borrar curso con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
@@ -138,7 +163,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'EDITHORARIO':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','','');//Coger clase guardado a eliminar
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Coger clase guardado a eliminar
 			$clase->_getDatosGuardados();//Rellenar datos
 			$horarios = $clase->HORARIOSLIBRES();
 			if(is_string($horarios)){
@@ -153,7 +178,7 @@ switch ($_REQUEST['submit']){
 			if(!isset($_REQUEST['codigoPistayHorario']) || !isset($_SESSION['DNI'])){
 				new Mensaje("Error al seleccionar pista y horario", '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 			}else{
-				$clase = new Clase($_REQUEST['Clase'],'','','','');//Clave
+				$clase = new Clase($_REQUEST['Clase'],'','','','', '');//Clave
 				$clase->_getDatosGuardados();
 				if($_REQUEST['codigoPistayHorario'] != $clase->_getCodigoPistayHorario()){
 					include_once '../Modelos/Reserva.php';
@@ -174,9 +199,12 @@ switch ($_REQUEST['submit']){
 		}
 		break;
 		
+	case 'VERALUMNOS':
+		break;
+		
 	case 'SHOWCURRENT':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Coger clave del clase
+			$clase = new Clase($_REQUEST['Clase'],'','','', '', '');//Coger clave del clase
 			$respuesta = $clase->SHOWCURRENT();
 			if(!is_string($respuesta)){//NO debería ser posible pedir un showcurrent de algo no existente pero si esp osible retornará un string, así que si no es un string es un clase
 				$clase->_getDatosGuardados();
@@ -190,7 +218,7 @@ switch ($_REQUEST['submit']){
 	case 'SHOWALL':
 		$respuesta = null;
 		if(!isAdmin()){
-			$clase = new Clase('','','',$_SESSION['DNI'], '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
+			$clase = new Clase('','','',$_SESSION['DNI'], '', '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
 			$respuesta = $clase->SHOWALLFROM();//Todos los datos de la BD que tenga su dni
 			if(!is_string($respuesta)){
 				new Clase_SHOWALLFROM($respuesta);//Le pasamos todos los datos de la BD
@@ -198,7 +226,7 @@ switch ($_REQUEST['submit']){
 				new Clase_SHOWALLFROM($respuesta);
 			}
 		}else{
-			$clase = new Clase('','','','', '');//No necesitamos clase para buscar (pero sí para acceder a la BD)
+			$clase = new Clase('','','','', '','');//No necesitamos clase para buscar (pero sí para acceder a la BD)
 			$respuesta = $clase->SHOWALL();//Todos los datos de la BD estarán aqúi
 			new Clase_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		}
