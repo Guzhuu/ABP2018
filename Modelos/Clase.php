@@ -352,8 +352,8 @@ class Clase{
 			* Anular curso (CHECK)
 			* Editar horas, qutiando la reserva si se da el caso (lo mismo en anular) (CHECK)
 			* Ver alumnos apuntados, por si acaso no va nadie (CHECK maomeno)
-			* Crear clases particulares (hora concreta hablarlo con alumno) (FALTA VISTA)
-			* Crear clases grupales (FALTA VISTA)
+			* Crear clases particulares (hora concreta hablarlo con alumno) (CHECK)
+			* Crear clases grupales (CHECK)
 		*/
 		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.codigoEscuela, escuela.nombreEscuela, clase.Entrenador, clase.Reserva_Reserva, clase.Curso, clase.Particulares,
 												horario.Horario, horario.HoraInicio, horario.HoraFin, pista.codigoPista, pista.nombre 

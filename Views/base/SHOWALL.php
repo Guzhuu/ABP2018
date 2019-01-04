@@ -7,6 +7,7 @@ class SHOWALL{
 	var $showShowcurrent = true;
 	var $showAdd = true;
 	var $showSearch = true;
+	var $showAcciones = true;
 	
 	//Obligatorio ponerlo. Indica el controlador al que ir al hacer una petición
 	var $controlador;
@@ -49,13 +50,17 @@ class SHOWALL{
 		echo '<table align="center">';
 			echo "<form id='AnadirBuscar' method='GET' action='"; echo $this->controlador; echo "'>";
 			echo '<tr class="filaInvisible">';
-				echo '<td class="celdaInvisible">';
-				echo "<input class='btn btn-success' type='submit' name='submit' value='ADD'/>";
-				echo '</td>';
+				if($this->showAdd){
+					echo '<td class="celdaInvisible">';
+					echo "<input class='btn btn-success' type='submit' name='submit' value='ADD'/>";
+					echo '</td>';
+				}
 				
-				echo '<td class="celdaInvisible">';
-				echo "<input class='btn btn-primary' type='submit' name='submit' value='SEARCH'/>";
-				echo '</td>';
+				if($this->showSearch){
+					echo '<td class="celdaInvisible">';
+					echo "<input class='btn btn-primary' type='submit' name='submit' value='SEARCH'/>";
+					echo '</td>';
+				}
 				
 				$this->botonesArriba();
 			echo '</tr>';
@@ -70,9 +75,11 @@ class SHOWALL{
 						echo $tituloColumna->name;
 					echo '</th>';
 				}
-				echo '<th class="tituloColumna">';
-				echo $this->acciones;
-				echo '</th>';
+				if($this->showAcciones){
+					echo '<th class="tituloColumna">';
+					echo $this->acciones;
+					echo '</th>';
+				}
 				/*Columna de acciones*/
 			echo '</tr>';
 			/**FIN FILA TITULOS COLUMNA**/
@@ -96,6 +103,7 @@ class SHOWALL{
 				
 				/*Se crean los botones para las acciones*/
 				//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
+				if($this->showAcciones){
 					echo '<td class="celda">';
 						if($this->showEdit){
 							echo "<input class='btn btn-primary' type='submit' name='submit' value='EDIT'/>";
@@ -108,6 +116,7 @@ class SHOWALL{
 						}
 						$this->botonesOpcion();
 					echo '</td>';
+				}
 					
 				echo '</tr>';
 				echo '</form>';

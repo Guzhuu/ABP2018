@@ -14,9 +14,11 @@
 	include '../Views/Reserva/Reserva_EDIT.php';
 	include '../Views/Reserva/Reserva_SEARCH.php';
 	include '../Views/Reserva/Reserva_DELETE.php';
+	include '../Views/Reserva/Reserva_CANCELARRESERVA.php';
 	include '../Views/Reserva/Reserva_SHOWCURRENT.php';
 	include '../Views/Reserva/Reserva_SHOWALL.php';
 	include '../Views/Reserva/Reserva_RESERVAR.php';
+	include '../Views/Reserva/Reserva_VERRESERVAS.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -44,7 +46,7 @@ if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array 
 if(!isAdmin()){
 	if($_REQUEST['submit'] === 'SHOWALL'){
 		$_REQUEST['submit'] = 'RESERVARALL';
-	}else if($_REQUEST['submit'] != 'RESERVARONE' || $_REQUEST['submit'] != 'RESERVAR'){
+	}else if($_REQUEST['submit'] != 'RESERVARONE' && $_REQUEST['submit'] != 'RESERVAR' && $_REQUEST['submit'] != 'VERRESERVAS' && $_REQUEST['submit'] != 'CANCELARRESERVA'){
 		$_REQUEST['submit'] = 'RESERVARALL';
 	}
 }
@@ -142,6 +144,30 @@ switch ($_REQUEST['submit']){
 			new Mensaje($respuesta, '../Controllers/Controller_Reserva.php');//A ver qué pasa en la BD
 		}
 	break;
+	
+	case 'CANCELARRESERVA':
+		if(!$_POST){
+			if(isAdmin()){
+				$reserva = new Reserva($_REQUEST['Reserva'],'', '');//Coger reserva guardado a eliminar
+				$reserva->_getDatosGuardados();//Rellenar datos
+				new Reserva_DELETE($reserva);//Mostrar vissta 
+			}else{
+				$reserva = new Reserva($_REQUEST['Reserva'],'', $_SESSION['DNI']);//Coger reserva guardado a eliminar
+				$reserva->_getDatosGuardados();//Rellenar datos
+				new Reserva_CANCELARRESERVA($reserva);//Mostrar vissta 
+			}
+		}else{
+			if(isAdmin()){
+				$reserva = new Reserva($_REQUEST['Reserva'],'','');//Clave
+				$respuesta = $reserva->DELETE();//Borrar reserva con dicha clave
+				new Mensaje($respuesta, '../Controllers/Controller_Reserva.php?submit=VERRESERVAS');
+			}else{
+				$reserva = new Reserva($_REQUEST['Reserva'],'',$_SESSION['DNI']);//Clave
+				$respuesta = $reserva->CANCELARRESERVA();//Borrar reserva con dicha clave
+				new Mensaje($respuesta, '../Controllers/Controller_Reserva.php?submit=VERRESERVAS');
+			}
+		}
+		break;
 		
 	case 'SHOWCURRENT':
 		if(!$_POST){//Si GET
@@ -162,10 +188,20 @@ switch ($_REQUEST['submit']){
 		new Reserva_SHOWALL($respuesta, '');//Le pasamos todos los datos de la BD
 		break;
 		
+	case 'VERRESERVAS':
+		if(isAdmin()){
+			$reserva = new Reserva('','','');//No necesitamos reserva para buscar (pero sí para acceder a la BD)
+			$respuesta = $reserva->SHOWALL();//Todos los datos de la BD estarán aqúi
+			new Reserva_SHOWALL($respuesta, '');//Le pasamos todos los datos de la BD
+		}else{
+			$reserva = new Reserva('','',$_SESSION['DNI']);//No necesitamos reserva para buscar (pero sí para acceder a la BD)
+			$respuesta = $reserva->VERRESERVAS();//Todos los datos de la BD estarán aqúi
+			new Reserva_VERRESERVAS($respuesta, '');//Le pasamos todos los datos de la BD
+		}
+		break;
+		
 	default:
-		$reserva = new Reserva('','','');//No necesitamos reserva para buscar (pero sí para acceder a la BD)
-		$respuesta = $reserva->SHOWALL();//Todos los datos de la BD estarán aqúi
-		new Reserva_SHOWALL($respuesta, '');//Le pasamos todos los datos de la BD
+		new Mensaje("Permisos insuficientes", '../Controllers/Controller_Deportista.php');//Mensaje de error, que hay muchos
 		break;
 }
 ?>

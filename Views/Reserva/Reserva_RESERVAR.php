@@ -65,7 +65,7 @@ class Reserva_RESERVAR{
 					echo '<br/>';
 					echo '<br/>';
 					echo '<br/>';
-					echo '<form>';
+					echo '<form method="POST" accept-charset="UTF-8" id="reservar'; echo $i; echo '" name="reservar'; echo $i; echo'" action="../Controllers/'; echo $this->controlador; echo '">';
 					echo '<table class="pistaPadel">';
 					//Creamos la primera fila
 					echo '<tr class="lineaPadel">';
@@ -85,7 +85,7 @@ class Reserva_RESERVAR{
 				echo '<tr class="horariosPadel">';
 					echo '<td class="botonHorario">';
 						echo '<br/><b class="lblBtReservar"> Desde las ' . $fila[$this->campos['HoraInicio']] . ' hasta las ' . $fila[$this->campos['HoraFin']] . '</b>';
-						echo '<input type="hidden" name="'; echo $this->campos['codigoHorario']; echo '" value="'; echo $fila[$this->campos['codigoHorario']]; echo '">';
+						echo '<input type="hidden" name="'; echo $this->campos['codigoPistayHorario']; echo '" value="'; echo $fila[$this->campos['codigoPistayHorario']]; echo '">';
 						echo '<input type="submit" style="width:100%" value="RESERVAR">';
 					echo '</td>';
 					echo '</input>';

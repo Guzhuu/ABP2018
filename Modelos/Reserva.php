@@ -61,7 +61,9 @@ class Reserva{
 				$fila = $resultado->fetch_row();
 				
 				$this->_setCodigoPistayHorario($fila[1]);
-				$this->_setDNI($fila[2]);
+				if($this->DNI_Deportista !== null || $this->DNI_Deportista === null || $this->DNI_Deportista === ''){
+					$this->_setDNI($fila[2]);
+				}
 			}
 		}
 	}
@@ -148,6 +150,30 @@ class Reserva{
 		}
 	}
 	
+	function CANCELARRESERVA(){
+		$sql = $this->mysqli->prepare("SELECT * FROM reserva WHERE Reserva = ? AND DNI_Deportista = ?");
+		$sql->bind_param("is", $this->Reserva, $this->DNI_Deportista);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'Error al cancelar la reserva';
+		}else{
+			$sql = $this->mysqli->prepare("DELETE FROM reserva WHERE Reserva = ? AND DNI_Deportista = ?");
+			$sql->bind_param("is", $this->Reserva, $this->DNI_Deportista);
+			$resultado = $sql->execute();
+		
+			if(!$resultado){
+				return 'Fallo al cancelar la reserva';
+			}else{
+				return 'Reserva cancelada correctamente';
+			}
+		}
+	}
+	
 	function SHOWCURRENT(){//Para mostrar de la base de datos
 		$sql = $this->mysqli->prepare("SELECT * FROM reserva WHERE Reserva = ?");
 		$sql->bind_param("i", $this->Reserva);
@@ -209,6 +235,22 @@ class Reserva{
 			return array();
 		}else{
 			return $resultado->fetch_all();
+		}
+	}
+	
+	function VERRESERVAS(){
+		$sql = $this->mysqli->prepare("	SELECT reserva.Reserva, reserva.DNI_Deportista, horario.HoraInicio, horario.HoraFin, pista.nombre FROM reserva, horario, pista, pista_tiene_horario
+										WHERE reserva.DNI_Deportista = ? AND reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario 
+												AND pista_tiene_horario.Horario_Horario = horario.Horario AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista");
+		$sql->bind_param("s", $this->DNI_Deportista);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else{
+			return $resultado;
 		}
 	}
 }

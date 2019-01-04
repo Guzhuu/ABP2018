@@ -5,8 +5,8 @@
 	session_start();
 	include_once '../Functions/Autenticacion.php';
 	if(!isAdmin()){
-		if(isEntrenador()){
-			$_REQUEST['submit'] = 'AGENDA';
+		if(isEntrenador() || isset($_SESSION['DNI'])){
+			$_REQUEST['submit'] = 'PERFIL';
 		}else{
 			header('Location: ../index.php');
 		}
@@ -126,20 +126,15 @@ switch ($_REQUEST['submit']){
 		new Deportista_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		break;
 		
-	case 'AGENDA':
-		if(isEntrenador()){ //Este if en teoría es innecesario aka imposible de ser falso
-			$deportista = new Deportista($_SESSION['DNI'],'','','','','','','','');//No necesitamos deportista para buscar (pero sí para acceder a la BD)
-			$respuesta = $deportista->SHOWAGENDA();//Todos los datos de la BD estarán aqúi
-			new Deportista_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
-		}else{
-			new Mensaje("Permisos insuficientes", '../Controllers/Controller_Deportista.php');//Mensaje de error, que hay muchos
-		}
+	case 'PERFIL':
+		$deportista = new Deportista($_SESSION['DNI'],'','','','','','','','');//No necesitamos deportista para buscar (pero sí para acceder a la BD)
+		//Aquí habrá que coger datos del modelo sobre el perfil y hacer una vista
+		//$respuesta = $deportista->SHOWAGENDA();//Todos los datos de la BD estarán aqúi
+		//new Deportista_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		break;
 		
 	default:
-		$deportista = new Deportista('','','','','','','','','');//No necesitamos deportista para buscar (pero sí para acceder a la BD)
-		$respuesta = $deportista->SHOWALL();//Todos los datos de la BD estarán aqúi
-		new Deportista_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
+		new Mensaje("Permisos insuficientes", '../Controllers/Controller_Deportista.php');//Mensaje de error, que hay muchos
 		break;
 }
 ?>
