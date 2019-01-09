@@ -407,5 +407,43 @@ class Clase{
 			return $resultado->fetch_all();
 		}
 	}
+	
+	function CLASESDE($DNI){
+		$sql = $this->mysqli->prepare("	SELECT Deportista_inscrito_clase.Clase, Clase.Entrenador, Deportista.Nombre, Deportista.Apellidos, Clase.Curso, Horario.HoraInicio, Horario.HoraFin, Pista.codigoPista, Pista.nombre 
+										FROM Deportista_inscrito_clase, Clase, Horario, Deportista, Pista, Reserva, pista_tiene_horario
+										WHERE Deportista_inscrito_clase.DNI_Deportista = ? AND Deportista_inscrito_clase.Clase = Clase.Clase AND Clase.Entrenador = Deportista.DNI AND
+											Clase.Reserva_Reserva = Reserva.Reserva AND Reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario 
+											AND pista_tiene_horario.Horario_Horario = Horario.Horario AND pista_tiene_horario.Pista_codigoPista = Pista.codigoPista
+										ORDER BY 1");
+		$sql->bind_param("s", $DNI);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return "No se ha podido conectar con la BD";
+		}else if($resultado->num_rows == 0){
+			return "No hay clases asignadas";
+		}else{
+			return $resultado->fetch_all();
+		}
+	}
+	
+	function ALUMNOS(){
+		$sql = $this->mysqli->prepare("	SELECT Deportista.DNI, Deportista.Edad, Deportista.Nombre, Deportista.Apellidos, Deportista.Sexo FROM Deportista_inscrito_clase, Deportista
+										WHERE Deportista_inscrito_clase.Clase = ? AND Deportista_inscrito_clase.DNI_Deportista = Deportista.DNI ORDER BY 1");
+		$sql->bind_param("i", $this->Clase);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return "No se ha podido conectar con la BD";
+		}else if($resultado->num_rows == 0){
+			return "No hay alumnos apuntados a esta clase";
+		}else{
+			return $resultado->fetch_all();
+		}
+	}
 }
 ?>
