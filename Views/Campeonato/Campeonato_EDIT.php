@@ -43,15 +43,17 @@ class Campeonato_EDIT{  // declaración de clase
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
 		
-
-		/*Fila para Campeonato*/
+			echo '<input type="hidden" name="Campeonato" value="'; echo $this->Campeonato->Campeonato; echo'">';
+			echo '</input>';
+	
+			/*Fila para FechaInicio*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['Campeonato'];
+					echo $this->campos['FechaInicio'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Campeonato" value="'; echo $this->Campeonato->Campeonato; echo'">';
+					echo '<input type="text" name="FechaInicio" value="'; echo $this->Campeonato->FechaInicio; echo'">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
@@ -65,22 +67,6 @@ class Campeonato_EDIT{  // declaración de clase
 				
 				echo '<td class="formularioTd">';
 					echo '<input type="text" name="FechaFinal" value="'; echo $this->Campeonato->FechaFinal; echo'">';
-					echo '</input>';
-				echo '</td>';
-			echo '</tr>';
-			$i++;
-			
-
-
-
-			/*Fila para FechaInicio*/
-			echo '<tr class="'; echo $this->_getTr($i); echo '">';
-				echo '<td class="formularioTd">';
-					echo $this->campos['FechaInicio'];
-				echo '</td>';
-				
-				echo '<td class="formularioTd">';
-					echo '<input type="text" name="FechaInicio" value="'; echo $this->Campeonato->FechaInicio; echo'">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
@@ -99,8 +85,6 @@ class Campeonato_EDIT{  // declaración de clase
 				echo '</td>';
 			echo '</tr>';
 			$i++;
-
-//var_dump($this->Campeonato); // para ver fallos
 			
 			/*Fila para submit*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
@@ -109,7 +93,7 @@ class Campeonato_EDIT{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-primary" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
@@ -123,7 +107,7 @@ class Campeonato_EDIT{  // declaración de clase
 				
 				echo '<td class="formularioTd">';
 					echo '<a href="'; echo $this->controller; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';

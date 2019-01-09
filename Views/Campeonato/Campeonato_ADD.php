@@ -14,9 +14,9 @@ class Campeonato_ADD{  // declaración de clase
 	function __construct(){
 		$this->campos = array(
 					"Campeonato" => "Codigo del Campeonato",
-					"FechaInicio" => "frecha de inicio del campeonato",
-					"FechaFinal" => "fecha final del campeonato",
-					"Nombre" => "nombre del campeonato");
+					"FechaInicio" => "Fecha de inicio de campeonato",
+					"FechaFinal" => "Fecha de fin de campeonato",
+					"Nombre" => "Nombre del campeonato");
 
 		$this->controller = 'controller_Campeonato.php';
 		$this->toString();
@@ -40,22 +40,9 @@ class Campeonato_ADD{  // declaración de clase
 		/*Tabla para el formulario*/
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
-			
-			/*Fila para Campeonato*/
-			echo '<tr class="'; echo $this->_getTr($i); echo '">';
-				echo '<td class="formularioTd">';
-					echo $this->campos['Campeonato'];
-				echo '</td>';
-				
-				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Campeonato">';
-					echo '</input>';
-				echo '</td>';
-			echo '</tr>';
-			$i++;
 
 
-/*Fila para FechaInicio*/
+			/*Fila para FechaInicio*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
 					echo $this->campos['FechaInicio'];

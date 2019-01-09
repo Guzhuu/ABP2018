@@ -139,31 +139,29 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
   }
   
   
-  function DELETE(){//Para eliminar de la BD
-    $sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
-    $sql->bind_param("i", $this->Campeonato);
-    $sql->execute();
+	function DELETE(){//Para eliminar de la BD
+		$sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
+		$sql->bind_param("i", $this->Campeonato);
+		$sql->execute();
     
-    $resultado = $sql->get_result();
+		$resultado = $sql->get_result();
     
-    if(!$resultado){
-      return 'No se ha podido conectar con la BD';
-    }else if($resultado->num_rows == 0){
-      return 'No se ha encontrado el campeonato';
-    }else{
-      $sql = $this->mysqli->prepare("DELETE FROM Campeonato WHERE Campeonato = ?");
-      $sql->bind_param("i", $this->Campeonato);
-      $sql->execute();
-      
-      $resultado = $sql->get_result();
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'No se ha encontrado el campeonato';
+		}else{
+			$sql = $this->mysqli->prepare("DELETE FROM Campeonato WHERE Campeonato = ?");
+			$sql->bind_param("i", $this->Campeonato);
+			$resultado = $sql->execute();
     
-      if(!$resultado){
-        return 'Fallo al eliminar la tupla';
-      }else{
-        return 'campeonato eliminado correctamente';
-      }
-    }
-  }
+			if(!$resultado){
+				return 'Fallo al eliminar el campeonato';
+			}else{
+				return 'Campeonato eliminado';
+			}
+		}
+	}
   
   function SHOWCURRENT(){//Para mostrar de la base de datos
     $sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
