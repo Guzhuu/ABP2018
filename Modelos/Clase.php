@@ -206,10 +206,10 @@ class Clase{
 	}
 	
 	function DETALLES(){
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares,
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, Deportista.Nombre, Deportista.Apellidos clase.Curso, clase.Particulares,
 												horario.HoraInicio, horario.HoraFin, pista.nombre 
-										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
-										WHERE 	clase.Clase = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
+										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista, Deportista
+										WHERE 	clase.Clase = ? AND clase.Reserva_Reserva = reserva.Reserva
 												reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = horario.Horario 
 												AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista AND clase.codigoEscuela = escuela.codigoEscuela
 										ORDER BY Curso");
@@ -222,6 +222,30 @@ class Clase{
 			return 'No se ha podido conectar con la BD';
 		}else if($resultado->num_rows == 0){
 			return 'No se ha encontrado la clase';
+		}else{
+			return $resultado;
+		}
+	}
+	
+	function CLASESNOAPUNTADO($DNI){
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, Deportista.Nombre, Deportista.Apellidos, clase.Curso, clase.Particulares,
+												horario.HoraInicio, horario.HoraFin, pista.nombre 
+										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista, Deportista
+										WHERE 	Clase.clase NOT IN (SELECT DISTINCT CLASE FROM Deportista_inscrito_clase WHERE Deportista_inscrito_clase.DNI_Deportista = ?) 
+												AND clase.Reserva_Reserva = reserva.Reserva AND reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario 
+												AND pista_tiene_horario.Horario_Horario = horario.Horario AND clase.Entrenador = Deportista.DNI
+												AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista AND clase.codigoEscuela = escuela.codigoEscuela
+												AND Clase.Particulares = 0
+										ORDER BY Curso");
+		$sql->bind_param("s", $DNI);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'No hay clases disponibles';
 		}else{
 			return $resultado;
 		}
@@ -425,7 +449,7 @@ class Clase{
 		}else if($resultado->num_rows == 0){
 			return "No hay clases asignadas";
 		}else{
-			return $resultado->fetch_all();
+			return $resultado;
 		}
 	}
 	
@@ -442,7 +466,43 @@ class Clase{
 		}else if($resultado->num_rows == 0){
 			return "No hay alumnos apuntados a esta clase";
 		}else{
-			return $resultado->fetch_all();
+			return $resultado;
+		}
+	}
+	
+	function APUNTAR($DNI){
+		$sql = $this->mysqli->prepare("INSERT INTO Deportista_inscrito_clase (Clase, DNI_Deportista) VALUES (?, ?)");
+		$sql->bind_param("is", $this->Clase, $DNI);
+		$resultado = $sql->execute();
+		
+		if($resultado){
+			return "Apuntado a la clase con éxito";
+		}else{
+			return "Fallo al apuntarse a la clase";
+		}
+	}
+	
+	function ABANDONAR($DNI){
+		$sql = $this->mysqli->prepare("SELECT * FROM Deportista_inscrito_clase WHERE Clase = ? AND DNI_Deportista = ?");
+		$sql->bind_param("is", $this->Clase, $DNI);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return "No se ha podido conectar con la BD";
+		}else if($resultado->num_rows == 0){
+			return "No estás apuntado a esta clase";
+		}else{
+			$sql = $this->mysqli->prepare("DELETE FROM Deportista_inscrito_clase WHERE Clase = ? AND DNI_Deportista = ?");
+			$sql->bind_param("is", $this->Clase, $DNI);
+			$resultado = $sql->execute();
+			
+			if($resultado){
+				return "Has abandonado la clase";
+			}else{
+				return "No se ha podido abandonar la clase";
+			}
 		}
 	}
 }

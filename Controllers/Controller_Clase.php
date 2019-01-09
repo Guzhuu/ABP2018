@@ -17,6 +17,7 @@
 	include '../Views/Clase/Clase_ADD.php';
 	include '../Views/Clase/Clase_SHOWALL.php';
 	include '../Views/Clase/Clase_SHOWALLFROM.php';
+	include '../Views/Clase/Clase_SHOWALLFOR.php';
 	include '../Views/MESSAGE.php';
 	
 	
@@ -51,8 +52,8 @@ if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array 
 	if(isAdmin()){
 		$_REQUEST['submit'] = 'SHOWALL';
 	}else{
-		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE", "VERALUMNOS");
-		$accionesPermitidasUser = array("MISCLASES", "APUNTARSE");
+		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE", "VERALUMNOS", "MISCLASES", "APUNTARSE", "ABANDONAR");
+		$accionesPermitidasUser = array("MISCLASES", "APUNTARSE", "ABANDONAR");
 		if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
 			//Entrenador
 			if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasEntrenador)){
@@ -235,26 +236,30 @@ switch ($_REQUEST['submit']){
 		if(is_string($respuesta)){
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 		}else{
-			new Mensaje(var_dump($respuesta), '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+			new Clase_SHOWALLFOR($respuesta, false);//A ver qué pasa en la BD
 		}
 		break;
 		
 	case 'APUNTARSE':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Coger clase guardado a eliminar
-			$clase->_getDatosGuardados();//Rellenar datos
-			$respuesta = $clase->CURSO();
+			$clase = new Clase('', '', '', '', '', '');//Coger clase guardado a eliminar
+			$respuesta = $clase->CLASESNOAPUNTADO($_SESSION['DNI']);//Rellenar datos
 			if(is_string($respuesta)){
 				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//Mensaje de error, que hay muchos
 			}else{
-				new Clase_ANULARCURSO($respuesta);//Mostrar vissta 
+				new Clase_SHOWALLFOR($respuesta, true);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
 			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
-			$clase->_getDatosGuardados();
-			$respuesta = $clase->ANULARCURSO();//Borrar curso con dicha clave
-			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+			$respuesta = $clase->APUNTAR($_SESSION['DNI']);
+			new Mensaje($respuesta, '../Controllers/Controller_Clase.php?submit=APUNTARSE');//A ver qué pasa en la BD
 		}
+		break;
+		
+	case 'ABANDONAR':
+		$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
+		$respuesta = $clase->ABANDONAR($_SESSION['DNI']);
+		new Mensaje($respuesta, '../Controllers/Controller_Clase.php?submit=MISCLASES');//A ver qué pasa en la BD
 		break;
 		
 	case 'SHOWCURRENT':
