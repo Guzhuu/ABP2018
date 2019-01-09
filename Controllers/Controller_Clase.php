@@ -4,9 +4,6 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	if(!(isAdmin() || isEntrenador())){
-		header('Location: ../index.php');
-	}
 	
 	include '../Modelos/Clase.php';
 	
@@ -51,16 +48,27 @@ function get_data_form(){
 	
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
+	var_dump($_REQUEST['submit']);
 	if(isAdmin()){
 		$_REQUEST['submit'] = 'SHOWALL';
 	}else{
 		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE", "VERALUMNOS");
-		if(isset($_SESSION['DNI'])){
+		$accionesPermitidasUser = array("MISCLASES", "APUNTARSE");
+		if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
+			//Entrenador
 			if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasEntrenador)){
 				$_REQUEST['submit'] = 'SHOWALL';
 			}
 		}else{
-			new Mensaje("Error de login", '../index.php');
+			if(isset($_SESSION['DNI'])){
+				//Usuario
+				if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasUser)){
+					$_REQUEST['submit'] = 'APUNTARSE';
+				}
+			}else{
+				//Guest
+				new Mensaje("Error de login", '../index.php');
+			}
 		}
 	}
 }
@@ -243,7 +251,7 @@ switch ($_REQUEST['submit']){
 	
 		
 	default:
-		new Mensaje("Error de login", '../index.php');
+		new Mensaje("Error", '../index.php');
 		break;
 }
 ?>

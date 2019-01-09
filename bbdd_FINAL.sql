@@ -294,6 +294,28 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- `AWGP`.`Clase`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AWGP`.`Deportista_inscrito_clase` (
+  `Clase` INT NOT NULL,
+  `DNI_Deportista` VARCHAR(9) NOT NULL,
+  PRIMARY KEY (`Clase`, `DNI_Deportista`),
+  INDEX `fk_Deportista_inscrito_clase_Clase_idx` (`Clase` ASC),
+  INDEX `fk_Deportista_inscrito_clase_DNI_Deportista_idx` (`DNI_Deportista` ASC),
+  CONSTRAINT `fk_Deportista_inscrito_clase_Clase`
+    FOREIGN KEY (`Clase`)
+    REFERENCES `AWGP`.`Clase` (`Clase`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Deportista_inscrito_clase_DNI_Deportista`
+    FOREIGN KEY (`DNI_Deportista`)
+    REFERENCES `AWGP`.`Deportista` (`DNI`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- `AWGP`.`Pista_tiene_horario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Pista_tiene_horario` (
@@ -680,19 +702,46 @@ VALUES ('9','ENEAESEA');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
 VALUES ('10','La familia');
 
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('3','1','6', '99185554D', 'Tacticas secretas');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('2','2','5', '02793268X', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('1','3','4', '67721782F', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('5','4','3', '53495571D', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('6','5','2', '99185554D', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('7','6','1', '99185554D', 'Boleas');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('4','7','1', '67721782F', 'Boleas');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('1','6', '99185554D', 'Tacticas secretas');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('2','5', '02793268X', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('3','4', '67721782F', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('4','3', '53495571D', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('5','2', '99185554D', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('6','1', '99185554D', 'Boleas');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('7','1', '67721782F', 'Boleas');
+
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','02793268X');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','08722995S');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','111111111');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','12345678A');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','20865489G');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','111111111');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','57768016C');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','67721782F');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','72180857A');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','78380290Q');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','93407187R');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','99185554D');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','111111111');
 
 GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";
