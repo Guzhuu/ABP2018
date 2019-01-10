@@ -30,6 +30,8 @@ class Campeonato_SHOWALL{
 	var $Sexo = "Sexo";
 	var $showAddcategoria = true;
 	var $showGenerarcalendario = true;
+	var $showGenerarCuartos = true;
+	var $showGenerarRankingfinal = true;
 	var $showQuitarCategoria = true;
 	
 	function __construct($respuesta){
@@ -47,8 +49,16 @@ class Campeonato_SHOWALL{
 		if($this->showAddcategoria){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='ADDCATEGORIA'/>";
 		}
+		echo '</br>';
+		echo '</br>';
 		if($this->showGenerarcalendario){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARCALENDARIO'/>";
+		}
+		if($this->showGenerarCuartos){
+			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARCUARTOS'/>";
+		}
+		if($this->showGenerarRankingfinal){
+			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARRANKINGFINAL'/>";
 		}
 	}
 	

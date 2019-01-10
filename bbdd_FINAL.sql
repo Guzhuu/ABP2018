@@ -179,9 +179,9 @@ ENGINE = InnoDB;
 -- `AWGP`.`Pareja_pertenece_categoria_de_campeonato`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Pareja_pertenece_categoria_de_campeonato` (
+  `parejaCategoriaCampeonato` INT NOT NULL AUTO_INCREMENT,
   `CampeonatoConstadeCategorias` INT NOT NULL,
   `ParejaPerteneceCategoria` INT NOT NULL,
-  `parejaCategoriaCampeonato` INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`parejaCategoriaCampeonato`),
   CONSTRAINT `fk_Pareja_pertenece_categoria_de_campeonato_Campeonato1`
     FOREIGN KEY (`CampeonatoConstadeCategorias`)
@@ -458,6 +458,8 @@ INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
 VALUES ('02793268X57768016C', '02793268X', '57768016C');
 INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
 VALUES ('67721782F08722995S', '67721782F', '08722995S');
+INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
+VALUES ('000000000111111111', '000000000', '111111111');
 
 
 INSERT INTO Horario (`Horario`, `HoraInicio`, `HoraFin`)
@@ -581,19 +583,21 @@ VALUES(5, 2);
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
 VALUES ('72180857A08722995S', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('72180857A93407187R', '2');
+VALUES ('72180857A93407187R', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('12345678A78380290Q', '3');
+VALUES ('12345678A78380290Q', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('99185554D53495571D', '4');
+VALUES ('99185554D53495571D', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('53495571D99185554D', '5');
+VALUES ('53495571D99185554D', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('20865489G12345678A', '6');
+VALUES ('20865489G12345678A', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('02793268X57768016C', '7');
+VALUES ('02793268X57768016C', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
-VALUES ('67721782F08722995S', '8');
+VALUES ('67721782F08722995S', '1');
+INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
+VALUES ('000000000111111111', '1');
 
 INSERT INTO Pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
 VALUES ('1', '1');
@@ -602,15 +606,17 @@ VALUES ('1', '2');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
 VALUES ('1', '3');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
-VALUES ('2', '4');
+VALUES ('1', '4');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
-VALUES ('3', '5');
+VALUES ('1', '5');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
-VALUES ('3', '6');
+VALUES ('1', '6');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
-VALUES ('3', '7');
+VALUES ('1', '7');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
-VALUES ('4', '8');
+VALUES ('1', '8');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('1', '9');
 
 
 INSERT INTO Pista_tiene_horario (Horario_Horario,Pista_codigoPista) 

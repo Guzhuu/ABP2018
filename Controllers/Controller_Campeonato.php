@@ -119,7 +119,7 @@ switch ($_REQUEST['submit']){
 				}else{
 					$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
 					$respuesta = $campeonato->ADDCATEGORIA($_REQUEST['Categoria']);//Y lo añadimos
-					new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+					new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php?Campeonato=' . $_REQUEST['Campeonato'] . '&submit=ADDCATEGORIA');// y a ver qué ha pasado en la BD
 				}
 			}
 		}
@@ -139,9 +139,22 @@ switch ($_REQUEST['submit']){
 			}
 		}
 		break;
-	
+
 	case 'GENERARCALENDARIO':
+		if(!isset($_REQUEST['Campeonato'])){
+			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+			$respuesta = $campeonato->GENERARCALENDARIO();//Y lo añadimos
+			//TODO: Currarse mensajes
+			new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}
+		break;
+
+	case 'GENERARCUARTOS':
+		break;
 		
+	case 'GENERARRANKINGFINAL':
 		break;
 
 	case 'SHOWALL':
