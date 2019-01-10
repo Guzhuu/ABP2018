@@ -121,7 +121,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Categoria` (
   `Categoria` INT NOT NULL AUTO_INCREMENT,
-  `Nivel` INT NOT NULL,
+  `Nivel` VARCHAR(45) NOT NULL,
   `Sexo` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Categoria`),
   CONSTRAINT `NivelySexoUnicos` 
@@ -147,7 +147,9 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Campeonato_consta_de_categorias` (
     FOREIGN KEY (`Categoria_Categoria`)
     REFERENCES `AWGP`.`Categoria` (`Categoria`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `CampeonatoyCategoriaUnicos` 
+    UNIQUE(`Campeonato_Campeonato`, `Categoria_Categoria`))
 ENGINE = InnoDB;
 
 
@@ -517,23 +519,23 @@ INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(10, '2018-11-19 09:00:00','2018-12-19 10:00:00', 'HULIO');
 
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(1, 'M');
+VALUES('Cadete', 'M');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(1, 'F');
+VALUES('Cadete', 'F');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(1, 'MX');
+VALUES('Cadete', 'MX');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(2, 'M');
+VALUES('Infantil', 'M');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(2, 'F');
+VALUES('Infantil', 'F');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(2, 'MX');
+VALUES('Infantil', 'MX');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(3, 'M');
+VALUES('Alevin', 'M');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(3, 'F');
+VALUES('Alevin', 'F');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES(3, 'MX');
+VALUES('Alevin', 'MX');
 
  
 INSERT INTO Campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria)

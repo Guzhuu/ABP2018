@@ -179,20 +179,90 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
     }
   }
   
-  function SHOWALL(){//Para mostrar la BD
-    $sql = "SELECT * FROM Campeonato";
+	function SHOWALL(){//Para mostrar la BD
+		$sql = "	SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, null, null, null FROM Campeonato WHERE Campeonato.Campeonato NOT IN 
+						(SELECT Campeonato_consta_de_categorias.Campeonato_Campeonato FROM Campeonato_consta_de_categorias) AND Campeonato.FechaFinal >= CURDATE()
+					UNION
+					SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, Categoria.Categoria, Categoria.Nivel, Categoria.Sexo
+					FROM Campeonato, Campeonato_consta_de_categorias, Categoria WHERE Campeonato.Campeonato = Campeonato_consta_de_categorias.Campeonato_Campeonato 
+						AND Campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria AND Campeonato.FechaFinal >= CURDATE()
+					ORDER BY 1";
     
-   $resultado = $this->mysqli->query($sql);
+		$resultado = $this->mysqli->query($sql);
     
-    if(!$resultado){
-      return 'No se ha podido conectar con la BD';
-    }else{
-      return $resultado;
-    }
-  }
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else{
+			return $resultado;
+		}
+	}
+  
+	function ADDCATEGORIA($Categoria){
+		$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+		$sql->bind_param("ii", $this->Campeonato, $Categoria);
+		$sql->execute();
+    
+		$resultado = $sql->get_result();
+    
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows != 0){
+			return 'El campeonato ya tiene asociada la categoria';
+		}else{
+			$sql = $this->mysqli->prepare("INSERT INTO campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria) VALUES (?, ?)");
+			$sql->bind_param("ii", $this->Campeonato, $Categoria);
+			$resultado = $sql->execute();
+			
+			if($resultado){
+				return 'Categoría añadida con éxito';
+			}else{
+				return 'Error al añadir la categoría al campeonato';
+			}
+		}
+	}
+  
+	function QUITARCATEGORIA($Categoria){
+		$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+		$sql->bind_param("ii", $this->Campeonato, $Categoria);
+		$sql->execute();
+    
+		$resultado = $sql->get_result();
+    
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'El campeonato no tiene la categoría';
+		}else{
+			$sql = $this->mysqli->prepare("DELETE FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+			$sql->bind_param("ii", $this->Campeonato, $Categoria);
+			$resultado = $sql->execute();
+			
+			if($resultado){
+				return 'Categoría eliminada con éxito';
+			}else{
+				return 'Error al eliminar la categoría del campeonato';
+			}
+		}
+	}
 
+	function CATEGORIASYCAMPEONATOS_UNSET(){ //horaios que no tenga pìst asignada
+		$sql = $this->mysqli->prepare("	SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, Categoria.Categoria, Categoria.Nivel, Categoria.Sexo
+										FROM Campeonato, Categoria WHERE Campeonato.Campeonato = ? 
+											AND CONCAT(Campeonato.Campeonato,'', Categoria.Categoria) 
+												NOT IN (SELECT CONCAT(Campeonato_consta_de_categorias.Campeonato_Campeonato,'',Campeonato_consta_de_categorias.Categoria_Categoria) FROM Campeonato_consta_de_categorias) 
+										ORDER BY Campeonato.Campeonato, Categoria.Categoria;");
+		$sql->bind_param("i", $this->Campeonato);
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows == 0){
+			return 'No se han encontrado categorias no asignadas para el campeonato';
+		}else{
+			return $resultado;
+		}
+	}
 }
-
-
-
 ?>
