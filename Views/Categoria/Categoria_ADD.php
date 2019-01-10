@@ -14,10 +14,10 @@ class Categoria_ADD{  // declaración de clase
 	function __construct(){
 		$this->campos = array(
 					"Categoria" => "Codigo de la Categoria",
-					"Nivel" => "nivel de la categoria",
-					"Sexo" => "sexo de los participantes en la categoria");
+					"Nivel" => "Nivel",
+					"Sexo" => "Sexo");
 					
-		$this->controller = 'controller_Categoria.php';
+		$this->controller = 'Controller_Categoria.php';
 		$this->toString();
 	} // fin del constructor
 	
@@ -39,10 +39,6 @@ class Categoria_ADD{  // declaración de clase
 		/*Tabla para el formulario*/
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
-			
-
-
-
 
 			/*Fila para Nivel*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
@@ -64,15 +60,14 @@ class Categoria_ADD{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Sexo">';
-					echo '</input>';
+					echo '<select name="Sexo">';
+						echo '<option value="M">Masculino</option>';
+						echo '<option value="F">Femenino</option>';
+						echo '<option value="MX">Mixto</option>';
+					echo '</select>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;
-
-
-
-
 			
 			/*Fila para submit*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';

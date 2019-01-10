@@ -7,16 +7,17 @@ class Categoria_SEARCH{  // declaración de clase
 	var $campos;
 	var $controller;
 	var $submit = 'SEARCH';
+	var $Volver = 'Volver';
 
 	// declaración constructor de la clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
 					"Categoria" => "Codigo de la Categoria",
-					"Nivel" => "nivel de la categoria",
-					"Sexo" => "sexo de los participantes en la categoria");
+					"Nivel" => "Por nivel",
+					"Sexo" => "Por sexo");
 					
-		$this->controller = 'controller_Categoria.php';
+		$this->controller = 'Controller_Categoria.php';
 		$this->toString();
 	} // fin del constructor
 	
@@ -36,7 +37,7 @@ class Categoria_SEARCH{  // declaración de clase
 		
 		$i = 0;
 		/*Tabla para el formulario*/
-		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controller/'; echo $this->controller; echo '">';
+		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
 		
 			/*Fila para codigo*/
@@ -74,14 +75,14 @@ class Categoria_SEARCH{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Sexo">';
-					echo '</input>';
+					echo '<select name="Sexo">';
+						echo '<option value="M">Masculino</option>';
+						echo '<option value="F">Femenino</option>';
+						echo '<option value="MX">Mixto</option>';
+					echo '</select>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;
-
-
-
 			
 			/*Fila para submit*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
@@ -90,8 +91,22 @@ class Categoria_SEARCH{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-primary" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para volver*/
+			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+				echo '<td class="formularioTd">';
+					echo $this->Volver;
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<a href="'; echo $this->controller; echo '">';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
+					echo '</a>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;

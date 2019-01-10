@@ -7,11 +7,11 @@ class Pareja
   public $DNI_Companhero;
   var $mysqli;
 
-	function __construct($codPareja,$DNI_Capitan,$DNI_Companhero)
+	function __construct($DNI_Capitan,$DNI_Companhero)
   {
-      $this ->codPareja = $codPareja;
       $this ->DNI_Capitan = $DNI_Capitan;
       $this ->DNI_Companhero = $DNI_Companhero;
+      $this ->codPareja = $DNI_Capitan.$DNI_Companhero;
     include_once '../Functions/ConectarBD.php'; //Actualizar
     $this->mysqli = ConectarBD();
 	}
@@ -79,10 +79,10 @@ class Pareja
   
   
   function ADD(){//Para añadir a la BD
-    $sql = $this->mysqli->prepare("INSERT INTO pareja (DNI_Capitan, DNI_Companhero) VALUES (?, ?)");
-    $sql->bind_param("ss", $this->DNI_Capitan, $this->DNI_Companhero);
+    $sql = $this->mysqli->prepare("INSERT INTO pareja (codPareja,DNI_Capitan, DNI_Companhero) VALUES (?, ?, ?)");
+    $sql->bind_param("sss",$this->codPareja, $this->DNI_Capitan, $this->DNI_Companhero);
     $resultado = $sql->execute();
-    var_dump($resultado);
+    var_dump($this->codPareja);
   
     if(!$resultado){
       return 'Ha fallado el insertar la pareja';

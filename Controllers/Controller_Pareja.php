@@ -16,6 +16,7 @@
 	include '../Views/Pareja/Pareja_SHOWCURRENT.php';
 	include '../Views/Pareja/Pareja_ADD.php';
 	include '../Views/Pareja/Pareja_SHOWALL.php';
+	include '../Views/Pareja/Pareja_ESCOGERPAREJA.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -26,11 +27,28 @@ function get_data_form(){
 	$DNI_Capitan = $_REQUEST['DNI_Capitan'];
 	$DNI_Companhero = $_REQUEST['DNI_Companhero'];
 
-	$pareja = new Pareja($codPareja, $DNI_Capitan, $DNI_Companhero);
+
+	$pareja = new Pareja($DNI_Capitan, $DNI_Companhero);
+	$_REQUEST['codPareja'] = $pareja->codPareja;
  
 	return $pareja;
 }
 	
+function get_parejaCampeonato_data_form(){
+	if(!isset($_REQUEST['codPareja'])){
+		$_REQUEST['codPareja'] = 0;
+	}
+	if(!isset($_REQUEST['DNI_Companhero'])){
+		$_REQUEST['DNI_Companhero'] = 0;
+	}
+	$DNICompanhero = $_REQUEST['DNI_Companhero'];
+
+	$pareja = new Pareja($_SESSION['DNI'], $DNICompanhero);
+	$_REQUEST['codPareja'] = $pareja->codPareja;
+ 
+	return $pareja;
+}
+
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
 	$_REQUEST['submit'] = 'SHOWALL';
@@ -104,6 +122,16 @@ switch ($_REQUEST['submit']){
 		new Pareja_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		break;
 		
+	case 'ESCOGERPAREJA':
+		if(!$_POST){//Si GET
+			$muestraESCOGERPAREJA = new Pareja_ESCOGERPAREJA();//Mostrar vista add
+		}else{
+			$pareja = get_parejaCampeonato_data_form();//Si post cogemos horario
+			$respuesta = $pareja->ADD();//Y lo añadimos
+			new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
+		}	
+	break;
+
 	default:
 		$pareja = new Pareja('','','');//No necesitamos horario para buscar (pero sí para acceder a la BD)
 		$respuesta = $pareja->SHOWALL();//Todos los datos de la BD estarán aqúi

@@ -25,7 +25,13 @@ if(!isset($_REQUEST['Categoria'])){
 
 	$Categoria = $_REQUEST['Categoria'];
 	$Nivel = $_REQUEST['Nivel'];
-	$Sexo = $_REQUEST['Sexo'];
+	
+	$sexos = array('M', 'F', 'MX');
+	if(isset($_REQUEST['Sexo']) && in_array($_REQUEST['Sexo'], $sexos)){
+		$Sexo = $_REQUEST['Sexo'];
+	}else{
+		$Sexo = 'MX';
+	}
 	
 	$Categoria = new Categoria($Categoria, $Nivel, $Sexo);
  

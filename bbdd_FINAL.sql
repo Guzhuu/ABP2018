@@ -120,10 +120,12 @@ ENGINE = InnoDB;
 -- `AWGP`.`Categoria`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Categoria` (
-  `Categoria` INT NOT NULL,
-  `Nivel` VARCHAR(45) NULL,
-  `Sexo` VARCHAR(45) NULL,
-  PRIMARY KEY (`Categoria`))
+  `Categoria` INT NOT NULL AUTO_INCREMENT,
+  `Nivel` VARCHAR(45) NOT NULL,
+  `Sexo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Categoria`),
+  CONSTRAINT `NivelySexoUnicos` 
+    UNIQUE(`Nivel`, `Sexo`))
 ENGINE = InnoDB;
 
 
@@ -145,7 +147,9 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Campeonato_consta_de_categorias` (
     FOREIGN KEY (`Categoria_Categoria`)
     REFERENCES `AWGP`.`Categoria` (`Categoria`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `CampeonatoyCategoriaUnicos` 
+    UNIQUE(`Campeonato_Campeonato`, `Categoria_Categoria`))
 ENGINE = InnoDB;
 
 
@@ -169,6 +173,28 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Pareja_pertenece_categoria` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- `AWGP`.`Pareja_pertenece_categoria_de_campeonato`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AWGP`.`Pareja_pertenece_categoria_de_campeonato` (
+  `CampeonatoConstadeCategorias` INT NOT NULL,
+  `ParejaPerteneceCategoria` INT NOT NULL,
+  `parejaCategoriaCampeonato` INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`parejaCategoriaCampeonato`),
+  CONSTRAINT `fk_Pareja_pertenece_categoria_de_campeonato_Campeonato1`
+    FOREIGN KEY (`CampeonatoConstadeCategorias`)
+    REFERENCES `AWGP`.`Campeonato_consta_de_categorias` (`constadeCategorias`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Pareja_pertenece_categoria_de_campeonato_Pareja1`
+    FOREIGN KEY (`ParejaPerteneceCategoria`)
+    REFERENCES `AWGP`.`Pareja_pertenece_categoria` (`perteneceCategoria`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
 
 
 -- -----------------------------------------------------
@@ -287,6 +313,28 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Clase` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_Clase_Deportista1`
     FOREIGN KEY (`Entrenador`)
+    REFERENCES `AWGP`.`Deportista` (`DNI`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- `AWGP`.`Clase`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AWGP`.`Deportista_inscrito_clase` (
+  `Clase` INT NOT NULL,
+  `DNI_Deportista` VARCHAR(9) NOT NULL,
+  PRIMARY KEY (`Clase`, `DNI_Deportista`),
+  INDEX `fk_Deportista_inscrito_clase_Clase_idx` (`Clase` ASC),
+  INDEX `fk_Deportista_inscrito_clase_DNI_Deportista_idx` (`DNI_Deportista` ASC),
+  CONSTRAINT `fk_Deportista_inscrito_clase_Clase`
+    FOREIGN KEY (`Clase`)
+    REFERENCES `AWGP`.`Clase` (`Clase`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Deportista_inscrito_clase_DNI_Deportista`
+    FOREIGN KEY (`DNI_Deportista`)
     REFERENCES `AWGP`.`Deportista` (`DNI`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
@@ -472,46 +520,44 @@ VALUES(8,3, 1);
 
 
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(1, '2018-11-10 09:00:00','2018-12-10 10:00:00', 'GADIS');
+VALUES(1, '2018-11-10 09:00:00','2019-12-10 10:00:00', 'GADIS');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(2, '2018-11-11 09:00:00','2018-12-11 10:00:00', 'NAVIDAD');
+VALUES(2, '2018-11-11 09:00:00','2019-12-11 10:00:00', 'NAVIDAD');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(3, '2018-11-12 09:00:00','2018-12-12 10:00:00', 'PRIMAVERA');
+VALUES(3, '2018-11-12 09:00:00','2019-12-12 10:00:00', 'PRIMAVERA');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(4, '2018-11-13 09:00:00','2018-12-13 10:00:00', 'OTOÑO');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(5, '2018-11-14 09:00:00','2018-12-14 10:00:00', 'INVIERNO');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(6, '2018-11-15 09:00:00','2018-12-15 10:00:00', 'JUBILADOS');
+VALUES(6, '2018-11-15 09:00:00','2019-12-15 10:00:00', 'JUBILADOS');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(7, '2018-11-16 09:00:00','2018-12-16 10:00:00', 'ESEI');
+VALUES(7, '2018-11-16 09:00:00','2019-12-16 10:00:00', 'ESEI');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(8, '2018-11-17 09:00:00','2018-12-17 10:00:00', 'FCETOU');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(9, '2018-11-18 09:00:00','2018-12-18 10:00:00', 'OURENSE');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(10, '2018-11-19 09:00:00','2018-12-19 10:00:00', 'HULIO');
+VALUES(10, '2018-11-19 09:00:00','2019-12-19 10:00:00', 'HULIO');
 
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(1, '1', 'M');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(2, '2', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(3, '3', 'MX');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(4, '1', 'M');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(5, '2', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(6, '3', 'MX');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(7, '1', 'M');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(8, '2', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(9, '1', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(10, '2', 'MX');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Cadete', 'M');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Cadete', 'F');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Cadete', 'MX');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Infantil', 'M');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Infantil', 'F');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Infantil', 'MX');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Alevin', 'M');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Alevin', 'F');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES('Alevin', 'MX');
 
  
 INSERT INTO Campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria)
@@ -548,6 +594,23 @@ INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
 VALUES ('02793268X57768016C', '7');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
 VALUES ('67721782F08722995S', '8');
+
+INSERT INTO Pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('1', '1');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('1', '2');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('1', '3');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('2', '4');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('3', '5');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('3', '6');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('3', '7');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('4', '8');
 
 
 INSERT INTO Pista_tiene_horario (Horario_Horario,Pista_codigoPista) 
@@ -680,19 +743,46 @@ VALUES ('9','ENEAESEA');
 INSERT INTO Escuela (codigoEscuela,nombreEscuela)
 VALUES ('10','La familia');
 
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('3','1','6', '99185554D', 'Tacticas secretas');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('2','2','5', '02793268X', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('1','3','4', '67721782F', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('5','4','3', '53495571D', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('6','5','2', '99185554D', 'Resistencia');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('7','6','1', '99185554D', 'Boleas');
-INSERT INTO Clase (Clase,Reserva_Reserva,codigoEscuela, Entrenador, Curso)
-VALUES ('4','7','1', '67721782F', 'Boleas');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('1','6', '99185554D', 'Tacticas secretas');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('2','5', '02793268X', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('3','4', '67721782F', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('4','3', '53495571D', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('5','2', '99185554D', 'Resistencia');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('6','1', '99185554D', 'Boleas');
+INSERT INTO Clase (Reserva_Reserva,codigoEscuela, Entrenador, Curso)
+VALUES ('7','1', '67721782F', 'Boleas');
+
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','02793268X');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','08722995S');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','111111111');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('1','12345678A');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','20865489G');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','111111111');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','57768016C');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('2','67721782F');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','72180857A');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','78380290Q');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','93407187R');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','99185554D');
+INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
+VALUES ('3','111111111');
 
 GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";

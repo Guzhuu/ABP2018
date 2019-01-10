@@ -74,7 +74,13 @@
 			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=PERFIL">Mi perfil</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=INSCRIBIR">Inscribirse a un campeonato</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Pareja.php?submit=ESCOGERPAREJA">Inscribirse a un campeonato</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=MISCLASES">Ver clases</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=APUNTARSE">Apuntarse a clases</a>
 			</li>
 			<?php
 			if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
@@ -92,11 +98,11 @@
 		/************************************************************************FIN USUARIO*******************************************************************************************/
 	}else{
 		/************************************************************************HEADER GUEST*******************************************************************************************/
-		?>
+		/*?>
 			<li class="nav-item">
 			  <a class="nav-link" href="../Controllers/Controller_Registro.php">Registrarse</a>
 			</li>
-		<?php
+		<?php*/
 		/************************************************************************FIN GUEST*******************************************************************************************/
 	}
 ?>

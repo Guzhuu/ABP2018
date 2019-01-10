@@ -4,9 +4,6 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	if(!(isAdmin() || isEntrenador())){
-		header('Location: ../index.php');
-	}
 	
 	include '../Modelos/Clase.php';
 	
@@ -20,6 +17,7 @@
 	include '../Views/Clase/Clase_ADD.php';
 	include '../Views/Clase/Clase_SHOWALL.php';
 	include '../Views/Clase/Clase_SHOWALLFROM.php';
+	include '../Views/Clase/Clase_SHOWALLFOR.php';
 	include '../Views/MESSAGE.php';
 	
 	
@@ -54,13 +52,23 @@ if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array 
 	if(isAdmin()){
 		$_REQUEST['submit'] = 'SHOWALL';
 	}else{
-		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE", "VERALUMNOS");
-		if(isset($_SESSION['DNI'])){
+		$accionesPermitidasEntrenador = array("EDITHORARIO", "SHOWALLFROM", "ANULARCURSO", "ANULARCLASE", "VERALUMNOS", "MISCLASES", "APUNTARSE", "ABANDONAR");
+		$accionesPermitidasUser = array("MISCLASES", "APUNTARSE", "ABANDONAR");
+		if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
+			//Entrenador
 			if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasEntrenador)){
 				$_REQUEST['submit'] = 'SHOWALL';
 			}
 		}else{
-			new Mensaje("Error de login", '../index.php');
+			if(isset($_SESSION['DNI'])){
+				//Usuario
+				if(!isset($_REQUEST['submit']) || !in_array($_REQUEST['submit'], $accionesPermitidasUser)){
+					$_REQUEST['submit'] = 'APUNTARSE';
+				}
+			}else{
+				//Guest
+				new Mensaje("Error de login", '../index.php');
+			}
 		}
 	}
 }
@@ -209,6 +217,49 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	case 'VERALUMNOS':
+		if(!isset($_REQUEST['Clase'])){
+			new Mensaje('Error al seleccionar la clase', '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+		}else{
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
+			$respuesta = $clase->ALUMNOS();
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+			}else{
+				new Mensaje(var_dump($respuesta), '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+			}
+		}
+		break;
+		
+	case 'MISCLASES':
+		$clase = new Clase('', '', '', '', '', '');//Clave
+		$respuesta = $clase->CLASESDE($_SESSION['DNI']);
+		if(is_string($respuesta)){
+			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+		}else{
+			new Clase_SHOWALLFOR($respuesta, false);//A ver qué pasa en la BD
+		}
+		break;
+		
+	case 'APUNTARSE':
+		if(!$_POST){//Si GET
+			$clase = new Clase('', '', '', '', '', '');//Coger clase guardado a eliminar
+			$respuesta = $clase->CLASESNOAPUNTADO($_SESSION['DNI']);//Rellenar datos
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//Mensaje de error, que hay muchos
+			}else{
+				new Clase_SHOWALLFOR($respuesta, true);//Mostrar vissta 
+			}
+		}else{//Si confirma borrado llega por post
+			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
+			$respuesta = $clase->APUNTAR($_SESSION['DNI']);
+			new Mensaje($respuesta, '../Controllers/Controller_Clase.php?submit=APUNTARSE');//A ver qué pasa en la BD
+		}
+		break;
+		
+	case 'ABANDONAR':
+		$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
+		$respuesta = $clase->ABANDONAR($_SESSION['DNI']);
+		new Mensaje($respuesta, '../Controllers/Controller_Clase.php?submit=MISCLASES');//A ver qué pasa en la BD
 		break;
 		
 	case 'SHOWCURRENT':
@@ -243,7 +294,7 @@ switch ($_REQUEST['submit']){
 	
 		
 	default:
-		new Mensaje("Error de login", '../index.php');
+		new Mensaje("Error", '../index.php');
 		break;
 }
 ?>

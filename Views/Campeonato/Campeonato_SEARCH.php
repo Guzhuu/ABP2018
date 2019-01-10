@@ -7,15 +7,16 @@ class Campeonato_SEARCH{  // declaración de clase
 	var $campos;
 	var $controller;
 	var $submit = 'SEARCH';
+	var $Volver = 'Volver';
 
 	// declaración constructor de la clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"Campeonato" => "Codigo del Campeonato",
-					"FechaInicio" => "frecha de inicio del campeonato",
-					"FechaFinal" => "fecha final del campeonato",
-					"Nombre" => "nombre del campeonato",
+					"Campeonato" => "Por codigo",
+					"FechaInicio" => "Fecha de inicio",
+					"FechaFinal" => "Fecha de finalización",
+					"Nombre" => "Por nombre",
 					
 		$this->controller = 'controller_Campeonato.php');
 		$this->toString();
@@ -93,9 +94,6 @@ class Campeonato_SEARCH{  // declaración de clase
 				echo '</td>';
 			echo '</tr>';
 			$i++;
-
-
-
 			
 			/*Fila para submit*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
@@ -104,8 +102,22 @@ class Campeonato_SEARCH{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-primary" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para volver*/
+			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+				echo '<td class="formularioTd">';
+					echo $this->Volver;
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<a href="'; echo $this->controller; echo '">';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
+					echo '</a>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;

@@ -19,7 +19,6 @@
 	include '../Views/Campeonato/Campeonato_DELETE.php';
 	include '../Views/Campeonato/Campeonato_SHOWCURRENT.php';
 	include '../Views/Campeonato/Campeonato_SHOWALL.php';
-	include '../Modelos/Campeonato_consta_de_categorias.php';
 	include '../Views/Campeonato/Campeonato_ADDCATEGORIA.php';
 	include '../Views/MESSAGE.php';
 	
@@ -104,23 +103,46 @@ switch ($_REQUEST['submit']){
 
 	case 'ADDCATEGORIA':
 		if(!$_POST){//Si GET
-			$categoriasyCampeonatos = new Campeonato_consta_de_categorias('',$_REQUEST['Campeonato'],'');
-			$categoriasyCampeonatos = $categoriasyCampeonatos->CATEGORIASYCAMPEONATOS_UNSET();
-		if(is_string($categoriasyCampeonatos)){
-			new Mensaje($categoriasyCampeonatos, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');
+			$categorias = $campeonato->CATEGORIASYCAMPEONATOS_UNSET();
+			if(is_string($categorias)){
+				new Mensaje($categorias, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				new Campeonato_ADDCATEGORIA($categorias);//Mostrar vista addcategoria
+			}
 		}else{
-			$muestraADDCAMPEONATO = new Campeonato_ADDCATEGORIA($categoriasyCampeonatos);//Mostrar vista addcategoria
+			if(!isset($_REQUEST['Categoria'])){
+				new Mensaje('No está indicada la categoría', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				if(!isset($_REQUEST['Campeonato'])){
+					new Mensaje('No está indicada el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+				}else{
+					$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+					$respuesta = $campeonato->ADDCATEGORIA($_REQUEST['Categoria']);//Y lo añadimos
+					new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+				}
+			}
 		}
-	}else{
+		break;
+		
+
+	case 'QUITARCATEGORIA':
 		if(!isset($_REQUEST['Categoria'])){
-			new Mensaje('No está indicado el codigo de la categoria', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			new Mensaje('No está indicada la categoría', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 		}else{
-			$categoriasyCampeonatos = new Campeonato_consta_de_categorias('',$_REQUEST['Campeonato'], $_REQUEST['Categoria']);//Si post cogemos Pista
-			$respuesta = $categoriasyCampeonatos->ADD();//Y lo añadimos
-			new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			if(!isset($_REQUEST['Campeonato'])){
+				new Mensaje('No está indicada el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+				$respuesta = $campeonato->QUITARCATEGORIA($_REQUEST['Categoria']);//Y lo añadimos
+				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
 		}
-	}
-	break;
+		break;
+	
+	case 'GENERARCALENDARIO':
+		
+		break;
 
 	case 'SHOWALL':
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
@@ -129,9 +151,7 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	default:
-		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
-		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
-		new Campeonato_SHOWALL($respuesta, '','','','');//Le pasamos todos los datos de la BD
+		new Mensaje("Error", '../index.php');// y a ver qué ha pasado en la BD
 		break;
 }
 ?>

@@ -3,7 +3,7 @@
 class Campeonato_ADDCATEGORIA{
 	
 	//Obligatorio ponerlo. Indica el controlador al que ir al hacer una petición
-	var $controlador;
+	var $controller;
 	
 	var $campos;
 	
@@ -12,8 +12,7 @@ class Campeonato_ADDCATEGORIA{
 	var $Volver = 'Volver';
 	
 	function __construct($categoriasyCampeonatos){
-		$this->controlador = 'Controller_Campeonato.php';
-		var_dump($categoriasyCampeonatos->fetch_fields());
+		$this->controller = 'Controller_Campeonato.php';
 		$this->campos = array(
 					"Campeonato" => "Codigo del campeonato",
 					"Categoria" => "codigo de la categoria",
@@ -32,6 +31,16 @@ class Campeonato_ADDCATEGORIA{
 			return 'trPar';
 		}else{
 			return 'trImpar';
+		}
+	}
+	
+	function sexoDe($string){
+		if($string === 'M'){
+			return 'Masculino';
+		}else if($string === 'F'){
+			return 'Femenino';
+		}else{
+			return 'Mixto';
 		}
 	}
 	
@@ -62,17 +71,18 @@ class Campeonato_ADDCATEGORIA{
 						echo '</td>';
 					echo '<td class="mensaje">';
 				}
-				echo '<form method="POST" accept-charset="UTF-8" id="addCategoria'; echo $i; echo '" name="addCategoria'; echo $i; echo '" action="../Controllers/'; echo $this->controlador; echo '">';
-				echo '<b class="lblBtCategoria"> Nivel ' . $fila[5] . ' Sexo ' . $fila[6] . '</b>';
-				echo '<input type="hidden" name="Campeonato" value="'; echo $fila[5]; echo '"/>';
-				echo '<input type="hidden" name="Categoria" value="'; echo $fila[6]; echo '"/>';
+				echo '<form method="POST" accept-charset="UTF-8" id="addCategoria'; echo $i; echo '" name="addCategoria'; echo $i; echo '" action="../Controllers/'; echo $this->controller; echo '">';
+				echo '<b class="lblBtCategoria">' . $fila[5] . '  ' . $this->sexoDe($fila[6]) . '</b>';
+				echo '<input type="hidden" name="Campeonato" value="'; echo $fila[0]; echo '"/>';
+				echo '<input type="hidden" name="Categoria" value="'; echo $fila[4]; echo '"/>';
 				echo '<input type="submit" name="submit" style="width:100%" value="ADDCATEGORIA"/><br/><br/>';
-				$i++;
 				echo '</form>';
 			
 			}
 			echo '</td>';
 			echo '</tr>';
+			$i++;
+			
 			/*Fila para volver*/
 			echo '<tr class="'; echo $this->_getTr($i); echo'">';
 				echo '<td class="formularioTd">';
@@ -80,11 +90,12 @@ class Campeonato_ADDCATEGORIA{
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<a href="'; echo $this->controlador; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<a href="'; echo $this->controller; echo '">';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';
+			$i++;
 			
 		/**FIN TABLA**/
 		echo '</table>';

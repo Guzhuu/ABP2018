@@ -65,19 +65,17 @@ class Categoria
   }
   
   }
-  function ADD(){//Para añadir a la BD
-    $sql = $this->mysqli->prepare("INSERT INTO Categoria (Nivel,Sexo) VALUES (?, ?)");
-    $sql->bind_param("ss", $this->getNivel(), $this->getSexo());
-    $sql->execute();
-    
-    $resultado = $sql->get_result();
+	function ADD(){//Para añadir a la BD
+		$sql = $this->mysqli->prepare("INSERT INTO Categoria (Nivel,Sexo) VALUES (?, ?)");
+		$sql->bind_param("ss", $this->Nivel, $this->Sexo);
+		$resultado = $sql->execute();
   
-    if(!$resultado){
-      return 'Ha fallado el insertar una Categoria';
-    }else{
-      return 'Inserción correcta';
-    }
-  }
+		if(!$resultado){
+			return 'Ha fallado el insertar una Categoria';
+		}else{
+			return 'Inserción correcta';
+		}
+	}
   
     
 
@@ -112,8 +110,11 @@ function EDIT(){//Para editar de la BD
 
 
   function SEARCH(){
-    $sql = $this->mysqli->prepare("SELECT * FROM Categoria WHERE ((Nivel LIKE ?) AND (Sexo LIKE ?))");
-    $sql->bind_param("sss", '%' + $this->getCategoria() + '%', '%' + $this->getNivel() + '%', '%' + $this->getSexo() + '%'); 
+    $sql = $this->mysqli->prepare("SELECT * FROM Categoria WHERE ((Categoria LIKE ?) AND (Nivel LIKE ?) AND (Sexo = ?))");
+    $likeCat = "%" . $this->getCategoria() . "%";
+    $likeNiv = "%" . $this->getNivel() . "%";
+    $likeSex = $this->getSexo();
+    $sql->bind_param("sss", $likeCat, $likeNiv, $likeSex); 
     $sql->execute();
     
     $resultado = $sql->get_result();
@@ -147,7 +148,7 @@ function EDIT(){//Para editar de la BD
       if(!$resultado){
           return 'Ha fallado la actualización de la categoria';
         }else{
-          return 'borrado correcto';
+          return 'Categoría eliminada';
         }
       }
     }
