@@ -265,16 +265,5 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		}
 	}
 
-  function INSCRIBIRSE(){
-    $sql = "SELECT * FROM Campeonato /*where categorias compatibles. Esta por hacer.WHERE campeonato.FechaFinal<= GETDATE()*/" ;
-
-    $resultado = $this->mysqli->query($sql);
-     
-    if(!$resultado){
-      return 'No se ha podido conectar con la BD';
-    }else{
-      return $resultado;
-    }    
-  }
 }
 ?>
