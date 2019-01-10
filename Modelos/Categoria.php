@@ -65,17 +65,17 @@ class Categoria
   }
   
   }
-  function ADD(){//Para añadir a la BD
-    $sql = $this->mysqli->prepare("INSERT INTO Categoria (Nivel,Sexo) VALUES (?, ?)");
-    $sql->bind_param("is", $this->Nivel, $this->Sexo);
-    $resultado = $sql->execute();
+	function ADD(){//Para añadir a la BD
+		$sql = $this->mysqli->prepare("INSERT INTO Categoria (Nivel,Sexo) VALUES (?, ?)");
+		$sql->bind_param("ss", $this->Nivel, $this->Sexo);
+		$resultado = $sql->execute();
   
-    if(!$resultado){
-      return 'Ha fallado el insertar una Categoria';
-    }else{
-      return 'Inserción correcta';
-    }
-  }
+		if(!$resultado){
+			return 'Ha fallado el insertar una Categoria';
+		}else{
+			return 'Inserción correcta';
+		}
+	}
   
     
 
