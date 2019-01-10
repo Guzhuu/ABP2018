@@ -498,25 +498,25 @@ VALUES(8,3, 1);
 
 
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(1, '2018-11-10 09:00:00','2018-12-10 10:00:00', 'GADIS');
+VALUES(1, '2018-11-10 09:00:00','2019-12-10 10:00:00', 'GADIS');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(2, '2018-11-11 09:00:00','2018-12-11 10:00:00', 'NAVIDAD');
+VALUES(2, '2018-11-11 09:00:00','2019-12-11 10:00:00', 'NAVIDAD');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(3, '2018-11-12 09:00:00','2018-12-12 10:00:00', 'PRIMAVERA');
+VALUES(3, '2018-11-12 09:00:00','2019-12-12 10:00:00', 'PRIMAVERA');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(4, '2018-11-13 09:00:00','2018-12-13 10:00:00', 'OTOÑO');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(5, '2018-11-14 09:00:00','2018-12-14 10:00:00', 'INVIERNO');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(6, '2018-11-15 09:00:00','2018-12-15 10:00:00', 'JUBILADOS');
+VALUES(6, '2018-11-15 09:00:00','2019-12-15 10:00:00', 'JUBILADOS');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(7, '2018-11-16 09:00:00','2018-12-16 10:00:00', 'ESEI');
+VALUES(7, '2018-11-16 09:00:00','2019-12-16 10:00:00', 'ESEI');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(8, '2018-11-17 09:00:00','2018-12-17 10:00:00', 'FCETOU');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(9, '2018-11-18 09:00:00','2018-12-18 10:00:00', 'OURENSE');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
-VALUES(10, '2018-11-19 09:00:00','2018-12-19 10:00:00', 'HULIO');
+VALUES(10, '2018-11-19 09:00:00','2019-12-19 10:00:00', 'HULIO');
 
 INSERT INTO Categoria (Nivel, Sexo)
 VALUES('Cadete', 'M');
