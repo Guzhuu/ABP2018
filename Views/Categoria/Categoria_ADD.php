@@ -17,7 +17,7 @@ class Categoria_ADD{  // declaración de clase
 					"Nivel" => "Nivel",
 					"Sexo" => "Sexo");
 					
-		$this->controller = 'controller_Categoria.php';
+		$this->controller = 'Controller_Categoria.php';
 		$this->toString();
 	} // fin del constructor
 	
