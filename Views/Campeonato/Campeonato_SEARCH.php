@@ -13,10 +13,10 @@ class Campeonato_SEARCH{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"Campeonato" => "Codigo del Campeonato",
-					"FechaInicio" => "frecha de inicio del campeonato",
-					"FechaFinal" => "fecha final del campeonato",
-					"Nombre" => "nombre del campeonato",
+					"Campeonato" => "Por codigo",
+					"FechaInicio" => "Fecha de inicio",
+					"FechaFinal" => "Fecha de finalización",
+					"Nombre" => "Por nombre",
 					
 		$this->controller = 'controller_Campeonato.php');
 		$this->toString();

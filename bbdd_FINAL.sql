@@ -120,10 +120,12 @@ ENGINE = InnoDB;
 -- `AWGP`.`Categoria`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Categoria` (
-  `Categoria` INT NOT NULL,
-  `Nivel` VARCHAR(45) NULL,
-  `Sexo` VARCHAR(45) NULL,
-  PRIMARY KEY (`Categoria`))
+  `Categoria` INT NOT NULL AUTO_INCREMENT,
+  `Nivel` INT NOT NULL,
+  `Sexo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Categoria`),
+  CONSTRAINT `NivelySexoUnicos` 
+    UNIQUE(`Nivel`, `Sexo`))
 ENGINE = InnoDB;
 
 
@@ -514,26 +516,24 @@ VALUES(9, '2018-11-18 09:00:00','2018-12-18 10:00:00', 'OURENSE');
 INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(10, '2018-11-19 09:00:00','2018-12-19 10:00:00', 'HULIO');
 
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(1, '1', 'M');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(2, '2', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(3, '3', 'MX');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(4, '1', 'M');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(5, '2', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(6, '3', 'MX');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(7, '1', 'M');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(8, '2', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(9, '1', 'F');
-INSERT INTO Categoria (Categoria, Nivel, Sexo)
-VALUES(10, '2', 'MX');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(1, 'M');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(1, 'F');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(1, 'MX');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(2, 'M');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(2, 'F');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(2, 'MX');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(3, 'M');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(3, 'F');
+INSERT INTO Categoria (Nivel, Sexo)
+VALUES(3, 'MX');
 
  
 INSERT INTO Campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria)
