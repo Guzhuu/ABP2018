@@ -266,6 +266,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	}
 	
 	function GENERARCALENDARIO(){
+		//Falta el check de si ya exiten grupos y enfrentamientos
 		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
 										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
 		$sql->bind_param("i", $this->Campeonato);
@@ -277,7 +278,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		
 		while($categoria = $categorias->fetch_row()){
 			//Para cada categoria, mirar los apuntados a la categoria y generar grupos y enfrentamientos
-			$sql = $this->mysqli->prepare("	SELECT pareja_pertenece_categoria.Pareja_codPareja FROM pareja_pertenece_categoria, campeonato_consta_de_categorias, pareja_pertenece_categoria_de_campeonato
+			$sql = $this->mysqli->prepare("	SELECT pareja_pertenece_categoria.perteneceCategoria, pareja_pertenece_categoria.Pareja_codPareja FROM pareja_pertenece_categoria, campeonato_consta_de_categorias, pareja_pertenece_categoria_de_campeonato
 											WHERE campeonato_consta_de_categorias.Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = ?
 												AND campeonato_consta_de_categorias.constadeCategorias = pareja_pertenece_categoria_de_campeonato.CampeonatoConstadeCategorias 
 												AND pareja_pertenece_categoria_de_campeonato.ParejaPerteneceCategoria = pareja_pertenece_categoria.perteneceCategoria
@@ -288,38 +289,59 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 			$apuntados = $sql->get_result();
 			
 			$mensajeRespuesta = "";
-			var_dump($apuntados);
 			
 			if(!$apuntados){
-				$mensajeRespuesta = "No se ha podido conectar a la BD";
+				$mensajeRespuesta = "No se ha podido conectar a la BD</br>";
 			}else if($apuntados->num_rows < 8){
-				$mensajeRespuesta = "No hay suficiente gente apuntada (solo hay " . $apuntados->num_rows . " persona/s)";
+				$mensajeRespuesta = "No hay suficiente gente apuntada (" . $apuntados->num_rows . " persona/s registrada/s)</br>";
 			}else{
 				$paraGrupos = array();
 				if($apuntados->num_rows > 32){
-					$mensajeRespuesta = "Hay demasiados apuntados (más de 32), así que se cogeran a los primeros 32 apuntados\n";
+					$mensajeRespuesta = "Hay demasiados apuntados (más de 32), así que se cogeran a los primeros 32 apuntados</br>";
 					for($i = 0; $i < 32; $i++){
-						array_push($paraGrupos, $apuntados->fetch_row()[0]);
+						$fila = $apuntados->fetch_row();
+						$auxIn = array($fila[0], $fila[1]);
+						array_push($paraGrupos, $auxIn);
 					}
-				}else if($apuntados->num_rows % 4 == 1){
-					$mensajeRespuesta = $mensajeRespuesta . "Queda un grupo de una persona, así que no se contará a esa persona para el campeonato\n";
-					for($i = 0; $i < $apuntados->num_rows - 1; $i++){
-						array_push($paraGrupos, $apuntados->fetch_row()[0]);
+				}else if($apuntados->num_rows % 4 == 1 || $apuntados->num_rows % 4 == 2){
+					$mensajeRespuesta = $mensajeRespuesta . "No hay suficientes personas para hacer un grupo de 3 o 4, así que se retiran las personas de exceso</br>";
+					for($i = 0; $i < $apuntados->num_rows - $apuntados->num_rows % 4; $i++){
+						$fila = $apuntados->fetch_row();
+						$auxIn = array($fila[0],$fila[1]);
+						array_push($paraGrupos, $auxIn);
 					}
 				}else{
 					for($i = 0; $i < $apuntados->num_rows; $i++){
-						array_push($paraGrupos, $apuntados->fetch_row()[0]);
+						$fila = $apuntados->fetch_row();
+						$auxIn = array($fila[0], $fila[1]);
+						array_push($paraGrupos, $auxIn);
 					}
 				}
-				var_dump($paraGrupos);
+				shuffle($paraGrupos);shuffle($paraGrupos);shuffle($paraGrupos);shuffle($paraGrupos);shuffle($paraGrupos); //Aleatoriedad
+				
+				$Grupo = array("A", "B", "C", "D", "E", "F", "G", "H");
+				$GrupoNum = -1;
+				//$categoria[0] CampeonatoCategoria $paraGrupos[$i][0] ParejaCategoria
+				for($i = 0; $i < sizeof($paraGrupos); $i++){
+					if($i % 4 == 0){
+						$GrupoNum++;
+					}
+					$sql = $this->mysqli->prepare("	INSERT INTO Grupo (nombre, CampeonatoCategoria, ParejaCategoria) VALUES (?, ?, ?)");
+					$sql->bind_param("sii", $Grupo[$GrupoNum], $categoria[0], $paraGrupos[$i][0]);
+					$resultado = $sql->execute();
+					
+					if(!$resultado){
+						$mensajeRespuesta = $mensajeRespuesta . "Error al insertar en el grupo " . $Grupo[$GrupoNum] . " al deportista con DNI " . $paraGrupos[$i][1] . ", quizá ya existe el grupo</br>";
+					}else{
+						$mensajeRespuesta = $mensajeRespuesta . "Insertado en el grupo " . $Grupo[$GrupoNum] . " al deportista con DNI " . $paraGrupos[$i][1] . "</br>";
+					}
+				}
 			}
-			
 			
 			$arrayRespuesta = array($categoria[1] . ' ' . $categoria[2] => $mensajeRespuesta);
 			array_push($respuesta, $arrayRespuesta);
 		}
-		
-		var_dump($respuesta);
+		return $respuesta;
 	}
 
 }

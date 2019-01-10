@@ -217,7 +217,9 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Grupo` (
     FOREIGN KEY (`ParejaCategoria`)
     REFERENCES `AWGP`.`Pareja_pertenece_categoria` (`perteneceCategoria`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `campeonatoYParejaUnicos` 
+    UNIQUE(`CampeonatoCategoria`, `ParejaCategoria`))
 ENGINE = InnoDB;
 
 
@@ -460,6 +462,8 @@ INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
 VALUES ('67721782F08722995S', '67721782F', '08722995S');
 INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
 VALUES ('000000000111111111', '000000000', '111111111');
+INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
+VALUES ('11111111120865489G', '111111111', '20865489G');
 
 
 INSERT INTO Horario (`Horario`, `HoraInicio`, `HoraFin`)
@@ -598,6 +602,8 @@ INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
 VALUES ('67721782F08722995S', '1');
 INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
 VALUES ('000000000111111111', '1');
+INSERT INTO pareja_pertenece_categoria (Pareja_codPareja , Categoria_Categoria)
+VALUES ('11111111120865489G', '1');
 
 INSERT INTO Pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
 VALUES ('1', '1');
@@ -617,6 +623,8 @@ INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategori
 VALUES ('1', '8');
 INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
 VALUES ('1', '9');
+INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias , ParejaPerteneceCategoria)
+VALUES ('1', '10');
 
 
 INSERT INTO Pista_tiene_horario (Horario_Horario,Pista_codigoPista) 

@@ -146,8 +146,17 @@ switch ($_REQUEST['submit']){
 		}else{
 			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
 			$respuesta = $campeonato->GENERARCALENDARIO();//Y lo añadimos
-			//TODO: Currarse mensajes
-			new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			$mensaje = "";
+			for($i = 0; $i < sizeof($respuesta); $i++){
+				foreach(array_keys($respuesta[$i]) as $key){
+					if($respuesta[$i][$key] === ""){
+						$mensaje = $mensaje . "</br>" . $key . ":</br>" . "Grupos creados sin problemas";
+					}else{
+						$mensaje = $mensaje . "</br>" . $key . ":</br>" . $respuesta[$i][$key];
+					}
+				}
+			}
+			new Mensaje($mensaje, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 		}
 		break;
 
