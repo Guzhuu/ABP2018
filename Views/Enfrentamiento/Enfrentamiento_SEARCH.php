@@ -13,13 +13,13 @@ class Enfrentamiento_SEARCH{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"Enfrentamiento"=> "codigo de un enfrentamiento",
-					"Grupo_Grupo" => "grupo al que pertenece un enfrentamiento ",
-					"Pareja1" => "pareja 1 del enfrentamiento",
-					"Pareja2" => "pareja 2 del enfrentamiento",
-					"set1" => "set 1 del enfrentamiento",
-					"set2" => "set 2 del enfrentamiento",
-					"set3" => "set 3 del enfrentamiento");
+					"Enfrentamiento"=> "Codigo del enfrentamiento",
+					"Grupo_Grupo" => "Grupo del enfrentamiento",
+					"Pareja1" => "Pareja 1 del enfrentamiento",
+					"Pareja2" => "Pareja 2 del enfrentamiento",
+					"set1" => "Resultado del primer set",
+					"set2" => "Resultado del segundo set",
+					"set3" => "Resultado del tercer set");
 
 		$this->controller = 'Controller_Enfrentamiento.php';
 		$this->toString();

@@ -201,11 +201,10 @@ ENGINE = InnoDB;
 -- `AWGP`.`Grupo`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Grupo` (
-  `Grupo` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NULL,
+  `nombre` VARCHAR(45) NOT NULL,
   `CampeonatoCategoria` INT NOT NULL,
   `ParejaCategoria` INT NOT NULL,
-  PRIMARY KEY (`Grupo`),
+  PRIMARY KEY (`nombre`,`CampeonatoCategoria`,`ParejaCategoria`),
   INDEX `fk_Grupo_Campeonato_consta_de_categorias1_idx` (`CampeonatoCategoria` ASC),
   INDEX `fk_Grupo_Pareja_pertenece_categoria1_idx` (`ParejaCategoria` ASC),
   CONSTRAINT `fk_Grupo_Campeonato_consta_de_categorias1`
@@ -217,9 +216,7 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Grupo` (
     FOREIGN KEY (`ParejaCategoria`)
     REFERENCES `AWGP`.`Pareja_pertenece_categoria` (`perteneceCategoria`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `campeonatoYParejaUnicos` 
-    UNIQUE(`CampeonatoCategoria`, `ParejaCategoria`))
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -228,19 +225,20 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Enfrentamiento` (
   `Enfrentamiento` INT NOT NULL AUTO_INCREMENT,
-  `Grupo_Grupo` INT NOT NULL,
+  `nombre` VARCHAR(45) NOT NULL,
+  `CampeonatoCategoria` INT NOT NULL,
   `Pareja1` VARCHAR(18) NOT NULL,
   `Pareja2` VARCHAR(18) NOT NULL,
   `set1` VARCHAR(3) NULL,
   `set2` VARCHAR(3) NULL,
   `set3` VARCHAR(3) NULL,
   PRIMARY KEY (`Enfrentamiento`),
-  INDEX `fk_Enfrentamiento_Grupo1_idx` (`Grupo_Grupo` ASC),
+  INDEX `fk_Enfrentamiento_Grupo1_idx` (`CampeonatoCategoria` ASC),
   INDEX `fk_Enfrentamiento_Pareja1_idx` (`Pareja1` ASC),
   INDEX `fk_Enfrentamiento_Pareja2_idx` (`Pareja2` ASC),
   CONSTRAINT `fk_Enfrentamiento_Grupo1`
-    FOREIGN KEY (`Grupo_Grupo`)
-    REFERENCES `AWGP`.`Grupo` (`Grupo`)
+    FOREIGN KEY (`nombre`, `CampeonatoCategoria`)
+    REFERENCES `AWGP`.`Grupo` (`nombre`, `CampeonatoCategoria`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_Enfrentamiento_Pareja1`
@@ -674,7 +672,7 @@ VALUES ('A', '1', '1');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
 VALUES ('B', '2', '2');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
-VALUES ('C', '3', '3');
+VALUES ('C', '4', '3');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
 VALUES ('D', '4', '4');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
@@ -686,27 +684,26 @@ VALUES ('G', '7', '7');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
 VALUES ('H', '8', '8');
 
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('1', '3', '72180857A08722995S', '72180857A93407187R', '6-1', '3-6', '6-2');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('2', '4', '12345678A78380290Q', '99185554D53495571D','6-1', '0-6', '6-2');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('3', '5', '53495571D99185554D','20865489G12345678A','6-1', '3-6', '6-0');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('4', '5', '02793268X57768016C','67721782F08722995S','6-1', '3-6', '6-4');
-
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('5', '4', '53495571D99185554D','72180857A93407187R','6-3', '1-6', '6-3');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('6', '3', '99185554D53495571D','67721782F08722995S','6-0', '0-6', '6-2');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('7', '4', '02793268X57768016C','20865489G12345678A','6-1', '3-6', '0-6');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('8', '5', '12345678A78380290Q','20865489G12345678A','6-1', '2-6', '6-0');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('9', '5', '53495571D99185554D','72180857A93407187R','4-6', '3-6', '6-1');
-INSERT INTO Enfrentamiento (Enfrentamiento, Grupo_Grupo, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('10', '5', '67721782F08722995S','12345678A78380290Q','6-4', '1-6', '6-3');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('1', 'C', '4', '72180857A08722995S', '72180857A93407187R', '6-1', '3-6', '6-2');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('2', 'C', '4', '12345678A78380290Q', '99185554D53495571D','6-1', '0-6', '6-2');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('3', 'D', '4', '53495571D99185554D','20865489G12345678A','6-1', '3-6', '6-0');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('4', 'D', '4', '02793268X57768016C','67721782F08722995S','6-1', '3-6', '6-4');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('5', 'C', '4', '53495571D99185554D','72180857A93407187R','6-3', '1-6', '6-3');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('6', 'C', '4', '99185554D53495571D','67721782F08722995S','6-0', '0-6', '6-2');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('7', 'C', '4', '02793268X57768016C','20865489G12345678A','6-1', '3-6', '0-6');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('8', 'C', '4', '12345678A78380290Q','20865489G12345678A','6-1', '2-6', '6-0');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('9', 'D', '4', '53495571D99185554D','72180857A93407187R','4-6', '3-6', '6-1');
+INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+VALUES ('10', 'D', '4', '67721782F08722995S','12345678A78380290Q','6-4', '1-6', '6-3');
 
 
 

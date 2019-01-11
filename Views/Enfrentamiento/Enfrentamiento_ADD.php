@@ -43,20 +43,6 @@ class Enfrentamiento_ADD{  // declaración de clase
 		/*Tabla para el formulario*/
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
-			
-
-/*Fila para Enfrentamiento*/
-			echo '<tr class="'; echo $this->_getTr($i); echo '">';
-				echo '<td class="formularioTd">';
-					echo $this->campos['Enfrentamiento'];
-				echo '</td>';
-				
-				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Enfrentamiento">';
-					echo '</input>';
-				echo '</td>';
-			echo '</tr>';
-			$i++;
 
 			/*Fila para Grupo_Grupo*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';

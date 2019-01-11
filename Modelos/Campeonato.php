@@ -297,15 +297,15 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 			}else{
 				$paraGrupos = array();
 				if($apuntados->num_rows > 32){
-					$mensajeRespuesta = "Hay demasiados apuntados (más de 32), así que se cogeran a los primeros 32 apuntados</br>";
-					for($i = 0; $i < 32; $i++){
+					$mensajeRespuesta = "Hay demasiados apuntados (más de 96), así que se cogeran a los primeros 96 apuntados</br>";
+					for($i = 0; $i < 96; $i++){
 						$fila = $apuntados->fetch_row();
 						$auxIn = array($fila[0], $fila[1]);
 						array_push($paraGrupos, $auxIn);
 					}
-				}else if($apuntados->num_rows % 4 == 1 || $apuntados->num_rows % 4 == 2){
-					$mensajeRespuesta = $mensajeRespuesta . "No hay suficientes personas para hacer un grupo de 3 o 4, así que se retiran las personas de exceso</br>";
-					for($i = 0; $i < $apuntados->num_rows - $apuntados->num_rows % 4; $i++){
+				}else if($apuntados->num_rows % 12 < 8){
+					$mensajeRespuesta = $mensajeRespuesta . "No hay suficientes personas para hacer un grupo de 8, así que se retiran las personas de exceso</br>";
+					for($i = 0; $i < $apuntados->num_rows - $apuntados->num_rows % 12; $i++){
 						$fila = $apuntados->fetch_row();
 						$auxIn = array($fila[0],$fila[1]);
 						array_push($paraGrupos, $auxIn);
@@ -323,7 +323,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				$GrupoNum = -1;
 				//$categoria[0] CampeonatoCategoria $paraGrupos[$i][0] ParejaCategoria
 				for($i = 0; $i < sizeof($paraGrupos); $i++){
-					if($i % 4 == 0){
+					if($i % 12 == 0){
 						$GrupoNum++;
 					}
 					$sql = $this->mysqli->prepare("	INSERT INTO Grupo (nombre, CampeonatoCategoria, ParejaCategoria) VALUES (?, ?, ?)");
@@ -331,11 +331,31 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 					$resultado = $sql->execute();
 					
 					if(!$resultado){
-						$mensajeRespuesta = $mensajeRespuesta . "Error al insertar en el grupo " . $Grupo[$GrupoNum] . " al deportista con DNI " . $paraGrupos[$i][1] . ", quizá ya existe el grupo</br>";
+						$mensajeRespuesta = $mensajeRespuesta . "Error al insertar en el grupo " . $Grupo[$GrupoNum] . " al deportista con DNI " . $paraGrupos[$i][1] . ", ya está registrado en el grupo</br>";
 					}else{
 						$mensajeRespuesta = $mensajeRespuesta . "Insertado en el grupo " . $Grupo[$GrupoNum] . " al deportista con DNI " . $paraGrupos[$i][1] . "</br>";
 					}
 				}
+				
+				$sql = $this->mysqli->prepare("	SELECT Grupo.nombre, Grupo.CampeonatoCategoria, pareja_pertenece_categoria.Pareja_codPareja FROM Grupo, pareja_pertenece_categoria 
+												WHERE Grupo.CampeonatoCategoria = ? AND Grupo.ParejaCategoria = pareja_pertenece_categoria.perteneceCategoria");
+				$sql->bind_param("i", $categoria[0]);
+				$sql->execute();
+				
+				$apuntadosEnElGrupo = $sql->get_result();
+				
+				if(!$apuntadosEnElGrupo){
+						$mensajeRespuesta = $mensajeRespuesta . "No se ha podido conectar con la BD para generar los enfrentamientos</br>";
+				}else if($apuntadosEnElGrupo->num_rows != sizeof($paraGrupos)){
+						$mensajeRespuesta = $mensajeRespuesta . "Ha habido un error al insertar a los deportistas a los grupos, no se pueden generar los enfrentamientos</br>";
+				}else{
+					for($i = 0; $i < $apuntadosEnElGrupo->num_rows; $i++){
+						var_dump($apuntadosEnElGrupo->fetch_row());
+					}
+					
+				}
+				
+				
 			}
 			
 			$arrayRespuesta = array($categoria[1] . ' ' . $categoria[2] => $mensajeRespuesta);
