@@ -31,6 +31,7 @@ class Campeonato_SHOWALL{
 	var $showAddcategoria = true;
 	var $showGenerarcalendario = true;
 	var $showGenerarCuartos = true;
+	var $showGenerarRanking = true;
 	var $showGenerarRankingfinal = true;
 	var $showQuitarCategoria = true;
 	
@@ -52,13 +53,17 @@ class Campeonato_SHOWALL{
 		echo '</br>';
 		echo '</br>';
 		if($this->showGenerarcalendario){
-			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARCALENDARIO'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARCALENDARIO'/>";
 		}
+		if($this->showGenerarRanking){
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARRANKING'/>";
+		}
+		echo '</br>';
 		if($this->showGenerarCuartos){
-			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARCUARTOS'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARCUARTOS'/>";
 		}
 		if($this->showGenerarRankingfinal){
-			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARRANKINGFINAL'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARRANKINGFINAL'/>";
 		}
 	}
 	

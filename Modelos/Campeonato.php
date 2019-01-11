@@ -412,6 +412,134 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		}
 		return $respuesta;
 	}
+	
+	function GENERARRANKING(){
+		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
+										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
+		$sql->bind_param("i", $this->Campeonato);
+		$sql->execute();
+    
+		$categorias = $sql->get_result();
+		
+		$respuesta = array();
+		
+		while($categoria = $categorias->fetch_row()){
+			$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.nombre, Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set2
+											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ?");
+			$sql->bind_param("i", $categoria[0]);
+			$sql->execute();
+		
+			$participantes = $sql->get_result();
+			$arrayGrupo = array();
+			
+			for($i = 0; $i < $participantes->num_rows; $i++){
+				$fila = $participantes->fetch_row();
+				$Grupo = $fila[0];
+				$Pareja1 = $fila[1];
+				$Pareja2 = $fila[2];
+				$set1 = $fila[3];
+				$set2 = $fila[4];
+				$set3 = $fila[5];
+				
+				//$ParejaX => array("Jugados" => x, "Ganados" => x, "Perdidos" => x, "Puntos" => x);
+				if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) < 0){
+					$arrayGrupo = $this->sumarEstadisticas($Pareja1, $Pareja2, $arrayGrupo);
+				}else if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) > 0){
+					$arrayGrupo = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo);
+				}else{
+					if(!array_key_exists($Grupo, $arrayGrupo)){
+						$arrayGrupo[$Grupo] = array();
+					}
+					
+					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo[$Grupo]);
+				}
+			}
+			if(empty($arrayGrupo)){
+				$respuesta[$categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos o no se han jugado para la categoría";
+			}else{
+				$respuesta[$categoria[1] . ' ' . $categoria[2]] = $arrayGrupo;
+			}
+		}
+		return $respuesta;
+	}
+	
+	function ganadorDe($set){
+		if(substr($set, 0, 1) === '6' || substr($set, 0, 1) != '0'){
+			return -1;
+		}else if(substr($set, 2, 1) === '6' || substr($set, 2, 1) != '0'){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+	
+	function sumarEstadisticas($Ganador, $Perdedor, $array){
+		$stringJugados = "Jugados";
+		$stringGanados = "Ganados";
+		$stringPerdidos = "Perdidos";
+		$stringPuntos = "Puntos";
+		$stringCapitan = "Capitan";
+		$stringCompanhero = "Companhero";
+		/**GANADOR**/
+		if(array_key_exists($Ganador, $array)){
+			$array[$Ganador][$stringJugados]++;
+			$array[$Ganador][$stringGanados]++;
+			$array[$Ganador][$stringPuntos] += 4;
+		}else{
+			$array[$Ganador] = array($stringJugados => 1, $stringGanados => 1, $stringPerdidos => 0, $stringPuntos => 4);
+			
+			$sqlCap = $this->mysqli->prepare("	SELECT Deportista.nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Capitan = Deportista.DNI");
+			$sqlCap->bind_param("s", $Ganador);
+			$sqlCap->execute();
+		
+			$DNI_Capitan = $sqlCap->get_result();
+			
+			$sqlCop = $this->mysqli->prepare("	SELECT Deportista.nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Companhero = Deportista.DNI");
+			$sqlCop->bind_param("s", $Ganador);
+			$sqlCop->execute();
+		
+			$DNI_Companhero = $sqlCop->get_result();
+			if($DNI_Capitan != null){
+				$fila = $DNI_Capitan->fetch_row();
+				$array[$Ganador][$stringCapitan] = $fila[0] . ' ' . $fila[1];
+			}
+			if($DNI_Companhero != null){
+				$fila = $DNI_Companhero->fetch_row();
+				$array[$Ganador][$stringCompanhero] = $fila[0] . ' ' . $fila[1];
+			}
+		}
+		
+		/**PERDEDOR**/
+		if(array_key_exists($Perdedor, $array)){
+			$array[$Perdedor][$stringJugados]++;
+			$array[$Perdedor][$stringPerdidos]++;
+			$array[$Perdedor][$stringPuntos] += 1;
+		}else{
+			$array[$Perdedor] = array($stringJugados => 1, $stringGanados => 0, $stringPerdidos => 1, $stringPuntos => 1);
+			
+			$sqlCap = $this->mysqli->prepare("	SELECT Deportista.nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Capitan = Deportista.DNI");
+			$sqlCap->bind_param("s", $Perdedor);
+			$sqlCap->execute();
+		
+			$DNI_Capitan = $sqlCap->get_result();
+			
+			$sqlCop = $this->mysqli->prepare("	SELECT Deportista.nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Companhero = Deportista.DNI");
+			$sqlCop->bind_param("s", $Perdedor);
+			$sqlCop->execute();
+		
+			$DNI_Companhero = $sqlCop->get_result();
+			if($DNI_Capitan != null){
+				$fila = $DNI_Capitan->fetch_row();
+				$array[$Perdedor][$stringCapitan] = $fila[0] . ' ' . $fila[1];
+			}
+			if($DNI_Companhero != null){
+				$fila = $DNI_Companhero->fetch_row();
+				$array[$Perdedor][$stringCompanhero] = $fila[0] . ' ' . $fila[1];
+			}
+		}
+		
+		return $array;
+	}
 
 }
 ?>

@@ -23,6 +23,7 @@
 	include '../Views/Campeonato/Campeonato_ESCOGERPAREJA.php';
 	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
 	include '../Modelos/Pareja.php';
+	include '../Views/Campeonato/Campeonato_CLASIFICACION.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -178,6 +179,20 @@ switch ($_REQUEST['submit']){
 					}
 				}
 				new Mensaje($mensaje, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+		}
+		break;
+		
+	case 'GENERARRANKING':
+		if(!isset($_REQUEST['Campeonato'])){
+			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+			$respuesta = $campeonato->GENERARRANKING();//Y lo añadimos
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				new Campeonato_CLASIFICACION($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 			}
 		}
 		break;
