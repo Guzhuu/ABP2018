@@ -380,6 +380,9 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 							array_push($auxArray, $apuntadosEnElCampeonato[$i][2]);
 						}
 					}
+					if(!empty($auxArray)){
+						array_push($arrayGrupos, $auxArray);
+					}
 					
 					for($i = 0; $i < sizeof($arrayGrupos); $i++){
 						$GrupoAGenerarEnfrentamientos = $arrayGrupos[$i][0];
@@ -392,7 +395,9 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 								$confirmacionEnfrentamiento = $sql->execute();
 							
 								if(!$confirmacionEnfrentamiento){
-									$mensajeRespuesta = $mensajeRespuesta . "Error al añadir el enfrentamiento entre " . $arrayGrupos[$i][$j] . "y" . $arrayGrupos[$i][$auxEnf] . "</br>";
+									$mensajeRespuesta = $mensajeRespuesta . "Error al añadir el enfrentamiento entre " . $arrayGrupos[$i][$j] . " y " . $arrayGrupos[$i][$auxEnf] . "</br>";
+								}else{
+									$mensajeRespuesta = $mensajeRespuesta . "Añadido el enfrentamiento entre " . $arrayGrupos[$i][$j] . " y " . $arrayGrupos[$i][$auxEnf] . "</br>";
 								}
 							}
 						}
