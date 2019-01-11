@@ -6,7 +6,7 @@
 	include_once '../Functions/Autenticacion.php';
 	if(autenticado()){
 		if(!isAdmin()){
-			$_REQUEST['submit'] = 'INSCRIBIR';
+			$_REQUEST['submit'] = 'SHOWALL';
 		}
 	}else{
 		header('Location: ../index.php');
@@ -20,6 +20,9 @@
 	include '../Views/Campeonato/Campeonato_SHOWCURRENT.php';
 	include '../Views/Campeonato/Campeonato_SHOWALL.php';
 	include '../Views/Campeonato/Campeonato_ADDCATEGORIA.php';
+	include '../Views/Campeonato/Campeonato_ESCOGERPAREJA.php';
+	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
+	include '../Modelos/Pareja.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -37,6 +40,21 @@ function get_data_form(){
 	return $Campeonato;
 }
 	
+function get_parejaCampeonato_data_form(){
+	if(!isset($_REQUEST['codPareja'])){
+		$_REQUEST['codPareja'] = 0;
+	}
+	if(!isset($_REQUEST['DNI_Companhero'])){
+		$_REQUEST['DNI_Companhero'] = 0;
+	}
+	$DNICompanhero = $_REQUEST['DNI_Companhero'];
+
+	$pareja = new Pareja($_SESSION['DNI'], $DNICompanhero);
+	$_REQUEST['codPareja'] = $pareja->codPareja;
+ 
+	return $pareja;
+}
+
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
 	$_REQUEST['submit'] = 'SHOWALL';
@@ -169,6 +187,23 @@ switch ($_REQUEST['submit']){
 		
 	case 'GENERARRANKINGFINAL':
 		break;
+
+	case 'ESCOGERPAREJA':
+		if(!$_POST){//Si GET
+			$muestraESCOGERPAREJA = new Campeonato_ESCOGERPAREJA();//Mostrar vista add
+		}else{
+			$pareja = get_parejaCampeonato_data_form();//Si post cogemos horario
+			$respuesta = $pareja->ADD();//Y lo añadimos
+			new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
+		}	
+	break;
+
+	case 'SHOWPARAINSCRIBIRSE':
+
+		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
+		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
+		new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, '','','','');//Le pasamos todos los datos de la BD
+	break;
 
 	case 'SHOWALL':
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)

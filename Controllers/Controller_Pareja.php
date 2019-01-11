@@ -17,6 +17,7 @@
 	include '../Views/Pareja/Pareja_ADD.php';
 	include '../Views/Pareja/Pareja_SHOWALL.php';
 	include '../Views/Pareja/Pareja_ESCOGERPAREJA.php';
+	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -122,15 +123,16 @@ switch ($_REQUEST['submit']){
 		new Pareja_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		break;
 		
-	case 'ESCOGERPAREJA':
+	/*case 'ESCOGERPAREJA':
 		if(!$_POST){//Si GET
 			$muestraESCOGERPAREJA = new Pareja_ESCOGERPAREJA();//Mostrar vista add
 		}else{
 			$pareja = get_parejaCampeonato_data_form();//Si post cogemos horario
 			$respuesta = $pareja->ADD();//Y lo añadimos
 			new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
+			$muestraCAMPEONATOSposibles= new Campeonato_SHOWPARAINSCRIBIRSE($respuesta);
 		}	
-	break;
+	break;*/
 
 	default:
 		$pareja = new Pareja('','','');//No necesitamos horario para buscar (pero sí para acceder a la BD)
