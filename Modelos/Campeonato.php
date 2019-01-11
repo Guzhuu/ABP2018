@@ -267,6 +267,20 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	
 	function GENERARCALENDARIO(){
 		//Falta el check de si ya exiten grupos y enfrentamientos
+		$sql = $this->mysqli->prepare("	SELECT Comenzado FROM Campeonato WHERE Campeonato = ?");
+		$sql->bind_param("i", $this->Campeonato);
+		$sql->execute();
+    
+		$campeonato = $sql->get_result();
+		
+		if($campeonato->fetch_row()[0]){
+			return "No se puede generar el calendario de un campeonato que ya ha comenzado";
+		}else{
+			$sql = $this->mysqli->prepare("	UPDATE Campeonato SET Comenzado = 1 WHERE Campeonato = ?");
+			$sql->bind_param("i", $this->Campeonato);
+			$campeonato = $sql->execute();
+		}
+		
 		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
 										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
 		$sql->bind_param("i", $this->Campeonato);
@@ -326,7 +340,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 					if($i % 12 == 0){
 						$GrupoNum++;
 					}
-					$sql = $this->mysqli->prepare("	INSERT INTO Grupo (nombre, CampeonatoCategoria, ParejaCategoria) VALUES (?, ?, ?)");
+					$sql = $this->mysqli->prepare("	REPLACE INTO Grupo (nombre, CampeonatoCategoria, ParejaCategoria) VALUES (?, ?, ?)");
 					$sql->bind_param("sii", $Grupo[$GrupoNum], $categoria[0], $paraGrupos[$i][0]);
 					$resultado = $sql->execute();
 					
@@ -338,21 +352,51 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				}
 				
 				$sql = $this->mysqli->prepare("	SELECT Grupo.nombre, Grupo.CampeonatoCategoria, pareja_pertenece_categoria.Pareja_codPareja FROM Grupo, pareja_pertenece_categoria 
-												WHERE Grupo.CampeonatoCategoria = ? AND Grupo.ParejaCategoria = pareja_pertenece_categoria.perteneceCategoria");
+												WHERE Grupo.CampeonatoCategoria = ? AND Grupo.ParejaCategoria = pareja_pertenece_categoria.perteneceCategoria
+												ORDER BY Grupo.nombre");
 				$sql->bind_param("i", $categoria[0]);
 				$sql->execute();
 				
-				$apuntadosEnElGrupo = $sql->get_result();
+				$apuntadosEnElCampeonato = $sql->get_result()->fetch_all();
 				
-				if(!$apuntadosEnElGrupo){
+				if(!$apuntadosEnElCampeonato){
 						$mensajeRespuesta = $mensajeRespuesta . "No se ha podido conectar con la BD para generar los enfrentamientos</br>";
-				}else if($apuntadosEnElGrupo->num_rows != sizeof($paraGrupos)){
+				}else if(sizeof($apuntadosEnElCampeonato) != sizeof($paraGrupos)){
 						$mensajeRespuesta = $mensajeRespuesta . "Ha habido un error al insertar a los deportistas a los grupos, no se pueden generar los enfrentamientos</br>";
 				}else{
-					for($i = 0; $i < $apuntadosEnElGrupo->num_rows; $i++){
-						var_dump($apuntadosEnElGrupo->fetch_row());
+					//Aquí se pone un array con los que conforman cada grupo
+					$arrayGrupos = array();
+					$auxArray = array();
+					$prevGrupo = $apuntadosEnElCampeonato[0][0];
+					array_push($auxArray, $prevGrupo);
+					for($i = 0; $i < sizeof($apuntadosEnElCampeonato); $i++){
+						if($apuntadosEnElCampeonato[$i][0] === $prevGrupo){
+							array_push($auxArray, $apuntadosEnElCampeonato[$i][2]);
+						}else{
+							array_push($arrayGrupos, $auxArray);
+							$prevGrupo = $apuntadosEnElCampeonato[$i][0];
+							$auxArray = array();
+							array_push($auxArray, $prevGrupo);
+							array_push($auxArray, $apuntadosEnElCampeonato[$i][2]);
+						}
 					}
 					
+					for($i = 0; $i < sizeof($arrayGrupos); $i++){
+						$GrupoAGenerarEnfrentamientos = $arrayGrupos[$i][0];
+						for($j = 1; $j < sizeof($arrayGrupos[$i]) - 1; $j++){
+							$auxEnf = $j + 1;
+							for($auxEnf; $auxEnf < sizeof($arrayGrupos[$i]); $auxEnf++){
+								$sql = $this->mysqli->prepare("	INSERT INTO Enfrentamiento (nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
+																VALUES (?, ?, ?, ?, '0-0', '0-0', '0-0');");
+								$sql->bind_param("siss", $GrupoAGenerarEnfrentamientos, $categoria[0], $arrayGrupos[$i][$j], $arrayGrupos[$i][$auxEnf]);
+								$confirmacionEnfrentamiento = $sql->execute();
+							
+								if(!$confirmacionEnfrentamiento){
+									$mensajeRespuesta = $mensajeRespuesta . "Error al añadir el enfrentamiento entre " . $arrayGrupos[$i][$j] . "y" . $arrayGrupos[$i][$auxEnf] . "</br>";
+								}
+							}
+						}
+					}
 				}
 				
 				

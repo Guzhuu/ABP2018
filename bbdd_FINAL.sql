@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Campeonato` (
   `FechaInicio` DATETIME NULL,
   `FechaFinal` DATETIME NULL,
   `Nombre` VARCHAR(45) NULL,
+  `Comenzado` TINYINT DEFAULT 0,
   PRIMARY KEY (`Campeonato`))
 ENGINE = InnoDB;
 
@@ -667,8 +668,6 @@ VALUES ('9', '9', '53495571D');
 INSERT INTO Reserva (Reserva, codigoPistayHorario, DNI_Deportista)
 VALUES ('10', '10', '99185554D');
 
-INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
-VALUES ('A', '1', '1');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
 VALUES ('B', '2', '2');
 INSERT INTO Grupo(nombre,CampeonatoCategoria,ParejaCategoria)
