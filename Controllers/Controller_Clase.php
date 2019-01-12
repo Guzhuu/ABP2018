@@ -106,9 +106,18 @@ switch ($_REQUEST['submit']){
 		
 	case 'EDIT':
 		if(!$_POST){//Si GET
-			$clase = new Clase($_REQUEST['Clase'],'','','', '', '');//Editar clase seleccionado
-			$clase->_getDatosGuardados();//Rellenar con los datos de la BD
-			new Clase_EDIT($clase);//Mostrar vista
+			if(isAdmin()){
+				include_once '../Modelos/Deportista.php';
+				$aux = new Deportista('','','','','','','','','');
+				$Entrenadores = $aux->ENTRENADORES();
+			}else{
+				$Entrenadores = '';
+			}
+			$clase = new Clase($_REQUEST['Clase'],'','','','','');
+			$clase->_getDatosGuardados();
+			$Escuelas = $clase->ESCUELAS();
+			$Cursos = $clase->CURSOS();
+			$muestraEDIT = new Clase_EDIT($clase, $Escuelas, $Cursos, $Entrenadores);//Mostrar vista add
 		}else{
 			$clase = get_data_form();//Coger datos
 			$respuesta = $clase->EDIT();//Actualizarlos
@@ -136,7 +145,7 @@ switch ($_REQUEST['submit']){
 			$clase->_getDatosGuardados();//Rellenar datos
 			new Clase_DELETE($clase);//Mostrar vissta 
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_REQUEST['Clase'],'','','', '');//Clave
+			$clase = new Clase($_REQUEST['Clase'],'','','', '', '');//Clave
 			$respuesta = $clase->DELETE();//Borrar clase con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 		}
