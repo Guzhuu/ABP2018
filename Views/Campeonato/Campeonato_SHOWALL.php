@@ -56,14 +56,14 @@ class Campeonato_SHOWALL{
 			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARCALENDARIO'/>";
 		}
 		if($this->showGenerarRanking){
-			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARRANKING'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='RANKINGGRUPOS'/>";
 		}
 		echo '</br>';
 		if($this->showGenerarCuartos){
 			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARCUARTOS'/>";
 		}
 		if($this->showGenerarRankingfinal){
-			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARRANKINGFINAL'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='RANKINGFINAL'/>";
 		}
 	}
 	

@@ -154,7 +154,7 @@ switch ($_REQUEST['submit']){
 				for($i = 0; $i < sizeof($respuesta); $i++){
 					foreach(array_keys($respuesta[$i]) as $key){
 						if($respuesta[$i][$key] === ""){
-							$mensaje = $mensaje . "</br>" . $key . ":</br>" . "Grupos creados sin problemas";
+							$mensaje = $mensaje . "</br>" . $key . ":</br>" . "Grupos generados sin problemas";
 						}else{
 							$mensaje = $mensaje . "</br>" . $key . ":</br>" . $respuesta[$i][$key];
 						}
@@ -165,12 +165,12 @@ switch ($_REQUEST['submit']){
 		}
 		break;
 		
-	case 'GENERARRANKING':
+	case 'RANKINGGRUPOS':
 		if(!isset($_REQUEST['Campeonato'])){
 			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 		}else{
 			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
-			$respuesta = $campeonato->GENERARRANKING();//Y lo añadimos
+			$respuesta = $campeonato->RANKINGGRUPOS();//Y lo añadimos
 			if(is_string($respuesta)){
 				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 			}else{
@@ -180,9 +180,29 @@ switch ($_REQUEST['submit']){
 		break;
 
 	case 'GENERARCUARTOS':
+		if(!isset($_REQUEST['Campeonato'])){
+			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+			$respuesta = $campeonato->GENERARCUARTOS();//Y lo añadimos
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				$mensaje = "";
+				var_dump($respuesta);
+				foreach(array_keys($respuesta) as $categoria){
+					if($respuesta[$categoria] === ""){
+						$mensaje = $mensaje . "</br>" . $categoria . ":</br>" . "Cuartos generados sin problemas";
+					}else{
+						$mensaje = $mensaje . "</br>" . $categoria . ":</br>" . $respuesta[$categoria];
+					}
+				}
+				new Mensaje($mensaje, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+		}
 		break;
 		
-	case 'GENERARRANKINGFINAL':
+	case 'RANKINGFINAL':
 		break;
 
 	case 'SHOWALL':

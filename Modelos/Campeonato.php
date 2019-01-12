@@ -413,7 +413,75 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		return $respuesta;
 	}
 	
-	function GENERARRANKING(){
+	function GENERARCUARTOS(){
+		$cuartos = 8;
+		$stringJugados = "Jugados";
+		$stringGanados = "Ganados";
+		$stringPerdidos = "Perdidos";
+		$stringPuntos = "Puntos";
+		$stringCapitan = "Capitan";
+		$stringCompanhero = "Companhero";
+		
+		$respuesta = array();
+		
+		$ranking = $this->RANKINGGRUPOS();
+		foreach ($ranking as $categoria => $grupos){
+			$mensajeCategoria = "";
+			var_dump($categoria);
+			var_dump($grupos);
+		
+			//Coger ceiling(8/(numGrupos)) jugadores por grupo y poner por puntos del 1º al 8º, a partir de ahí generar los cuartos
+			//var_dump(ceil(floatval(8)/floatval(3)));
+			$sql = $this->mysqli->prepare("	SELECT COUNT(DISTINCT enfrentamiento.nombre) FROM enfrentamiento WHERE CampeonatoCategoria = ?");
+			$CampeonatoCategoria = intval(explode(":", $categoria)[0]);
+			$sql->bind_param("i", $CampeonatoCategoria);
+			$sql->execute();
+		
+			$numGrupos = $sql->get_result()->fetch_row()[0];
+			if($numGrupos != 0){
+				$seleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
+				var_dump($seleccionadosPorGrupo);
+			
+				if(!is_string($grupos)){
+					foreach ($grupos as $grupo => $parejas){
+						usort($parejas, array($this, "usortCustom"));
+					}
+				}else{
+					$mensajeCategoria = $grupos;
+				}
+				
+				if($mensajeCategoria === ''){
+					$mensajeCategoria = "Fase de cuartos generada sin problemas";
+				}
+			}else{
+				if(!is_string($grupos)){
+					$mensajeCategoria = "No se ha generado el calendario del campeonato";
+				}else{
+					$mensajeCategoria = $grupos;
+				}
+			}
+			
+			$respuesta[$categoria] = $mensajeCategoria;
+		}
+		
+		return $respuesta;
+	}
+	
+	function usortCustom($a, $b){
+		$strJugados = "Jugados";
+		$strPuntos = "Puntos";
+		if ($a[$strPuntos] == $b[$strPuntos]) {
+			if ($a[$strJugados] == $b[$strJugados]) {
+				return 0;
+			}else{
+				return ($a[$strJugados] < $b[$strJugados]) ? 1 : -1;
+			}
+		}
+		
+		return ($a[$strPuntos] < $b[$strPuntos]) ? 1 : -1;
+	}
+	
+	function RANKINGGRUPOS(){
 		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
 										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
 		$sql->bind_param("i", $this->Campeonato);
@@ -443,10 +511,12 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				
 				//$ParejaX => array("Jugados" => x, "Ganados" => x, "Perdidos" => x, "Puntos" => x);
 				if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) < 0){
-					$arrayGrupo = $this->sumarEstadisticas($Pareja1, $Pareja2, $arrayGrupo);
+					if(!array_key_exists($Grupo, $arrayGrupo)){
+						$arrayGrupo[$Grupo] = array();
+					}
+					
+					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja1, $Pareja2, $arrayGrupo[$Grupo]);
 				}else if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) > 0){
-					$arrayGrupo = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo);
-				}else{
 					if(!array_key_exists($Grupo, $arrayGrupo)){
 						$arrayGrupo[$Grupo] = array();
 					}
@@ -455,9 +525,9 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				}
 			}
 			if(empty($arrayGrupo)){
-				$respuesta[$categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos o no se han jugado para la categoría";
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos o no se han jugado para la categoría";
 			}else{
-				$respuesta[$categoria[1] . ' ' . $categoria[2]] = $arrayGrupo;
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = $arrayGrupo;
 			}
 		}
 		return $respuesta;
