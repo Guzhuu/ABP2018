@@ -94,35 +94,35 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
   }
   
   
-  function EDIT(){//Para editar de la BD
-    if(($this->Campeonato == '')){
-      return 'Campeonato vacio, introduzca un nuevo campeonato';
-    }else{
-      $sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
-      $sql->bind_param("i", $this->Campeonato);
-      $sql->execute();
+	function EDIT(){//Para editar de la BD
+		if(($this->Campeonato == '')){
+			return 'Campeonato vacio, introduzca un nuevo campeonato';
+		}else{
+			$sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
+			$sql->bind_param("i", $this->Campeonato);
+			$sql->execute();
       
-      $resultado = $sql->get_result();
+			$resultado = $sql->get_result();
       
-      if(!$resultado){
-        return 'No se ha podido conectar con la BD';
-      }else if($resultado->num_rows == 1){
-        $sql = $this->mysqli->prepare("UPDATE Campeonato SET FechaInicio = ?, FechaFinal = ?, Nombre = ?  WHERE Campeonato = ?");
-        $sql->bind_param("sssi",  $this->FechaInicio, $this->FechaFinal, $this->Nombre, $this->Campeonato );
-        $sql->execute();
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows == 1){
+				$sql = $this->mysqli->prepare("UPDATE Campeonato SET FechaInicio = ?, FechaFinal = ?, Nombre = ?  WHERE Campeonato = ?");
+				$sql->bind_param("sssi",  $this->FechaInicio, $this->FechaFinal, $this->Nombre, $this->Campeonato );
+				$sql->execute();
       
-        $resultado = $sql->execute();
+				$resultado = $sql->execute();
         
-        if(!$resultado){
-          return 'Ha fallado la actualización del campeonato';
-        }else{
-          return 'Modificado correcto';
-        }
-      }else{
-        return 'el campeonato no existe en la base de datos';
-      }
-    }
-  }
+				if(!$resultado){
+				return 'Ha fallado la actualización del campeonato';
+			}else{
+				return 'Modificado correcto';
+				}
+			}else{
+				return 'el campeonato no existe en la base de datos';
+			}
+		}
+	}
   
    function SEARCH(){
     $sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE ((Campeonato LIKE ?) AND (FechaInicio LIKE ?) AND (FechaFinal LIKE ?) AND (Nombre LIKE ?))"); //No funciona
@@ -549,6 +549,10 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		}
 		
 		return ($a[$strPuntos] < $b[$strPuntos]) ? 1 : -1;
+	}
+	
+	function RANKINGFINAL(){
+		return "Debe comprobar si se ha acabado el campeonato (se ha jugado la final, es decir, tiene un resultado) y generar un top 8 de los cuartos con formato igual al de ranking grupos por favor";
 	}
 	
 	function RANKINGGRUPOS(){

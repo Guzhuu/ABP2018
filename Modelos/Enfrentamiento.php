@@ -13,6 +13,10 @@ class Enfrentamiento
   var $set3;
   var $mysqli;
   //CampeonatoCategoria,Pareja1,Pareja2,set1,set2,set3
+  
+  var $codCuartos = 4;
+  var $codSemis = 2;
+  var $codFinal = 1;
    
 
 	function __construct($Enfrentamiento,$Nombre,$CampeonatoCategoria,$Pareja1,$Pareja2,$set1,$set2,$set3)
@@ -128,33 +132,50 @@ public function getSet1() {
     }  
   
 
-function EDIT(){//Para editar de la BD
-    if(($this->Enfrentamiento == '')){
-      return 'Enfrentamiento vacio, introduzca un Enfrentamiento';
-    }else{
-      $sql = $this->mysqli->prepare("SELECT * FROM Enfrentamiento WHERE Enfrentamiento = ?");
-      $sql->bind_param("i", $this->Enfrentamiento);
-      $sql->execute();
+	function EDIT(){//Para editar de la BD
+		if(($this->Enfrentamiento == '')){
+			return 'Enfrentamiento vacio, introduzca un Enfrentamiento';
+		}else{
+			$sql = $this->mysqli->prepare("SELECT * FROM Enfrentamiento WHERE Enfrentamiento = ?");
+			$sql->bind_param("i", $this->Enfrentamiento);
+			$sql->execute();
       
-      $resultado = $sql->get_result();
+			$resultado = $sql->get_result();
       
-      if(!$resultado){
-        return 'No se ha podido conectar con la BD';
-      }else if($resultado->num_rows == 1){
-        $sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET CampeonatoCategoria = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
-        $sql->bind_param("isssssi",  $this->CampeonatoCategoria, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
-        $resultado = $sql->execute();
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows == 1){
+				$sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET CampeonatoCategoria = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
+				$sql->bind_param("isssssi",  $this->CampeonatoCategoria, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
+				$resultado2 = $sql->execute();
         
-        if(!$resultado){
-          return 'Ha fallado la actualización de el Enfrentamiento';
-        }else{
-          return 'Modificado correcto';
-        }
-      }else{
-        return 'el Enfrentamiento no existe en la base de datos';
-      }
-    }
-  }
+				if(!$resultado2){
+					return 'Ha fallado la edición de el enfrentamiento';
+				}else{
+					$mensajeRetorno = 'Modificado correcto</br>';
+					$SegundaRonda = $resultado->fetch_row()[8];
+					if($SegundaRonda == $this->codCuartos){
+						//Si se introduce un resultado de cuartos, se comprueba si se han jugado todos los cuartos y se generan las semis si eso
+						$mensajeRetorno = $mensajeRetorno . $this->CUARTOS();
+					}else if($SegundaRonda == $this->codSemis){
+						//Si se introduce un resultado de semis, se comprueba si se han jugado todos las semis y se genera la final si eso
+						$mensajeRetorno = $mensajeRetorno . $this->SEMIS();
+					}
+					return $mensajeRetorno;
+				}
+			}else{
+				return 'El enfrentamiento no existe';
+			}
+		}
+	}
+	
+	function CUARTOS(){
+		return "";
+	}
+	
+	function SEMIS(){
+		return "";
+	}
 
 
   

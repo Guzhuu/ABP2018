@@ -221,6 +221,17 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	case 'RANKINGFINAL':
+		if(!isset($_REQUEST['Campeonato'])){
+			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+			$respuesta = $campeonato->RANKINGFINAL();//Y lo añadimos
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				new Campeonato_CLASIFICACION($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+		}
 		break;
 
 	case 'ESCOGERPAREJA':
@@ -234,7 +245,6 @@ switch ($_REQUEST['submit']){
 	break;
 
 	case 'SHOWPARAINSCRIBIRSE':
-
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
 		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
 		new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, '','','','');//Le pasamos todos los datos de la BD
