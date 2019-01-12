@@ -8,6 +8,10 @@ class Campeonato
   var $Nombre;
   var $mysqli;
     
+	var $codCuartos = 4;
+	var $codSemis = 2;
+	var $codFinal = 1;
+	var $stringCodPareja = "codPareja";
 
 	function __construct($Campeonato,$FechaInicio,$FechaFinal,$Nombre)
   {   
@@ -198,49 +202,83 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	}
   
 	function ADDCATEGORIA($Categoria){
-		$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
-		$sql->bind_param("ii", $this->Campeonato, $Categoria);
+		$sql = $this->mysqli->prepare("SELECT Comenzado FROM Campeonato WHERE Campeonato.Campeonato = ?");
+		$sql->bind_param("i", $this->Campeonato);
 		$sql->execute();
     
 		$resultado = $sql->get_result();
-    
+		
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
-		}else if($resultado->num_rows != 0){
-			return 'El campeonato ya tiene asociada la categoria';
+		}else if($resultado->num_rows != 1){
+			return 'No se ha encontrado el campeonato';
 		}else{
-			$sql = $this->mysqli->prepare("INSERT INTO campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria) VALUES (?, ?)");
-			$sql->bind_param("ii", $this->Campeonato, $Categoria);
-			$resultado = $sql->execute();
+			$fila = $resultado->fetch_row();
+			if($fila[0] == 1){
+				return 'El campeonato ya ha comenzado, no puedes añadir una categoría';
+			}
 			
-			if($resultado){
-				return 'Categoría añadida con éxito';
+			$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+			$sql->bind_param("ii", $this->Campeonato, $Categoria);
+			$sql->execute();
+		
+			$resultado = $sql->get_result();
+		
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows != 0){
+				return 'El campeonato ya tiene asociada la categoria';
 			}else{
-				return 'Error al añadir la categoría al campeonato';
+				$sql = $this->mysqli->prepare("INSERT INTO campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria) VALUES (?, ?)");
+				$sql->bind_param("ii", $this->Campeonato, $Categoria);
+				$resultado = $sql->execute();
+				
+				if($resultado){
+					return 'Categoría añadida con éxito';
+				}else{
+					return 'Error al añadir la categoría al campeonato';
+				}
 			}
 		}
 	}
   
 	function QUITARCATEGORIA($Categoria){
-		$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
-		$sql->bind_param("ii", $this->Campeonato, $Categoria);
+		$sql = $this->mysqli->prepare("SELECT Comenzado FROM Campeonato WHERE Campeonato.Campeonato = ?");
+		$sql->bind_param("i", $this->Campeonato);
 		$sql->execute();
     
 		$resultado = $sql->get_result();
-    
+		
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
-		}else if($resultado->num_rows == 0){
-			return 'El campeonato no tiene la categoría';
+		}else if($resultado->num_rows != 1){
+			return 'No se ha encontrado el campeonato';
 		}else{
-			$sql = $this->mysqli->prepare("DELETE FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
-			$sql->bind_param("ii", $this->Campeonato, $Categoria);
-			$resultado = $sql->execute();
+			$fila = $resultado->fetch_row();
+			if($fila[0] == 1){
+				return 'El campeonato ya ha comenzado, no puedes quitar una categoría';
+			}
 			
-			if($resultado){
-				return 'Categoría eliminada con éxito';
+			$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+			$sql->bind_param("ii", $this->Campeonato, $Categoria);
+			$sql->execute();
+		
+			$resultado = $sql->get_result();
+		
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows == 0){
+				return 'El campeonato no tiene la categoría';
 			}else{
-				return 'Error al eliminar la categoría del campeonato';
+				$sql = $this->mysqli->prepare("DELETE FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+				$sql->bind_param("ii", $this->Campeonato, $Categoria);
+				$resultado = $sql->execute();
+				
+				if($resultado){
+					return 'Categoría eliminada con éxito';
+				}else{
+					return 'Error al eliminar la categoría del campeonato';
+				}
 			}
 		}
 	}
@@ -415,6 +453,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	
 	function GENERARCUARTOS(){
 		$cuartos = 8;
+		$stringCuartos = "Cuartos";
 		$stringJugados = "Jugados";
 		$stringGanados = "Ganados";
 		$stringPerdidos = "Perdidos";
@@ -424,27 +463,58 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		
 		$respuesta = array();
 		
-		$ranking = $this->RANKINGGRUPOS();
-		foreach ($ranking as $categoria => $grupos){
+		$categorias = $this->RANKINGGRUPOS();
+		
+		foreach ($categorias as $categoria => $grupos){
 			$mensajeCategoria = "";
-			var_dump($categoria);
-			var_dump($grupos);
+			$seleccionados = array();
+			$contadorSeleccion = 0;
 		
 			//Coger ceiling(8/(numGrupos)) jugadores por grupo y poner por puntos del 1º al 8º, a partir de ahí generar los cuartos
 			//var_dump(ceil(floatval(8)/floatval(3)));
-			$sql = $this->mysqli->prepare("	SELECT COUNT(DISTINCT enfrentamiento.nombre) FROM enfrentamiento WHERE CampeonatoCategoria = ?");
+			$sql = $this->mysqli->prepare("	SELECT COUNT(DISTINCT enfrentamiento.nombre) FROM enfrentamiento WHERE CampeonatoCategoria = ? AND nombre IS NOT NULL");
 			$CampeonatoCategoria = intval(explode(":", $categoria)[0]);
 			$sql->bind_param("i", $CampeonatoCategoria);
 			$sql->execute();
 		
 			$numGrupos = $sql->get_result()->fetch_row()[0];
+			
 			if($numGrupos != 0){
-				$seleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
-				var_dump($seleccionadosPorGrupo);
+				$numSeleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
 			
 				if(!is_string($grupos)){
+					//Aquí habría que poner una condición de que cada grupo tenga suficiente gente, o coger de otro grupo si falta, o dejarlos en blanco
 					foreach ($grupos as $grupo => $parejas){
+						if(sizeof($parejas) < $numSeleccionadosPorGrupo){
+							$mensajeCategoria = "No hay suficientes usuarios para hacer la fase de cuartos de " . explode(":", $categoria)[1] .  ", abortando";
+							break;
+						}
 						usort($parejas, array($this, "usortCustom"));
+						for($i = 0; $i < $numSeleccionadosPorGrupo; $i++){
+							$seleccionados[$contadorSeleccion++] = $parejas[$i];
+						}
+					}
+					usort($seleccionados, array($this, "usortCustom"));
+					//Hora de generar los enfrentamientos
+					if(sizeof($seleccionados) != $cuartos){
+						$mensajeCategoria = "Error al seleccionar a los deportistas que pasan de grupos";
+					}else{
+						var_dump($seleccionados);
+						for($i = 0; $i < sizeof($seleccionados)/2; $i++){
+							$Pareja1 = $seleccionados[$i][$this->stringCodPareja];
+							$Pareja2 = $seleccionados[sizeof($seleccionados) - $i - 1][$this->stringCodPareja];
+							
+							$sql = $this->mysqli->prepare("	REPLACE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?,'0-0', '0-0', '0-0', ?)");
+							$sql->bind_param("issi", $CampeonatoCategoria, $Pareja1, $Pareja2, $this->codCuartos);
+							
+							$enfrentamientoInsertado = $sql->execute();
+							
+							if($enfrentamientoInsertado){
+								$mensajeCategoria = $mensajeCategoria . "Enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . " generado con éxito</br>";
+							}else{
+								$mensajeCategoria = $mensajeCategoria . "Error al generar el enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . "</br>";
+							}
+						}
 					}
 				}else{
 					$mensajeCategoria = $grupos;
@@ -493,7 +563,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		
 		while($categoria = $categorias->fetch_row()){
 			$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.nombre, Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set2
-											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ?");
+											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ? AND Enfrentamiento.nombre IS NOT NULL");
 			$sql->bind_param("i", $categoria[0]);
 			$sql->execute();
 		
@@ -517,6 +587,13 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 					
 					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja1, $Pareja2, $arrayGrupo[$Grupo]);
 				}else if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) > 0){
+					if(!array_key_exists($Grupo, $arrayGrupo)){
+						$arrayGrupo[$Grupo] = array();
+					}
+					
+					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo[$Grupo]);
+				}else{
+					//Si se quisiera poner aquí se añadirían los deportistas apuntados pero que no han jugado ningún partido a la clasificación
 					if(!array_key_exists($Grupo, $arrayGrupo)){
 						$arrayGrupo[$Grupo] = array();
 					}
@@ -577,6 +654,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				$fila = $DNI_Companhero->fetch_row();
 				$array[$Ganador][$stringCompanhero] = $fila[0] . ' ' . $fila[1];
 			}
+			$array[$Ganador][$this->stringCodPareja] = $Ganador;
 		}
 		
 		/**PERDEDOR**/
@@ -606,6 +684,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				$fila = $DNI_Companhero->fetch_row();
 				$array[$Perdedor][$stringCompanhero] = $fila[0] . ' ' . $fila[1];
 			}
+			$array[$Perdedor][$this->stringCodPareja] = $Perdedor;
 		}
 		
 		return $array;

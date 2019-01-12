@@ -13,13 +13,14 @@ class Enfrentamiento_ADD{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"Enfrentamiento"=> "codigo de un enfrentamiento" ,
-					"Grupo_Grupo" => "grupo al que pertenece un enfrentamiento ",
-					"Pareja1" => "pareja 1 del enfrentamiento",
-					"Pareja2" => "pareja 2 del enfrentamiento",
-					"set1" => "set 1 del enfrentamiento",
-					"set2" => "set 2 del enfrentamiento",
-					"set3" => "set 3 del enfrentamiento");
+					"Enfrentamiento"=> "codigo de un enfrentamiento",
+					"Nombre" => "Nombre del grupo",
+					"CampeonatoCategoria" => "Campeonato del enfrentamiento",
+					"Pareja1" => "Pareja 1 del enfrentamiento",
+					"Pareja2" => "Pareja 2 del enfrentamiento",
+					"set1" => "Primer set",
+					"set2" => "Segundo set",
+					"set3" => "Tercer set");
 					
 		$this->controller = 'controller_Enfrentamiento.php';
 		$this->toString();
@@ -44,14 +45,27 @@ class Enfrentamiento_ADD{  // declaración de clase
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioSearch" name="formularioSearch" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
 
-			/*Fila para Grupo_Grupo*/
+			/*Fila para CampeonatoCategoria*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['Grupo_Grupo'];
+					echo $this->campos['CampeonatoCategoria'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Grupo_Grupo">';
+					echo '<input type="text" name="CampeonatoCategoria">';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+
+			/*Fila para Nombre*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Nombre'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Nombre">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';

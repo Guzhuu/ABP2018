@@ -4,73 +4,82 @@ class Enfrentamiento
 {
 
   var $Enfrentamiento; //autoincrem
-  var $Grupo_Grupo;
+  var $CampeonatoCategoria;
+  var $Nombre;
   var $Pareja1;
   var $Pareja2;
   var $set1;
   var $set2;
   var $set3;
   var $mysqli;
-  //Grupo_Grupo,Pareja1,Pareja2,set1,set2,set3
+  //CampeonatoCategoria,Pareja1,Pareja2,set1,set2,set3
    
 
-	function __construct($Enfrentamiento,$Grupo_Grupo,$Pareja1,$Pareja2,$set1,$set2,$set3)
+	function __construct($Enfrentamiento,$Nombre,$CampeonatoCategoria,$Pareja1,$Pareja2,$set1,$set2,$set3)
   {
-  		$this ->Enfrentamiento = $Enfrentamiento;
-  		$this ->Grupo_Grupo = $Grupo_Grupo;
-  		$this ->Pareja1 = $Pareja1;
-  		$this ->Pareja2 = $Pareja2;
-  		$this ->set1= $set1;
-  		$this ->set2= $set2;
-  		$this ->set3= $set3;
+  		$this->Enfrentamiento = $Enfrentamiento;
+		$this->Nombre = $Nombre;
+  		$this->CampeonatoCategoria = $CampeonatoCategoria;
+  		$this->Pareja1 = $Pareja1;
+  		$this->Pareja2 = $Pareja2;
+  		$this->set1= $set1;
+  		$this->set2= $set2;
+  		$this->set3= $set3;
       include_once '../Functions/ConectarBD.php'; //Actualizar
     $this->mysqli = ConectarBD();
 	}
 
 	public function getEnfrentamiento() {
-    return $this ->Enfrentamiento;
+    return $this->Enfrentamiento;
   }
 
-  public function getGrupo_Grupo() {
-    return $this ->Grupo_Grupo;
+  public function getNombre() {
+    return $this->Nombre;
+  }
+
+  public function getCampeonatoCategoria() {
+    return $this->CampeonatoCategoria;
   }
 
   public function getPareja1() {
-    return $this ->Pareja1;
+    return $this->Pareja1;
   }
   public function getPareja2() {
-    return $this ->Pareja2;
+    return $this->Pareja2;
   }
 public function getSet1() {
-    return $this ->set1;
+    return $this->set1;
   }
   public function getSet2() {
-    return $this ->set2;
+    return $this->set2;
   }
   public function getSet3() {
-    return $this ->set3;
+    return $this->set3;
   }
 
   public function setEnfrentamiento($Enfrentamiento) {
-    return $this ->Enfrentamiento = $Enfrentamiento;
+    return $this->Enfrentamiento = $Enfrentamiento;
   }
-  public function setGrupo_Grupo($Grupo_Grupo) {
-    return $this ->Grupo_Grupo = $Grupo_Grupo;
+  public function setNombre($Nombre) {
+    return $this->Nombre = $Nombre;
+  }
+  public function setCampeonatoCategoria($CampeonatoCategoria) {
+    return $this->CampeonatoCategoria = $CampeonatoCategoria;
   }
   public function setPareja1($Pareja1) {
-    return $this ->Pareja1 = $Pareja1;
+    return $this->Pareja1 = $Pareja1;
   }
   public function setPareja2($Pareja2) {
-    return $this ->Pareja2 = $Pareja2;
+    return $this->Pareja2 = $Pareja2;
   }
   public function setSet1($set1) {
-    return $this ->set1 = $set1;
+    return $this->set1 = $set1;
   }
   public function setSet2($set2) {
-    return $this ->set2 = $set2;
+    return $this->set2 = $set2;
   }
   public function setSet3($set3) {
-    return $this ->set3 = $set3;
+    return $this->set3 = $set3;
   }
  
   function _getDatosGuardados(){//Para recuperar de la base de datos
@@ -91,20 +100,21 @@ public function getSet1() {
       else{
         $fila = $resultado->fetch_row();
         
-        $this->setGrupo_Grupo($fila[1]);
-        $this->setPareja1($fila[2]);
-        $this->setPareja2($fila[3]);
-        $this->setSet1($fila[4]);
-        $this->setSet2($fila[5]);
-        $this->setSet3($fila[6]);
+        $this->setNombre($fila[1]);
+        $this->setCampeonatoCategoria($fila[2]);
+        $this->setPareja1($fila[3]);
+        $this->setPareja2($fila[4]);
+        $this->setSet1($fila[5]);
+        $this->setSet2($fila[6]);
+        $this->setSet3($fila[7]);
     }
   }
 }
   
   
   function ADD(){//Para añadir a la BD
-    $sql = $this->mysqli->prepare("INSERT INTO Enfrentamiento (Grupo_Grupo,Pareja1,Pareja2,set1,set2,set3) VALUES (?, ?, ?, ?, ?, ?)");
-    $sql->bind_param("isssss", $this->Grupo_Grupo, $this->Pareja1,$this->Pareja2,$this->set1,$this->set2,$this->set3);
+    $sql = $this->mysqli->prepare("INSERT INTO Enfrentamiento (CampeonatoCategoria,Pareja1,Pareja2,set1,set2,set3) VALUES (?, ?, ?, ?, ?, ?)");
+    $sql->bind_param("isssss", $this->CampeonatoCategoria, $this->Pareja1,$this->Pareja2,$this->set1,$this->set2,$this->set3);
     $sql->execute();
     
     $resultado = $sql->get_result();
@@ -131,8 +141,8 @@ function EDIT(){//Para editar de la BD
       if(!$resultado){
         return 'No se ha podido conectar con la BD';
       }else if($resultado->num_rows == 1){
-        $sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET Grupo_Grupo = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
-        $sql->bind_param("isssssi",  $this->Grupo_Grupo, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
+        $sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET CampeonatoCategoria = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
+        $sql->bind_param("isssssi",  $this->CampeonatoCategoria, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
         $resultado = $sql->execute();
         
         if(!$resultado){
@@ -149,9 +159,9 @@ function EDIT(){//Para editar de la BD
 
   
   function SEARCH(){
-    $sql = $this->mysqli->prepare("SELECT * FROM Enfrentamiento WHERE ((Enfrentamiento LIKE ?) AND (Grupo_Grupo LIKE ?) AND (Pareja1 LIKE ?) AND (Pareja2 LIKE ?) AND (set1 LIKE ?) AND (set2 LIKE ?) AND (set3 LIKE ?))"); //No funciona
+    $sql = $this->mysqli->prepare("SELECT * FROM Enfrentamiento WHERE ((Enfrentamiento LIKE ?) AND (CampeonatoCategoria LIKE ?) AND (Pareja1 LIKE ?) AND (Pareja2 LIKE ?) AND (set1 LIKE ?) AND (set2 LIKE ?) AND (set3 LIKE ?))"); //No funciona
     $likeEnfrentamiento = "%" . $this->getEnfrentamiento() . "%";
-    $likeGrupo_Grupo = "%" . $this->getGrupo_Grupo() . "%";
+    $likeCampeonatoCategoria = "%" . $this->getCampeonatoCategoria() . "%";
     $likePareja1 = "%" . $this->getPareja1() . "%";
     $likePareja2 = "%" . $this->getPareja2() . "%";
     $likeset1 = "%" . $this->getSet1() . "%";
@@ -159,7 +169,7 @@ function EDIT(){//Para editar de la BD
     $likeset3 = "%" . $this->getSet3() . "%";
 
 
-    $sql->bind_param("sssssss", $likeEnfrentamiento, $likeGrupo_Grupo, $likePareja1, $likePareja2, $likeset1, $likeset2, $likeset3  ); //Puede dar fallo facil
+    $sql->bind_param("sssssss", $likeEnfrentamiento, $likeCampeonatoCategoria, $likePareja1, $likePareja2, $likeset1, $likeset2, $likeset3  ); //Puede dar fallo facil
     $sql->execute();
     
     $resultado = $sql->get_result();

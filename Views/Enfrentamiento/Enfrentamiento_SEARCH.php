@@ -13,13 +13,14 @@ class Enfrentamiento_SEARCH{  // declaración de clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
 	function __construct(){
 		$this->campos = array(
-					"Enfrentamiento"=> "Codigo del enfrentamiento",
-					"Grupo_Grupo" => "Grupo del enfrentamiento",
+					"Enfrentamiento"=> "codigo de un enfrentamiento",
+					"Nombre" => "Nombre del grupo",
+					"CampeonatoCategoria" => "Campeonato del enfrentamiento",
 					"Pareja1" => "Pareja 1 del enfrentamiento",
 					"Pareja2" => "Pareja 2 del enfrentamiento",
-					"set1" => "Resultado del primer set",
-					"set2" => "Resultado del segundo set",
-					"set3" => "Resultado del tercer set");
+					"set1" => "Primer set",
+					"set2" => "Segundo set",
+					"set3" => "Tercer set");
 
 		$this->controller = 'Controller_Enfrentamiento.php';
 		$this->toString();
@@ -57,14 +58,27 @@ class Enfrentamiento_SEARCH{  // declaración de clase
 			echo '</tr>';
 			$i++;
 
-/*Fila para Grupo_Grupo*/
+			/*Fila para CampeonatoCategoria*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['Grupo_Grupo'];
+					echo $this->campos['CampeonatoCategoria'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="Grupo_Grupo" >';
+					echo '<input type="text" name="CampeonatoCategoria">';
+					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+
+			/*Fila para Nombre*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Nombre'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input type="text" name="Nombre">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
