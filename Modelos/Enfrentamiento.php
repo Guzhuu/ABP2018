@@ -117,19 +117,32 @@ public function getSet1() {
   
   
   function ADD(){//Para añadir a la BD
-    $sql = $this->mysqli->prepare("INSERT INTO Enfrentamiento (CampeonatoCategoria,Pareja1,Pareja2,set1,set2,set3) VALUES (?, ?, ?, ?, ?, ?)");
-    $sql->bind_param("isssss", $this->CampeonatoCategoria, $this->Pareja1,$this->Pareja2,$this->set1,$this->set2,$this->set3);
-    $sql->execute();
-    
-    $resultado = $sql->get_result();
-        
-        if(!$resultado){
-          return 'Ha fallado la actualización de el Enfrentamiento';
-        }else{
-          return 'Modificado correcto';
-        }
-      
-    }  
+		if($this->Nombre === null){
+			$sql = $this->mysqli->prepare("INSERT INTO Enfrentamiento (CampeonatoCategoria,Pareja1,Pareja2,set1,set2,set3) VALUES (?, ?, ?, ?, ?, ?)");
+			$sql->bind_param("isssss", $this->CampeonatoCategoria, $this->Pareja1,$this->Pareja2,$this->set1,$this->set2,$this->set3);
+			$sql->execute();
+			$resultado = $sql->get_result();
+		
+			
+			if(!$resultado){
+			  return 'Ha fallado la actualización de el Enfrentamiento';
+			}else{
+			  return 'Modificado correcto';
+			}
+		}else{
+			$sql = $this->mysqli->prepare("INSERT INTO Enfrentamiento (CampeonatoCategoria,nombre,Pareja1,Pareja2,set1,set2,set3) VALUES (?, ?, ?, ?, ?, ?)");
+			$sql->bind_param("issssss", $this->CampeonatoCategoria, $this->Nombre, $this->Pareja1,$this->Pareja2,$this->set1,$this->set2,$this->set3);
+			$sql->execute();
+			$resultado = $sql->get_result();
+		
+			
+			if(!$resultado){
+			  return 'Ha fallado la actualización de el Enfrentamiento';
+			}else{
+			  return 'Modificado correcto';
+			}
+		}
+	}  
   
 
 	function EDIT(){//Para editar de la BD
@@ -145,9 +158,17 @@ public function getSet1() {
 			if(!$resultado){
 				return 'No se ha podido conectar con la BD';
 			}else if($resultado->num_rows == 1){
-				$sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET CampeonatoCategoria = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
-				$sql->bind_param("isssssi",  $this->CampeonatoCategoria, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
-				$resultado2 = $sql->execute();
+				$resultado2 = false;
+				
+				if($this->Nombre === null){
+					$sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET CampeonatoCategoria = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
+					$sql->bind_param("isssssi",  $this->CampeonatoCategoria, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
+					$resultado2 = $sql->execute();
+				}else{
+					$sql = $this->mysqli->prepare("UPDATE Enfrentamiento SET CampeonatoCategoria = ?, nombre = ?, Pareja1 = ?, Pareja2 = ?, set1 = ?, set2 = ?, set3 = ?  WHERE Enfrentamiento = ?");
+					$sql->bind_param("issssssi",  $this->CampeonatoCategoria, $this->Nombre, $this->Pareja1, $this->Pareja2, $this->set1, $this->set2, $this->set3, $this->Enfrentamiento);
+					$resultado2 = $sql->execute();
+				}
         
 				if(!$resultado2){
 					return 'Ha fallado la edición de el enfrentamiento';
@@ -170,13 +191,127 @@ public function getSet1() {
 	}
 	
 	function CUARTOS(){
-		return "";
+		$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.SegundaRonda, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set3
+										FROM Enfrentamiento 
+										WHERE CampeonatoCategoria = ? AND SegundaRonda = ? AND (set1 <> '0-0' OR set2 <> '0-0' OR set3 <> '0-0')");
+		$sql->bind_param("ii", $this->CampeonatoCategoria, $this->codCuartos);
+		$sql->execute();
+  
+		$resultado = $sql->get_result();
+		
+		$mensajeRetorno = "";
+		
+		if(!$resultado){
+			return '';
+		}else if($resultado->num_rows != 4){
+			return '';
+		}else{
+			$sqlParejas = array();
+			$sqlCount = 0;
+			while($fila = $resultado->fetch_row()){
+				if($this->acabado($fila)){
+					$sqlParejas[$sqlCount++] = $this->ganador($fila);
+				}else{
+					return 'El resultado entre ' . $fila[0] . ' y ' . $fila[1] . ' está mal (' . $fila[3] . ' ' . $fila[4] . ' ' . $fila[5] . ')';
+				}
+			}
+			//Si llega hasta aquí, todo resultado debería estar bien, así que se ponen las semis en la BD (si existen se borran las semis y la final)
+			$sql = $this->mysqli->prepare("	DELETE FROM Enfrentamiento WHERE CampeonatoCategoria = ? AND (SegundaRonda = ? OR SegundaRonda = ?)");
+			$sql->bind_param("iii", $this->CampeonatoCategoria, $this->codSemis, $this->codFinal);
+			$sql->execute();
+			
+			shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);shuffle($sqlParejas);//Random
+			
+			for($i = 0; $i < 2; $i++){
+				$sql = $this->mysqli->prepare("	INSERT INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?, '0-0', '0-0', '0-0', ?)");
+				$sql->bind_param("issi", $this->CampeonatoCategoria, $sqlParejas[$i], $sqlParejas[sizeof($sqlParejas) - $i - 1], $this->codSemis);
+				if($sql->execute()){
+					$mensajeRetorno = $mensajeRetorno . "Se ha generado la semifinal entre " . $sqlParejas[$i] . ' y ' . $sqlParejas[sizeof($sqlParejas) - $i - 1] . "</br>";
+				}else{
+					$mensajeRetorno = "Error al generar el enfrentamiento entre " . $sqlParejas[$i] . ' y ' . $sqlParejas[sizeof($sqlParejas) - $i - 1] . "</br>";
+					break;
+				}
+			}
+		}
+		return $mensajeRetorno;
 	}
 	
 	function SEMIS(){
-		return "";
+		$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.SegundaRonda, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set3
+										FROM Enfrentamiento 
+										WHERE CampeonatoCategoria = ? AND SegundaRonda = ? AND (set1 <> '0-0' OR set2 <> '0-0' OR set3 <> '0-0')");
+		$sql->bind_param("ii", $this->CampeonatoCategoria, $this->codSemis);
+		$sql->execute();
+  
+		$resultado = $sql->get_result();
+		
+		$mensajeRetorno = "";
+		
+		if(!$resultado){
+			return '';
+		}else if($resultado->num_rows != 2){
+			return '';
+		}else{
+			$sqlParejas = array();
+			$sqlCount = 0;
+			while($fila = $resultado->fetch_row()){
+				if($this->acabado($fila)){
+					$sqlParejas[$sqlCount++] = $this->ganador($fila);
+				}else{
+					return 'El resultado entre ' . $fila[0] . ' y ' . $fila[1] . ' está mal (' . $fila[3] . ' ' . $fila[4] . ' ' . $fila[5] . ')';
+				}
+			}
+			
+			for($i = 0; $i < 1; $i++){
+				$sql = $this->mysqli->prepare("	INSERT IGNORE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?, '0-0', '0-0', '0-0', ?)");
+				$sql->bind_param("issi", $this->CampeonatoCategoria, $sqlParejas[$i], $sqlParejas[sizeof($sqlParejas) - $i - 1], $this->codFinal);
+				if($sql->execute()){
+					$mensajeRetorno = $mensajeRetorno . "Se ha generado la final entre " . $sqlParejas[$i] . ' y ' . $sqlParejas[sizeof($sqlParejas) - $i - 1] . "</br>";
+				}else{
+					$mensajeRetorno = "Error al generar el enfrentamiento entre " . $sqlParejas[$i] . ' y ' . $sqlParejas[sizeof($sqlParejas) - $i - 1] . "</br>";
+					break;
+				}
+			}
+		}
+		return $mensajeRetorno;
 	}
-
+	
+	function acabado($fila){
+		$set1 = explode('-', $fila[3]);
+		$set2 = explode('-', $fila[4]);
+		$set3 = explode('-', $fila[5]);
+		if(sizeof($set1) != 2 OR sizeof($set2) != 2 OR sizeof($set3) != 2){
+			return false;
+		}
+		
+		if(($set1[0] === '6' || $set1[1] === '6') && ($set2[0] === '6' || $set2[1] === '6') && ($set3[0] === '6' || $set3[1] === '6')){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	function ganador($fila){
+		$set1 = $fila[3];
+		$set2 = $fila[4];
+		$set3 = $fila[5];
+		
+		if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) < 0){
+			return $fila[0];
+		}else{
+			return $fila[1];
+		}
+	}
+	
+	function ganadorDe($set){
+		if(substr($set, 0, 1) === '6' || substr($set, 0, 1) != '0'){
+			return -1;
+		}else if(substr($set, 2, 1) === '6' || substr($set, 2, 1) != '0'){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
 
   
   function SEARCH(){

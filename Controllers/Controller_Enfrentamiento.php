@@ -19,6 +19,9 @@ if(!isset($_REQUEST['Enfrentamiento'])){
 
 	$Enfrentamiento = $_REQUEST['Enfrentamiento'];
 	$Nombre = $_REQUEST['Nombre'];
+	if($Nombre == ''){
+		$Nombre = null;
+	}
 	$CampeonatoCategoria = $_REQUEST['CampeonatoCategoria'];
 	$Pareja1 = $_REQUEST['Pareja1'];
 	$Pareja2 = $_REQUEST['Pareja2'];

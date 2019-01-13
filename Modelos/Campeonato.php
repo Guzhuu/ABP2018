@@ -451,6 +451,17 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		return $respuesta;
 	}
 	
+	function acabado($fila){
+		$set1 = explode('-', $fila[3]);
+		$set2 = explode('-', $fila[4]);
+		$set3 = explode('-', $fila[5]);
+		if(($set1[0] === '6' || $set1[1] === '6') && ($set2[0] === '6' || $set2[1] === '6') && ($set3[0] === '6' || $set3[1] === '6')){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	function GENERARCUARTOS(){
 		$cuartos = 8;
 		$stringCuartos = "Cuartos";
@@ -470,68 +481,83 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 			$seleccionados = array();
 			$contadorSeleccion = 0;
 		
-			//Coger ceiling(8/(numGrupos)) jugadores por grupo y poner por puntos del 1º al 8º, a partir de ahí generar los cuartos
-			//var_dump(ceil(floatval(8)/floatval(3)));
-			$sql = $this->mysqli->prepare("	SELECT COUNT(DISTINCT enfrentamiento.nombre) FROM enfrentamiento WHERE CampeonatoCategoria = ? AND nombre IS NOT NULL");
+			$sql = $this->mysqli->prepare("	SELECT COUNT(*) FROM Enfrentamiento WHERE CampeonatoCategoria = ? AND SegundaRonda <> 0");
 			$CampeonatoCategoria = intval(explode(":", $categoria)[0]);
 			$sql->bind_param("i", $CampeonatoCategoria);
 			$sql->execute();
-		
-			$numGrupos = $sql->get_result()->fetch_row()[0];
 			
-			if($numGrupos != 0){
-				$numSeleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
+			$continuarGeneracion = $sql->get_result();
 			
-				if(!is_string($grupos)){
-					//Aquí habría que poner una condición de que cada grupo tenga suficiente gente, o coger de otro grupo si falta, o dejarlos en blanco
-					foreach ($grupos as $grupo => $parejas){
-						if(sizeof($parejas) < $numSeleccionadosPorGrupo){
-							$mensajeCategoria = "No hay suficientes usuarios para hacer la fase de cuartos de " . explode(":", $categoria)[1] .  ", abortando";
-							break;
-						}
-						usort($parejas, array($this, "usortCustom"));
-						for($i = 0; $i < $numSeleccionadosPorGrupo; $i++){
-							$seleccionados[$contadorSeleccion++] = $parejas[$i];
-						}
-					}
-					usort($seleccionados, array($this, "usortCustom"));
-					//Hora de generar los enfrentamientos
-					if(sizeof($seleccionados) != $cuartos){
-						$mensajeCategoria = "Error al seleccionar a los deportistas que pasan de grupos";
-					}else{
-						var_dump($seleccionados);
-						for($i = 0; $i < sizeof($seleccionados)/2; $i++){
-							$Pareja1 = $seleccionados[$i][$this->stringCodPareja];
-							$Pareja2 = $seleccionados[sizeof($seleccionados) - $i - 1][$this->stringCodPareja];
-							
-							$sql = $this->mysqli->prepare("	REPLACE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?,'0-0', '0-0', '0-0', ?)");
-							$sql->bind_param("issi", $CampeonatoCategoria, $Pareja1, $Pareja2, $this->codCuartos);
-							
-							$enfrentamientoInsertado = $sql->execute();
-							
-							if($enfrentamientoInsertado){
-								$mensajeCategoria = $mensajeCategoria . "Enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . " generado con éxito</br>";
-							}else{
-								$mensajeCategoria = $mensajeCategoria . "Error al generar el enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . "</br>";
+			if($continuarGeneracion->fetch_row()[0] > 4){
+				$mensajeCategoria = "Ya se han generado las semifinales del campeonato, no puedes volver a generar los cuartos.
+									 Si quieres volver a hacer el campeonato, elimina las semifinales y la final y vuelve a GENERARCUARTOS</br>";
+				$respuesta[$categoria] = $mensajeCategoria;
+			}else{
+				$sql = $this->mysqli->prepare("	SELECT COUNT(DISTINCT enfrentamiento.nombre) FROM enfrentamiento WHERE CampeonatoCategoria = ? AND nombre IS NOT NULL");
+				$sql->bind_param("i", $CampeonatoCategoria);
+				$sql->execute();
+			
+				$numGrupos = $sql->get_result()->fetch_row()[0];
+				
+				if($numGrupos != 0){
+					//Coger ceiling(8/(numGrupos)) jugadores por grupo y poner por puntos del 1º al 8º, a partir de ahí generar los cuartos
+					//var_dump(ceil(floatval(8)/floatval(3)));
+					$numSeleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
+				
+					if(!is_string($grupos)){
+						//Aquí habría que poner una condición de que cada grupo tenga suficiente gente, o coger de otro grupo si falta, o dejarlos en blanco
+						foreach ($grupos as $grupo => $parejas){
+							if(sizeof($parejas) < $numSeleccionadosPorGrupo){
+								$mensajeCategoria = "No hay suficientes usuarios para hacer la fase de cuartos de " . explode(":", $categoria)[1] .  ", abortando";
+								break;
+							}
+							usort($parejas, array($this, "usortCustom"));
+							for($i = 0; $i < $numSeleccionadosPorGrupo; $i++){
+								$seleccionados[$contadorSeleccion++] = $parejas[$i];
 							}
 						}
+						usort($seleccionados, array($this, "usortCustom"));
+						//Hora de generar los enfrentamientos
+						if(sizeof($seleccionados) < $cuartos){
+							$mensajeCategoria = "Error al seleccionar a los deportistas que pasan de grupos";
+						}else{
+							$sql = $this->mysqli->prepare("	DELETE FROM Enfrentamiento WHERE CampeonatoCategoria = ? AND SegundaRonda <> 0");
+							$sql->bind_param("i", $CampeonatoCategoria);
+							$sql->execute();
+							
+							for($i = 0; $i < $cuartos/2; $i++){
+								$Pareja1 = $seleccionados[$i][$this->stringCodPareja];
+								$Pareja2 = $seleccionados[$cuartos - $i - 1][$this->stringCodPareja];
+								
+								$sql = $this->mysqli->prepare("	REPLACE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?,'0-0', '0-0', '0-0', ?)");
+								$sql->bind_param("issi", $CampeonatoCategoria, $Pareja1, $Pareja2, $this->codCuartos);
+								
+								$enfrentamientoInsertado = $sql->execute();
+								
+								if($enfrentamientoInsertado){
+									$mensajeCategoria = $mensajeCategoria . "Enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . " generado con éxito</br>";
+								}else{
+									$mensajeCategoria = $mensajeCategoria . "Error al generar el enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . "</br>";
+								}
+							}
+						}
+					}else{
+						$mensajeCategoria = $grupos;
+					}
+					
+					if($mensajeCategoria === ''){
+						$mensajeCategoria = "Fase de cuartos generada sin problemas";
 					}
 				}else{
-					$mensajeCategoria = $grupos;
+					if(!is_string($grupos)){
+						$mensajeCategoria = "No se ha generado el calendario del campeonato";
+					}else{
+						$mensajeCategoria = $grupos;
+					}
 				}
 				
-				if($mensajeCategoria === ''){
-					$mensajeCategoria = "Fase de cuartos generada sin problemas";
-				}
-			}else{
-				if(!is_string($grupos)){
-					$mensajeCategoria = "No se ha generado el calendario del campeonato";
-				}else{
-					$mensajeCategoria = $grupos;
-				}
+				$respuesta[$categoria] = $mensajeCategoria;
 			}
-			
-			$respuesta[$categoria] = $mensajeCategoria;
 		}
 		
 		return $respuesta;

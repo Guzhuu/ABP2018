@@ -207,7 +207,6 @@ switch ($_REQUEST['submit']){
 				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 			}else{
 				$mensaje = "";
-				var_dump($respuesta);
 				foreach(array_keys($respuesta) as $categoria){
 					if($respuesta[$categoria] === ""){
 						$mensaje = $mensaje . "</br>" . $categoria . ":</br>" . "Cuartos generados sin problemas";
