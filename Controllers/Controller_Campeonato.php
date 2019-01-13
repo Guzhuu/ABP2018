@@ -24,6 +24,7 @@
 	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
 	include '../Modelos/Pareja.php';
 	include '../Views/Campeonato/Campeonato_CLASIFICACION.php';
+	include '../Views/Campeonato/Campeonato_CLASIFICACIONFINAL.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -228,7 +229,7 @@ switch ($_REQUEST['submit']){
 			if(is_string($respuesta)){
 				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 			}else{
-				new Campeonato_CLASIFICACION($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+				new Campeonato_CLASIFICACIONFINAL($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 			}
 		}
 		break;

@@ -9,9 +9,11 @@ class Campeonato
   var $mysqli;
     
 	var $codCuartos = 4;
+	var $codTercerCuartoPuesto = 3;
 	var $codSemis = 2;
 	var $codFinal = 1;
 	var $stringCodPareja = "codPareja";
+	var $stringPosicion = "Posicion";
 
 	function __construct($Campeonato,$FechaInicio,$FechaFinal,$Nombre)
   {   
@@ -501,7 +503,6 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				
 				if($numGrupos != 0){
 					//Coger ceiling(8/(numGrupos)) jugadores por grupo y poner por puntos del 1º al 8º, a partir de ahí generar los cuartos
-					//var_dump(ceil(floatval(8)/floatval(3)));
 					$numSeleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
 				
 					if(!is_string($grupos)){
@@ -563,22 +564,157 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		return $respuesta;
 	}
 	
-	function usortCustom($a, $b){
-		$strJugados = "Jugados";
-		$strPuntos = "Puntos";
-		if ($a[$strPuntos] == $b[$strPuntos]) {
-			if ($a[$strJugados] == $b[$strJugados]) {
-				return 0;
+	function RANKINGFINAL(){
+		$stringCapitan = "Capitan";
+		$stringCompanhero = "Companhero";
+		
+		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
+										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
+		$sql->bind_param("i", $this->Campeonato);
+		$sql->execute();
+    
+		$categorias = $sql->get_result();
+		
+		$respuesta = array();
+		
+		while($categoria = $categorias->fetch_row()){
+			$mensajeCategoria = "";
+			$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.nombre, Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set2, 
+												Enfrentamiento.SegundaRonda
+											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ? AND Enfrentamiento.SegundaRonda <> 0");
+			$sql->bind_param("i", $categoria[0]);
+			$sql->execute();
+		
+			$partidos = $sql->get_result();
+			
+			if($partidos->num_rows == 0){
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se ha finalizado la fase de grupos";
+			}else if($partidos->num_rows < 7){
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se han jugado todos los partidos de la segunda fase del torneo";
 			}else{
-				return ($a[$strJugados] < $b[$strJugados]) ? 1 : -1;
+				$partidos = $partidos->fetch_all();
+				$arrayCategoria = array();
+				usort($partidos, array($this, "usortSegundaRonda"));
+				
+				for($i = 0; $i < sizeof($partidos); $i++){
+					$mensajeCategoria = "";
+					if(!array_key_exists($partidos[$i][1], $arrayCategoria)){
+						$arrayCategoria[$partidos[$i][1]] = array();
+						$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 0;
+						
+						$DNI_Capitan = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Capitan = Deportista.DNI");
+						$DNI_Capitan->bind_param("s", $partidos[$i][1]);
+						$DNI_Capitan->execute();
+					
+						$DNI_Capitan_result = $DNI_Capitan->get_result();
+						
+						
+						if($DNI_Capitan_result->num_rows == 1){
+							$fila = $DNI_Capitan_result->fetch_row();
+							$arrayCategoria[$partidos[$i][1]][$stringCapitan] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$stringCapitan] = substr($partidos[$i][1], 0, 9);
+						}
+						
+						$DNI_Companhero = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Companhero = Deportista.DNI");
+						$DNI_Companhero->bind_param("s", $partidos[$i][1]);
+						$DNI_Companhero->execute();
+					
+						$DNI_Companhero_result = $DNI_Companhero->get_result();
+						
+						if($DNI_Companhero_result->num_rows == 1){
+							$fila = $DNI_Companhero_result->fetch_row();
+							$arrayCategoria[$partidos[$i][1]][$stringCompanhero] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$stringCompanhero] = substr($partidos[$i][1], 9, 18);
+						}
+					}
+					
+					if(!array_key_exists($partidos[$i][2], $arrayCategoria)){
+						$arrayCategoria[$partidos[$i][2]] = array();
+						$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 0;
+						
+						$DNI_Capitan = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Capitan = Deportista.DNI");
+						$DNI_Capitan->bind_param("s", $partidos[$i][2]);
+						$DNI_Capitan->execute();
+					
+						$DNI_Capitan_result = $DNI_Capitan->get_result();
+						
+						if($DNI_Capitan_result->num_rows == 1){
+							$fila = $DNI_Capitan_result->fetch_row();
+							$arrayCategoria[$partidos[$i][2]][$stringCapitan] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][2]][$stringCapitan] = substr($partidos[$i][2], 0, 9);
+						}
+						
+						$DNI_Companhero = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Companhero = Deportista.DNI");
+						$DNI_Companhero->bind_param("s", $partidos[$i][2]);
+						$DNI_Companhero->execute();
+					
+						$DNI_Companhero_result = $DNI_Companhero->get_result();
+						
+						if($DNI_Companhero_result->num_rows == 1){
+							$fila = $DNI_Companhero_result->fetch_row();
+							$arrayCategoria[$partidos[$i][2]][$stringCompanhero] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][2]][$stringCompanhero] = substr($partidos[$i][2], 9, 18);
+						}
+					}
+					
+					if($partidos[$i][6] == 1){
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 1;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 1;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
+						}
+					}else if($partidos[$i][6] == 2){
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}
+					}else if($partidos[$i][6] == 3){
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 3;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 3;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}
+					}else{
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 8;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 8;
+						}
+					}
+				}
+				if(empty($arrayCategoria)){
+					$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos de segunda ronda o no se han jugado para la categoría";
+				}else{
+					$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = $arrayCategoria;
+				}
 			}
 		}
-		
-		return ($a[$strPuntos] < $b[$strPuntos]) ? 1 : -1;
-	}
-	
-	function RANKINGFINAL(){
-		return "Debe comprobar si se ha acabado el campeonato (se ha jugado la final, es decir, tiene un resultado) y generar un top 8 de los cuartos con formato igual al de ranking grupos por favor";
+		return $respuesta;
 	}
 	
 	function RANKINGGRUPOS(){
@@ -718,6 +854,29 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		}
 		
 		return $array;
+	}
+	
+	function usortCustom($a, $b){
+		$strJugados = "Jugados";
+		$strPuntos = "Puntos";
+		if ($a[$strPuntos] == $b[$strPuntos]) {
+			if ($a[$strJugados] == $b[$strJugados]) {
+				return 0;
+			}else{
+				return ($a[$strJugados] < $b[$strJugados]) ? 1 : -1;
+			}
+		}
+		
+		return ($a[$strPuntos] < $b[$strPuntos]) ? 1 : -1;
+	}
+	
+	function usortSegundaRonda($a, $b){
+		$posSegundaRonda = 6;
+		if ($a[$posSegundaRonda] == $b[$posSegundaRonda]) {
+			return 0;
+		}
+		
+		return ($a[$posSegundaRonda] < $b[$posSegundaRonda]) ? 1 : -1;
 	}
 
 }

@@ -14,9 +14,10 @@ class Enfrentamiento
   var $mysqli;
   //CampeonatoCategoria,Pareja1,Pareja2,set1,set2,set3
   
-  var $codCuartos = 4;
-  var $codSemis = 2;
-  var $codFinal = 1;
+	var $codCuartos = 4;
+	var $codTercerCuartoPuesto = 3;
+	var $codSemis = 2;
+	var $codFinal = 1;
    
 
 	function __construct($Enfrentamiento,$Nombre,$CampeonatoCategoria,$Pareja1,$Pareja2,$set1,$set2,$set3)
@@ -252,25 +253,41 @@ public function getSet1() {
 		}else if($resultado->num_rows != 2){
 			return '';
 		}else{
-			$sqlParejas = array();
-			$sqlCount = 0;
+			$sqlGanadores = array();
+			$sqlPerdedores = array();
+			$sqlGanadoresCount = 0;
+			$sqlPerdedoresCount = 0;
 			while($fila = $resultado->fetch_row()){
 				if($this->acabado($fila)){
-					$sqlParejas[$sqlCount++] = $this->ganador($fila);
+					$Ganador = $this->ganador($fila);
+					$Perdedor = "";
+					if($Ganador === $fila[0]){
+						$Perdedor = $fila[1];
+					}else{
+						$Perdedor = $fila[0];
+					}
+					$sqlGanadores[$sqlGanadoresCount++] = $Ganador;
+					$sqlPerdedores[$sqlPerdedoresCount++] = $Perdedor;
 				}else{
 					return 'El resultado entre ' . $fila[0] . ' y ' . $fila[1] . ' está mal (' . $fila[3] . ' ' . $fila[4] . ' ' . $fila[5] . ')';
 				}
 			}
 			
-			for($i = 0; $i < 1; $i++){
-				$sql = $this->mysqli->prepare("	INSERT IGNORE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?, '0-0', '0-0', '0-0', ?)");
-				$sql->bind_param("issi", $this->CampeonatoCategoria, $sqlParejas[$i], $sqlParejas[sizeof($sqlParejas) - $i - 1], $this->codFinal);
-				if($sql->execute()){
-					$mensajeRetorno = $mensajeRetorno . "Se ha generado la final entre " . $sqlParejas[$i] . ' y ' . $sqlParejas[sizeof($sqlParejas) - $i - 1] . "</br>";
-				}else{
-					$mensajeRetorno = "Error al generar el enfrentamiento entre " . $sqlParejas[$i] . ' y ' . $sqlParejas[sizeof($sqlParejas) - $i - 1] . "</br>";
-					break;
-				}
+			$sql = $this->mysqli->prepare("	INSERT IGNORE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?, '0-0', '0-0', '0-0', ?)");
+			$sql->bind_param("issi", $this->CampeonatoCategoria, $sqlGanadores[0], $sqlGanadores[sizeof($sqlGanadores) - 0 - 1], $this->codFinal);
+			if($sql->execute()){
+				$mensajeRetorno = $mensajeRetorno . "Se ha generado la final entre " . $sqlGanadores[0] . ' y ' . $sqlGanadores[sizeof($sqlGanadores) - 0 - 1] . "</br>";
+			}else{
+				$mensajeRetorno = "Error al generar el enfrentamiento entre " . $sqlGanadores[0] . ' y ' . $sqlGanadores[sizeof($sqlGanadores) - 0 - 1] . "</br>";
+				return $mensajeRetorno;
+			}
+			
+			$sql = $this->mysqli->prepare("	INSERT IGNORE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?, '0-0', '0-0', '0-0', ?)");
+			$sql->bind_param("issi", $this->CampeonatoCategoria, $sqlPerdedores[0], $sqlPerdedores[sizeof($sqlPerdedores) - 0 - 1], $this->codTercerCuartoPuesto);
+			if($sql->execute()){
+				$mensajeRetorno = $mensajeRetorno . "Se ha generado el tercer-cuarto puesto entre " . $sqlPerdedores[0] . ' y ' . $sqlPerdedores[sizeof($sqlPerdedores) - 0 - 1] . "</br>";
+			}else{
+				$mensajeRetorno = "Error al generar el enfrentamiento entre " . $sqlPerdedores[0] . ' y ' . $sqlPerdedores[sizeof($sqlPerdedores) - 0 - 1] . "</br>";
 			}
 		}
 		return $mensajeRetorno;
