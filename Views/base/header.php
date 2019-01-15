@@ -62,38 +62,53 @@
 		/************************************************************************HEADER USUARIO*******************************************************************************************/
 		?>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Reserva.php">Reservar pista</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=PERFIL">Mi perfil</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Reserva.php?submit=VERRESERVAS">Mis reservas</a>
+				<div class="dropdown nav-link">
+				  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="vertical-align: middle">
+					Reservas
+				  </button>
+				  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					  <a class="nav-link text-nowrap" href="../Controllers/Controller_Reserva.php">Reservar pista</a>
+					  <a class="nav-link text-nowrap" href="../Controllers/Controller_Reserva.php?submit=VERRESERVAS">Mis reservas</a>
+				  </div>
+				</div>
+			</li>
+			<li class="nav-item">
+				<div class="dropdown nav-link">
+				  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="vertical-align: middle">
+					Clases
+				  </button>
+				  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					<?php
+					if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
+						?>
+						<li class="nav-item">
+						  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php">Agenda de clases</a>
+						</li>
+						<?php
+					}
+					?>
+				  	<a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=APUNTARSE">Apuntarse a clases</a>
+					<a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=MISCLASES">Ver clases</a>
+				  </div>
+				</div>
 			</li>
 			<li class="nav-item">
 			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Pareja.php">Mis parejas</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Deportista.php?submit=PERFIL">Mi perfil</a>
+				<div class="dropdown nav-link">
+				  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="vertical-align: middle">
+					Campeonatos
+				  </button>
+				  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=ESCOGERPAREJA">Inscribirse a un campeonato</a>
+					  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=SHOWALLFORUSER">Ver Campeonatos</a>
+				  </div>
+				</div>
 			</li>
-			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=ESCOGERPAREJA">Inscribirse a un campeonato</a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=MISCLASES">Ver clases</a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=APUNTARSE">Apuntarse a clases</a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=SHOWALLFORUSER">Ver Campeonatos</a>
-			</li>
-			<?php
-			if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
-				?>
-				<li class="nav-item">
-				  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php">Agenda de clases</a>
-				</li>
-				<?php
-			}
-			?>
 			<li class="nav-item">
 			  <a class="nav-link text-nowrap" href="../Functions/Desconectar.php">Desconectarse</a>
 			</li>
