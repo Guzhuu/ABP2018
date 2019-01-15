@@ -151,7 +151,7 @@ class Clase{
 			}
 			
 			if(!$resultado){
-				//return 'Ha fallado la actualización de clase';
+				return 'Ha fallado la actualización de clase';
 			}else{
 				return 'Actualización correcta de la clase';
 			}
@@ -206,12 +206,13 @@ class Clase{
 	}
 	
 	function DETALLES(){
-		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, Deportista.Nombre, Deportista.Apellidos clase.Curso, clase.Particulares,
+		$sql = $this->mysqli->prepare("	SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, Deportista.Nombre, Deportista.Apellidos, clase.Curso, clase.Particulares,
 												horario.HoraInicio, horario.HoraFin, pista.nombre 
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista, Deportista
 										WHERE 	clase.Clase = ? AND clase.Reserva_Reserva = reserva.Reserva
-												reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = horario.Horario 
+												AND reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = horario.Horario 
 												AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista AND clase.codigoEscuela = escuela.codigoEscuela
+												AND clase.Entrenador = Deportista.DNI
 										ORDER BY Curso");
 		$sql->bind_param("i", $this->Clase);
 		$sql->execute();

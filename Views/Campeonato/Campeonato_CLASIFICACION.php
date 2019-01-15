@@ -41,7 +41,7 @@ class Campeonato_CLASIFICACION{
 			echo "<tr class='trPar'>";
 				echo "<td>";
 					foreach ($this->Cuadro as $categoria => $grupos){
-						echo "<center><h1><b>" . $categoria . "</b></h1></center>"; //TODO: M a masculino, F a ...
+						echo "<center><h1><b>" . explode(":", $categoria)[1] . "</b></h1></center>"; //TODO: M a masculino, F a ...
 						echo '</br>';
 						
 						if(!is_string($grupos)){
@@ -85,7 +85,7 @@ class Campeonato_CLASIFICACION{
 						}else{
 							echo '</br>';
 							echo '</br>';
-							echo "<center>" . $grupos . ' <b>' . $categoria . "</b></center>";
+							echo "<center>" . $grupos . ' <b>' . explode(":", $categoria)[1] . "</b></center>";
 							echo '</br>';
 							echo '</br>';
 						}
@@ -95,7 +95,9 @@ class Campeonato_CLASIFICACION{
 			
 			echo "<tr class='trImpar'>";
 				echo "<td class='mensaje'>";
-				echo "<a href="; echo $this->retorno; echo '><button class="btn btn-secondary">Volver</button></a></td>';
+				echo '</br>';
+				echo "<a href="; echo $this->retorno; echo '><button class="btn btn-secondary"><h2>Volver</h2></button></a></td>';
+				echo '</br>';
 				echo "</td>";
 			echo "</tr>";
 		echo "</table>";

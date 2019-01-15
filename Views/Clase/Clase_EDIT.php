@@ -1,24 +1,35 @@
 <?php
 /* 
-	Vista para editar un pista
+	Vista para editar una clase
 */
 	
 class Clase_EDIT{  // declaración de clase
-	var $pista;
+	var $clase;
 	var $campos;
 	var $controller;
 	var $Volver = 'Volver';
 	var $submit = 'EDIT';
+	
+	var $Escuelas;
+	var $Cursos;
 
 	// declaración constructor de la clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
-	function __construct($pista){
-		$this->pista = $pista;
+	function __construct($clase, $Escuelas, $Cursos, $Entrenadores){
+		$this->clase = $clase;
 		$this->campos = array(
-					"nombre" => "Nombre de la pista");
+					"Clase" => "Clase",
+					"Reserva_Reserva" => "Codigo de la reserva",
+					"codigoEscuela" => "Escuela",
+					"Entrenador" => "Entrenador",
+					"Curso" => "Curso",
+					"Particulares" => "Clases particulares");
 		$this->controller = 'Controller_Clase.php';
+		$this->Escuelas = $Escuelas;
+		$this->Cursos = $Cursos;
+		$this->Entrenadores = $Entrenadores;
 		$this->toString();
-	} // fin del constructor
+	}
 	
 	function _getTr($i){
 		if($i % 2){
@@ -35,16 +46,83 @@ class Clase_EDIT{  // declaración de clase
 		/*Tabla para el formulario*/
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioEdit" name="formularioEdit" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
-			echo '<input type="hidden" name="codigoClase" value="'; echo $this->pista->codigoClase; echo '">';
-			/*Fila para nombre*/
+				echo '<input type="hidden" name="Clase" readonly value="'; echo $this->clase->_getClase(); echo '">';
+				echo '<input type="hidden" name="Reserva_Reserva" readonly value="'; echo $this->clase->_getReserva(); echo '">';
+		
+			/*Fila para codigoEscuela*/
 			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
-					echo $this->campos['nombre'];
+					echo $this->campos['codigoEscuela'];
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="text" name="nombre" value="'; echo $this->pista->nombre; echo '">';
-					echo '</input>';
+					echo '<select name="codigoEscuela">';
+					for($j = 0; $j < count($this->Escuelas); $j++){
+						echo '<option value="'; echo $this->Escuelas[$j][0]; echo '" '; if($this->clase->_getEscuela() == $this->Escuelas[$j][0]){echo 'selected';} echo '">'; echo $this->Escuelas[$j][1]; echo '</option>';
+					}
+					echo '</select>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			 
+			if(isAdmin()){
+				/*Fila para Entrenador*/
+				echo '<tr class="'; echo $this->_getTr($i); echo '">';
+					echo '<td class="formularioTd">';
+						echo $this->campos['Entrenador'];
+					echo '</td>';
+					
+					echo '<td class="formularioTd">';
+						if(isAdmin()){
+							echo '<select name="Entrenador">';
+							for($j = 0; $j < count($this->Entrenadores); $j++){
+								echo '<option value="'; echo $this->Entrenadores[$j][0]; echo '" '; if($this->clase->_getEntrenador() == $this->Entrenadores[$j][0]){echo ' selected ';} echo '">'; echo $this->Entrenadores[$j][0]; echo '</option>';
+							}
+							echo '</select>';
+						}else{
+							echo '<input type="text" name="Entrenador" readonly value="'; echo $_SESSION['DNI']; echo '">';
+						}
+						echo '</input>';
+					echo '</td>';
+				echo '</tr>';
+				$i++;
+			}else{
+				echo '<input type="hidden" name="Entrenador" readonly value="'; echo $_SESSION['DNI']; echo '">';
+			}
+
+			/*Fila para Curso*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Curso'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<input list="cursos" name="Curso" value="'; echo $this->clase->_getCurso(); echo '">';
+					echo '<datalist id="cursos">';
+					for($j = 0; $j < count($this->Cursos); $j++){
+						echo '<option value="'; echo $this->Cursos[$j][0]; echo '">';
+					}
+					echo '</datalist>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+		
+			/*Fila para Particulares*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['Particulares'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<select name="Particulares">';
+						if($this->clase->_getParticulares()){
+							echo '<option value="0">No</option>';
+							echo '<option value="1" selected>Sí</option>';
+						}else{
+							echo '<option value="0" selected>No</option>';
+							echo '<option value="1">Sí</option>';
+						}
+					echo '</select>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;

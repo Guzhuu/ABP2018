@@ -8,6 +8,12 @@ class Campeonato
   var $Nombre;
   var $mysqli;
     
+	var $codCuartos = 4;
+	var $codTercerCuartoPuesto = 3;
+	var $codSemis = 2;
+	var $codFinal = 1;
+	var $stringCodPareja = "codPareja";
+	var $stringPosicion = "Posicion";
 
 	function __construct($Campeonato,$FechaInicio,$FechaFinal,$Nombre)
   {   
@@ -90,35 +96,35 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
   }
   
   
-  function EDIT(){//Para editar de la BD
-    if(($this->Campeonato == '')){
-      return 'Campeonato vacio, introduzca un nuevo campeonato';
-    }else{
-      $sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
-      $sql->bind_param("i", $this->Campeonato);
-      $sql->execute();
+	function EDIT(){//Para editar de la BD
+		if(($this->Campeonato == '')){
+			return 'Campeonato vacio, introduzca un nuevo campeonato';
+		}else{
+			$sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE Campeonato = ?");
+			$sql->bind_param("i", $this->Campeonato);
+			$sql->execute();
       
-      $resultado = $sql->get_result();
+			$resultado = $sql->get_result();
       
-      if(!$resultado){
-        return 'No se ha podido conectar con la BD';
-      }else if($resultado->num_rows == 1){
-        $sql = $this->mysqli->prepare("UPDATE Campeonato SET FechaInicio = ?, FechaFinal = ?, Nombre = ?  WHERE Campeonato = ?");
-        $sql->bind_param("sssi",  $this->FechaInicio, $this->FechaFinal, $this->Nombre, $this->Campeonato );
-        $sql->execute();
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows == 1){
+				$sql = $this->mysqli->prepare("UPDATE Campeonato SET FechaInicio = ?, FechaFinal = ?, Nombre = ?  WHERE Campeonato = ?");
+				$sql->bind_param("sssi",  $this->FechaInicio, $this->FechaFinal, $this->Nombre, $this->Campeonato );
+				$sql->execute();
       
-        $resultado = $sql->execute();
+				$resultado = $sql->execute();
         
-        if(!$resultado){
-          return 'Ha fallado la actualización del campeonato';
-        }else{
-          return 'Modificado correcto';
-        }
-      }else{
-        return 'el campeonato no existe en la base de datos';
-      }
-    }
-  }
+				if(!$resultado){
+				return 'Ha fallado la actualización del campeonato';
+			}else{
+				return 'Modificado correcto';
+				}
+			}else{
+				return 'el campeonato no existe en la base de datos';
+			}
+		}
+	}
   
    function SEARCH(){
     $sql = $this->mysqli->prepare("SELECT * FROM Campeonato WHERE ((Campeonato LIKE ?) AND (FechaInicio LIKE ?) AND (FechaFinal LIKE ?) AND (Nombre LIKE ?))"); //No funciona
@@ -198,49 +204,83 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	}
   
 	function ADDCATEGORIA($Categoria){
-		$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
-		$sql->bind_param("ii", $this->Campeonato, $Categoria);
+		$sql = $this->mysqli->prepare("SELECT Comenzado FROM Campeonato WHERE Campeonato.Campeonato = ?");
+		$sql->bind_param("i", $this->Campeonato);
 		$sql->execute();
     
 		$resultado = $sql->get_result();
-    
+		
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
-		}else if($resultado->num_rows != 0){
-			return 'El campeonato ya tiene asociada la categoria';
+		}else if($resultado->num_rows != 1){
+			return 'No se ha encontrado el campeonato';
 		}else{
-			$sql = $this->mysqli->prepare("INSERT INTO campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria) VALUES (?, ?)");
-			$sql->bind_param("ii", $this->Campeonato, $Categoria);
-			$resultado = $sql->execute();
+			$fila = $resultado->fetch_row();
+			if($fila[0] == 1){
+				return 'El campeonato ya ha comenzado, no puedes añadir una categoría';
+			}
 			
-			if($resultado){
-				return 'Categoría añadida con éxito';
+			$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+			$sql->bind_param("ii", $this->Campeonato, $Categoria);
+			$sql->execute();
+		
+			$resultado = $sql->get_result();
+		
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows != 0){
+				return 'El campeonato ya tiene asociada la categoria';
 			}else{
-				return 'Error al añadir la categoría al campeonato';
+				$sql = $this->mysqli->prepare("INSERT INTO campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria) VALUES (?, ?)");
+				$sql->bind_param("ii", $this->Campeonato, $Categoria);
+				$resultado = $sql->execute();
+				
+				if($resultado){
+					return 'Categoría añadida con éxito';
+				}else{
+					return 'Error al añadir la categoría al campeonato';
+				}
 			}
 		}
 	}
   
 	function QUITARCATEGORIA($Categoria){
-		$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
-		$sql->bind_param("ii", $this->Campeonato, $Categoria);
+		$sql = $this->mysqli->prepare("SELECT Comenzado FROM Campeonato WHERE Campeonato.Campeonato = ?");
+		$sql->bind_param("i", $this->Campeonato);
 		$sql->execute();
     
 		$resultado = $sql->get_result();
-    
+		
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
-		}else if($resultado->num_rows == 0){
-			return 'El campeonato no tiene la categoría';
+		}else if($resultado->num_rows != 1){
+			return 'No se ha encontrado el campeonato';
 		}else{
-			$sql = $this->mysqli->prepare("DELETE FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
-			$sql->bind_param("ii", $this->Campeonato, $Categoria);
-			$resultado = $sql->execute();
+			$fila = $resultado->fetch_row();
+			if($fila[0] == 1){
+				return 'El campeonato ya ha comenzado, no puedes quitar una categoría';
+			}
 			
-			if($resultado){
-				return 'Categoría eliminada con éxito';
+			$sql = $this->mysqli->prepare("SELECT * FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+			$sql->bind_param("ii", $this->Campeonato, $Categoria);
+			$sql->execute();
+		
+			$resultado = $sql->get_result();
+		
+			if(!$resultado){
+				return 'No se ha podido conectar con la BD';
+			}else if($resultado->num_rows == 0){
+				return 'El campeonato no tiene la categoría';
 			}else{
-				return 'Error al eliminar la categoría del campeonato';
+				$sql = $this->mysqli->prepare("DELETE FROM campeonato_consta_de_categorias WHERE Campeonato_Campeonato = ? AND Categoria_Categoria = ?");
+				$sql->bind_param("ii", $this->Campeonato, $Categoria);
+				$resultado = $sql->execute();
+				
+				if($resultado){
+					return 'Categoría eliminada con éxito';
+				}else{
+					return 'Error al eliminar la categoría del campeonato';
+				}
 			}
 		}
 	}
@@ -413,7 +453,271 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		return $respuesta;
 	}
 	
-	function GENERARRANKING(){
+	function acabado($fila){
+		$set1 = explode('-', $fila[3]);
+		$set2 = explode('-', $fila[4]);
+		$set3 = explode('-', $fila[5]);
+		if(($set1[0] === '6' || $set1[1] === '6') && ($set2[0] === '6' || $set2[1] === '6') && ($set3[0] === '6' || $set3[1] === '6')){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	function GENERARCUARTOS(){
+		$cuartos = 8;
+		$stringCuartos = "Cuartos";
+		$stringJugados = "Jugados";
+		$stringGanados = "Ganados";
+		$stringPerdidos = "Perdidos";
+		$stringPuntos = "Puntos";
+		$stringCapitan = "Capitan";
+		$stringCompanhero = "Companhero";
+		
+		$respuesta = array();
+		
+		$categorias = $this->RANKINGGRUPOS();
+		
+		foreach ($categorias as $categoria => $grupos){
+			$mensajeCategoria = "";
+			$seleccionados = array();
+			$contadorSeleccion = 0;
+		
+			$sql = $this->mysqli->prepare("	SELECT COUNT(*) FROM Enfrentamiento WHERE CampeonatoCategoria = ? AND SegundaRonda <> 0");
+			$CampeonatoCategoria = intval(explode(":", $categoria)[0]);
+			$sql->bind_param("i", $CampeonatoCategoria);
+			$sql->execute();
+			
+			$continuarGeneracion = $sql->get_result();
+			
+			if($continuarGeneracion->fetch_row()[0] > 4){
+				$mensajeCategoria = "Ya se han generado las semifinales del campeonato, no puedes volver a generar los cuartos.
+									 Si quieres volver a hacer el campeonato, elimina las semifinales y la final y vuelve a GENERARCUARTOS</br>";
+				$respuesta[$categoria] = $mensajeCategoria;
+			}else{
+				$sql = $this->mysqli->prepare("	SELECT COUNT(DISTINCT enfrentamiento.nombre) FROM enfrentamiento WHERE CampeonatoCategoria = ? AND nombre IS NOT NULL");
+				$sql->bind_param("i", $CampeonatoCategoria);
+				$sql->execute();
+			
+				$numGrupos = $sql->get_result()->fetch_row()[0];
+				
+				if($numGrupos != 0){
+					//Coger ceiling(8/(numGrupos)) jugadores por grupo y poner por puntos del 1º al 8º, a partir de ahí generar los cuartos
+					$numSeleccionadosPorGrupo = intval(ceil(floatval($cuartos)/floatval($numGrupos)));
+				
+					if(!is_string($grupos)){
+						//Aquí habría que poner una condición de que cada grupo tenga suficiente gente, o coger de otro grupo si falta, o dejarlos en blanco
+						foreach ($grupos as $grupo => $parejas){
+							if(sizeof($parejas) < $numSeleccionadosPorGrupo){
+								$mensajeCategoria = "No hay suficientes usuarios para hacer la fase de cuartos de " . explode(":", $categoria)[1] .  ", abortando";
+								break;
+							}
+							usort($parejas, array($this, "usortCustom"));
+							for($i = 0; $i < $numSeleccionadosPorGrupo; $i++){
+								$seleccionados[$contadorSeleccion++] = $parejas[$i];
+							}
+						}
+						usort($seleccionados, array($this, "usortCustom"));
+						//Hora de generar los enfrentamientos
+						if(sizeof($seleccionados) < $cuartos){
+							$mensajeCategoria = "Error al seleccionar a los deportistas que pasan de grupos";
+						}else{
+							$sql = $this->mysqli->prepare("	DELETE FROM Enfrentamiento WHERE CampeonatoCategoria = ? AND SegundaRonda <> 0");
+							$sql->bind_param("i", $CampeonatoCategoria);
+							$sql->execute();
+							
+							for($i = 0; $i < $cuartos/2; $i++){
+								$Pareja1 = $seleccionados[$i][$this->stringCodPareja];
+								$Pareja2 = $seleccionados[$cuartos - $i - 1][$this->stringCodPareja];
+								
+								$sql = $this->mysqli->prepare("	REPLACE INTO Enfrentamiento (CampeonatoCategoria, Pareja1, Pareja2, set1, set2, set3, SegundaRonda) VALUES (?, ?, ?,'0-0', '0-0', '0-0', ?)");
+								$sql->bind_param("issi", $CampeonatoCategoria, $Pareja1, $Pareja2, $this->codCuartos);
+								
+								$enfrentamientoInsertado = $sql->execute();
+								
+								if($enfrentamientoInsertado){
+									$mensajeCategoria = $mensajeCategoria . "Enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . " generado con éxito</br>";
+								}else{
+									$mensajeCategoria = $mensajeCategoria . "Error al generar el enfrentamiento entre " . $Pareja1 . " y " . $Pareja2 . "</br>";
+								}
+							}
+						}
+					}else{
+						$mensajeCategoria = $grupos;
+					}
+					
+					if($mensajeCategoria === ''){
+						$mensajeCategoria = "Fase de cuartos generada sin problemas";
+					}
+				}else{
+					if(!is_string($grupos)){
+						$mensajeCategoria = "No se ha generado el calendario del campeonato";
+					}else{
+						$mensajeCategoria = $grupos;
+					}
+				}
+				
+				$respuesta[$categoria] = $mensajeCategoria;
+			}
+		}
+		
+		return $respuesta;
+	}
+	
+	function RANKINGFINAL(){
+		$stringCapitan = "Capitan";
+		$stringCompanhero = "Companhero";
+		
+		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
+										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
+		$sql->bind_param("i", $this->Campeonato);
+		$sql->execute();
+    
+		$categorias = $sql->get_result();
+		
+		$respuesta = array();
+		
+		while($categoria = $categorias->fetch_row()){
+			$mensajeCategoria = "";
+			$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.nombre, Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set2, 
+												Enfrentamiento.SegundaRonda
+											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ? AND Enfrentamiento.SegundaRonda <> 0");
+			$sql->bind_param("i", $categoria[0]);
+			$sql->execute();
+		
+			$partidos = $sql->get_result();
+			
+			if($partidos->num_rows == 0){
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se ha finalizado la fase de grupos";
+			}else if($partidos->num_rows < 7){
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se han jugado todos los partidos de la segunda fase del torneo";
+			}else{
+				$partidos = $partidos->fetch_all();
+				$arrayCategoria = array();
+				usort($partidos, array($this, "usortSegundaRonda"));
+				
+				for($i = 0; $i < sizeof($partidos); $i++){
+					$mensajeCategoria = "";
+					if(!array_key_exists($partidos[$i][1], $arrayCategoria)){
+						$arrayCategoria[$partidos[$i][1]] = array();
+						$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 0;
+						
+						$DNI_Capitan = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Capitan = Deportista.DNI");
+						$DNI_Capitan->bind_param("s", $partidos[$i][1]);
+						$DNI_Capitan->execute();
+					
+						$DNI_Capitan_result = $DNI_Capitan->get_result();
+						
+						
+						if($DNI_Capitan_result->num_rows == 1){
+							$fila = $DNI_Capitan_result->fetch_row();
+							$arrayCategoria[$partidos[$i][1]][$stringCapitan] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$stringCapitan] = substr($partidos[$i][1], 0, 9);
+						}
+						
+						$DNI_Companhero = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Companhero = Deportista.DNI");
+						$DNI_Companhero->bind_param("s", $partidos[$i][1]);
+						$DNI_Companhero->execute();
+					
+						$DNI_Companhero_result = $DNI_Companhero->get_result();
+						
+						if($DNI_Companhero_result->num_rows == 1){
+							$fila = $DNI_Companhero_result->fetch_row();
+							$arrayCategoria[$partidos[$i][1]][$stringCompanhero] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$stringCompanhero] = substr($partidos[$i][1], 9, 18);
+						}
+					}
+					
+					if(!array_key_exists($partidos[$i][2], $arrayCategoria)){
+						$arrayCategoria[$partidos[$i][2]] = array();
+						$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 0;
+						
+						$DNI_Capitan = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Capitan = Deportista.DNI");
+						$DNI_Capitan->bind_param("s", $partidos[$i][2]);
+						$DNI_Capitan->execute();
+					
+						$DNI_Capitan_result = $DNI_Capitan->get_result();
+						
+						if($DNI_Capitan_result->num_rows == 1){
+							$fila = $DNI_Capitan_result->fetch_row();
+							$arrayCategoria[$partidos[$i][2]][$stringCapitan] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][2]][$stringCapitan] = substr($partidos[$i][2], 0, 9);
+						}
+						
+						$DNI_Companhero = $this->mysqli->prepare("	SELECT Deportista.Nombre, Deportista.Apellidos FROM Deportista, Pareja WHERE Pareja.codPareja = ? AND Pareja.DNI_Companhero = Deportista.DNI");
+						$DNI_Companhero->bind_param("s", $partidos[$i][2]);
+						$DNI_Companhero->execute();
+					
+						$DNI_Companhero_result = $DNI_Companhero->get_result();
+						
+						if($DNI_Companhero_result->num_rows == 1){
+							$fila = $DNI_Companhero_result->fetch_row();
+							$arrayCategoria[$partidos[$i][2]][$stringCompanhero] = $fila[0] . " " . $fila[1];
+						}else{
+							$arrayCategoria[$partidos[$i][2]][$stringCompanhero] = substr($partidos[$i][2], 9, 18);
+						}
+					}
+					
+					if($partidos[$i][6] == 1){
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 1;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 1;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
+						}
+					}else if($partidos[$i][6] == 2){
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}
+					}else if($partidos[$i][6] == 3){
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 3;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 3;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+						}
+					}else{
+						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 8;
+						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
+						}else{
+							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
+							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 8;
+						}
+					}
+				}
+				if(empty($arrayCategoria)){
+					$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos de segunda ronda o no se han jugado para la categoría";
+				}else{
+					$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = $arrayCategoria;
+				}
+			}
+		}
+		return $respuesta;
+	}
+	
+	function RANKINGGRUPOS(){
 		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
 										WHERE Campeonato_Campeonato = ? AND campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria");
 		$sql->bind_param("i", $this->Campeonato);
@@ -425,7 +729,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		
 		while($categoria = $categorias->fetch_row()){
 			$sql = $this->mysqli->prepare("	SELECT Enfrentamiento.nombre, Enfrentamiento.Pareja1, Enfrentamiento.Pareja2, Enfrentamiento.set1, Enfrentamiento.set2, Enfrentamiento.set2
-											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ?");
+											FROM Enfrentamiento WHERE Enfrentamiento.CampeonatoCategoria = ? AND Enfrentamiento.nombre IS NOT NULL");
 			$sql->bind_param("i", $categoria[0]);
 			$sql->execute();
 		
@@ -443,10 +747,19 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				
 				//$ParejaX => array("Jugados" => x, "Ganados" => x, "Perdidos" => x, "Puntos" => x);
 				if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) < 0){
-					$arrayGrupo = $this->sumarEstadisticas($Pareja1, $Pareja2, $arrayGrupo);
+					if(!array_key_exists($Grupo, $arrayGrupo)){
+						$arrayGrupo[$Grupo] = array();
+					}
+					
+					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja1, $Pareja2, $arrayGrupo[$Grupo]);
 				}else if($this->ganadorDe($set1) + $this->ganadorDe($set2) + $this->ganadorDe($set3) > 0){
-					$arrayGrupo = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo);
+					if(!array_key_exists($Grupo, $arrayGrupo)){
+						$arrayGrupo[$Grupo] = array();
+					}
+					
+					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo[$Grupo]);
 				}else{
+					//Si se quisiera poner aquí se añadirían los deportistas apuntados pero que no han jugado ningún partido a la clasificación
 					if(!array_key_exists($Grupo, $arrayGrupo)){
 						$arrayGrupo[$Grupo] = array();
 					}
@@ -455,9 +768,9 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				}
 			}
 			if(empty($arrayGrupo)){
-				$respuesta[$categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos o no se han jugado para la categoría";
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No hay enfrentamientos o no se han jugado para la categoría";
 			}else{
-				$respuesta[$categoria[1] . ' ' . $categoria[2]] = $arrayGrupo;
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = $arrayGrupo;
 			}
 		}
 		return $respuesta;
@@ -507,6 +820,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				$fila = $DNI_Companhero->fetch_row();
 				$array[$Ganador][$stringCompanhero] = $fila[0] . ' ' . $fila[1];
 			}
+			$array[$Ganador][$this->stringCodPareja] = $Ganador;
 		}
 		
 		/**PERDEDOR**/
@@ -536,9 +850,33 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 				$fila = $DNI_Companhero->fetch_row();
 				$array[$Perdedor][$stringCompanhero] = $fila[0] . ' ' . $fila[1];
 			}
+			$array[$Perdedor][$this->stringCodPareja] = $Perdedor;
 		}
 		
 		return $array;
+	}
+	
+	function usortCustom($a, $b){
+		$strJugados = "Jugados";
+		$strPuntos = "Puntos";
+		if ($a[$strPuntos] == $b[$strPuntos]) {
+			if ($a[$strJugados] == $b[$strJugados]) {
+				return 0;
+			}else{
+				return ($a[$strJugados] < $b[$strJugados]) ? 1 : -1;
+			}
+		}
+		
+		return ($a[$strPuntos] < $b[$strPuntos]) ? 1 : -1;
+	}
+	
+	function usortSegundaRonda($a, $b){
+		$posSegundaRonda = 6;
+		if ($a[$posSegundaRonda] == $b[$posSegundaRonda]) {
+			return 0;
+		}
+		
+		return ($a[$posSegundaRonda] < $b[$posSegundaRonda]) ? 1 : -1;
 	}
 
 	function CATEGORIAS(){

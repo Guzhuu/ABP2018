@@ -30,7 +30,11 @@
 	include '../Modelos/Deportista.php';
 	include '../Modelos/Categoria.php';
 	include '../Views/Campeonato/Campeonato_CLASIFICACION.php';
+
 	include '../Views/Campeonato/Campeonato_INSCRITOS.php';
+
+	include '../Views/Campeonato/Campeonato_CLASIFICACIONFINAL.php';
+
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -217,7 +221,7 @@ switch ($_REQUEST['submit']){
 				for($i = 0; $i < sizeof($respuesta); $i++){
 					foreach(array_keys($respuesta[$i]) as $key){
 						if($respuesta[$i][$key] === ""){
-							$mensaje = $mensaje . "</br>" . $key . ":</br>" . "Grupos creados sin problemas";
+							$mensaje = $mensaje . "</br>" . $key . ":</br>" . "Grupos generados sin problemas";
 						}else{
 							$mensaje = $mensaje . "</br>" . $key . ":</br>" . $respuesta[$i][$key];
 						}
@@ -228,12 +232,12 @@ switch ($_REQUEST['submit']){
 		}
 		break;
 		
-	case 'GENERARRANKING':
+	case 'RANKINGGRUPOS':
 		if(!isset($_REQUEST['Campeonato'])){
 			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 		}else{
 			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
-			$respuesta = $campeonato->GENERARRANKING();//Y lo añadimos
+			$respuesta = $campeonato->RANKINGGRUPOS();//Y lo añadimos
 			if(is_string($respuesta)){
 				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
 			}else{
@@ -243,9 +247,39 @@ switch ($_REQUEST['submit']){
 		break;
 
 	case 'GENERARCUARTOS':
+		if(!isset($_REQUEST['Campeonato'])){
+			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+			$respuesta = $campeonato->GENERARCUARTOS();//Y lo añadimos
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				$mensaje = "";
+				foreach(array_keys($respuesta) as $categoria){
+					if($respuesta[$categoria] === ""){
+						$mensaje = $mensaje . "</br>" . $categoria . ":</br>" . "Cuartos generados sin problemas";
+					}else{
+						$mensaje = $mensaje . "</br>" . $categoria . ":</br>" . $respuesta[$categoria];
+					}
+				}
+				new Mensaje($mensaje, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+		}
 		break;
 		
-	case 'GENERARRANKINGFINAL':
+	case 'RANKINGFINAL':
+		if(!isset($_REQUEST['Campeonato'])){
+			new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}else{
+			$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+			$respuesta = $campeonato->RANKINGFINAL();//Y lo añadimos
+			if(is_string($respuesta)){
+				new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}else{
+				new Campeonato_CLASIFICACIONFINAL($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+		}
 		break;
 
 	case 'ESCOGERPAREJA':
@@ -268,6 +302,7 @@ switch ($_REQUEST['submit']){
 		new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, $parejaPerteneceCategoria,'','','','');
 		}	
 	break;
+
 
 	case 'INSCRIBIRSECATEGORIA':
 		if(!isset($_REQUEST['Categoria'])){
@@ -304,6 +339,12 @@ switch ($_REQUEST['submit']){
 				
 			}
 		}
+
+	case 'SHOWPARAINSCRIBIRSE':
+		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
+		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
+		new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, '','','','');//Le pasamos todos los datos de la BD
+
 	break;
 	case 'SHOWALL':
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)

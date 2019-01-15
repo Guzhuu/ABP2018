@@ -38,18 +38,18 @@
 					Controllers
 				  </button>
 				  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-					<a class="dropdown-item" href="../Controllers/Controller_Deportista.php">Deportista</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Pareja.php">Pareja</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Partido.php">Partido</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Reserva.php">Reserva</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Pista.php">Pista</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Horario.php">Horario</a>
 					<a class="dropdown-item" href="../Controllers/Controller_Campeonato.php">Campeonato</a>
 					<a class="dropdown-item" href="../Controllers/Controller_Categoria.php">Categoria</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Grupo.php">Grupo</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Clase.php">Clase</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Deportista.php">Deportista</a>
 					<a class="dropdown-item" href="../Controllers/Controller_Enfrentamiento.php">Enfrentamiento</a>
 					<a class="dropdown-item" href="../Controllers/Controller_Escuela.php">Escuela</a>
-					<a class="dropdown-item" href="../Controllers/Controller_Clase.php">Clase</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Grupo.php">Grupo</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Horario.php">Horario</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Pareja.php">Pareja</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Partido.php">Partido</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Pista.php">Pista</a>
+					<a class="dropdown-item" href="../Controllers/Controller_Reserva.php">Reserva</a>
 				  </div>
 				</div>
 			</li>

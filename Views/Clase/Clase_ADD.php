@@ -19,7 +19,7 @@ class Clase_ADD{  // declaración de clase
 		$this->campos = array(
 					"Clase" => "Clase",
 					"Reserva_Reserva" => "Codigo de la reserva",
-					"codigoEscuela" => "Codigo de la escuela",
+					"codigoEscuela" => "Escuela",
 					"Entrenador" => "Entrenador",
 					"Curso" => "Curso",
 					"Particulares" => "Clases particulares");

@@ -42,6 +42,14 @@ class SHOWALL{
 		*************************************************************/
 	}
 	
+	function colorDe($num){
+		if($num % 2 == 0){
+			return "BBBBBB";
+		}else{
+			return "EEEEEE";
+		}
+	}
+	
 	// muestra por pantall html con los valores de los atributos de la clase
 	// y un hiperenlace para volver al script php que la invoca
 	function toString(){
@@ -87,11 +95,12 @@ class SHOWALL{
 			/**COMIENZO FILAS CON DATOS**/
 			/*Para cada fila se muestran los datos recuperados*/
 			$num = 0;
+			$numFila = 0;
 			while($fila = $this->resultado->fetch_row()){
 				/*Se crea un formulario para dicha fila*/
 				echo "<form id='formularioOpcion"; echo $num; echo "' method='GET' action='"; echo $this->controlador; echo "'>";
 				/*Se crea una fila <tr>*/
-				echo '<tr class="fila">';
+				echo '<tr class="fila" bgcolor="' . $this->colorDe($numFila) . '">';
 				
 				/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
 				for($i = 0; $i < sizeof($fila); $i++){
@@ -119,6 +128,7 @@ class SHOWALL{
 				}
 					
 				echo '</tr>';
+				$numFila++;
 				echo '</form>';
 				$num++;
 			}

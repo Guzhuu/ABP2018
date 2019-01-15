@@ -226,13 +226,14 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `AWGP`.`Enfrentamiento` (
   `Enfrentamiento` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL,
+  `nombre` VARCHAR(45) NULL,
   `CampeonatoCategoria` INT NOT NULL,
   `Pareja1` VARCHAR(18) NOT NULL,
   `Pareja2` VARCHAR(18) NOT NULL,
-  `set1` VARCHAR(3) NULL,
-  `set2` VARCHAR(3) NULL,
-  `set3` VARCHAR(3) NULL,
+  `set1` VARCHAR(3) NOT NULL,
+  `set2` VARCHAR(3) NOT NULL,
+  `set3` VARCHAR(3) NOT NULL,
+  `SegundaRonda` TINYINT DEFAULT 0,
   PRIMARY KEY (`Enfrentamiento`),
   INDEX `fk_Enfrentamiento_Grupo1_idx` (`CampeonatoCategoria` ASC),
   INDEX `fk_Enfrentamiento_Pareja1_idx` (`Pareja1` ASC),
@@ -251,7 +252,11 @@ CREATE TABLE IF NOT EXISTS `AWGP`.`Enfrentamiento` (
     FOREIGN KEY (`Pareja2`)
     REFERENCES `AWGP`.`Pareja` (`codPareja`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `enfrentamientoUnicoPara2ParejasEnUnCampeonatoEnUnGrupo` 
+    UNIQUE(`nombre`, `CampeonatoCategoria`, `Pareja1`, `Pareja2`),
+  CONSTRAINT `enfrentamientoUnicoPara2ParejasEnUnCampeonatoEnCuartos` 
+    UNIQUE(`CampeonatoCategoria`, `Pareja1`, `Pareja2`, `SegundaRonda`))
 ENGINE = InnoDB;
 
 
@@ -700,7 +705,7 @@ VALUES ('7', 'C', '4', '02793268X57768016C','20865489G12345678A','6-1', '3-6', '
 INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
 VALUES ('8', 'C', '4', '12345678A78380290Q','20865489G12345678A','6-1', '2-6', '6-0');
 INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
-VALUES ('9', 'D', '4', '53495571D99185554D','72180857A93407187R','4-6', '3-6', '6-1');
+VALUES ('9', 'D', '4', '53495571D99185554D','12345678A78380290Q','4-6', '3-6', '6-1');
 INSERT INTO Enfrentamiento (Enfrentamiento, nombre, CampeonatoCategoria, Pareja1, Pareja2, set1, set2,set3)
 VALUES ('10', 'D', '4', '67721782F08722995S','12345678A78380290Q','6-4', '1-6', '6-3');
 

@@ -56,14 +56,14 @@ class Campeonato_SHOWALL{
 			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARCALENDARIO'/>";
 		}
 		if($this->showGenerarRanking){
-			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARRANKING'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='RANKINGGRUPOS'/>";
 		}
 		echo '</br>';
 		if($this->showGenerarCuartos){
 			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARCUARTOS'/>";
 		}
 		if($this->showGenerarRankingfinal){
-			echo "<input class='btn btn-warning' type='submit' name='submit' value='GENERARRANKINGFINAL'/>";
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='RANKINGFINAL'/>";
 		}
 	}
 	
@@ -74,6 +74,14 @@ class Campeonato_SHOWALL{
 			return 'Femenino';
 		}else{
 			return 'Mixto';
+		}
+	}
+	
+	function colorDe($num){
+		if($num % 2 == 0){
+			return "BBBBBB";
+		}else{
+			return "EEEEEE";
 		}
 	}
 	
@@ -131,12 +139,14 @@ class Campeonato_SHOWALL{
 			/*Para cada fila se muestran los datos recuperados*/
 			$num = 0;
 			$num2 = 0;
+			$numFila = 0;
+			$numFila2 = 0;
 			$prev = '';
 			$fila = $this->resultado->fetch_row();
 			while($fila){
 				$prev = $fila[0];
 				/*Se crea una fila <tr>*/
-				echo '<tr class="fila">';
+				echo '<tr class="fila" bgcolor="' . $this->colorDe($numFila) . '">';
 				
 				/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
 				for($i = 0; $i < 4; $i++){
@@ -146,7 +156,7 @@ class Campeonato_SHOWALL{
 				}
 				
 				echo '<td class="celda">';
-					echo '<table class="table table-light">';
+					echo '<table class="table table-light table-bordered">';
 					echo '<th>';
 					echo $this->Nivel;
 					echo '</th>';
@@ -159,7 +169,7 @@ class Campeonato_SHOWALL{
 					$categoriasDeFila = $fila;
 					while($categoriasDeFila[0] == $prev){
 						if($categoriasDeFila[4] != null){
-							echo '<tr>';
+							echo '<tr bgcolor="' . $this->colorDe($numFila2) . '">';
 							echo "<form id='formularioQuitar"; echo $num2; echo "' method='GET' action='"; echo $this->controlador; echo "'>";
 							echo "<input type='hidden' name='Campeonato' value=\""; echo $fila[0]; echo "\">";
 							echo "<input type='hidden' name='Categoria' value=\""; echo $categoriasDeFila[4]; echo "\">";
@@ -172,6 +182,7 @@ class Campeonato_SHOWALL{
 							}
 							echo '</form>';
 							echo '</tr>';
+							$numFila2++;
 							$num2++;
 						}
 						$categoriasDeFila = $this->resultado->fetch_row();
@@ -205,6 +216,7 @@ class Campeonato_SHOWALL{
 				}
 					
 				echo '</tr>';
+				$numFila++;
 				echo '</form>';
 				$num++;
 			}

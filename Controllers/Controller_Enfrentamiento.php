@@ -18,7 +18,11 @@ if(!isset($_REQUEST['Enfrentamiento'])){
 	}
 
 	$Enfrentamiento = $_REQUEST['Enfrentamiento'];
-	$Grupo_Grupo = $_REQUEST['Grupo_Grupo'];
+	$Nombre = $_REQUEST['Nombre'];
+	if($Nombre == ''){
+		$Nombre = null;
+	}
+	$CampeonatoCategoria = $_REQUEST['CampeonatoCategoria'];
 	$Pareja1 = $_REQUEST['Pareja1'];
 	$Pareja2 = $_REQUEST['Pareja2'];
 	$set1 = $_REQUEST['set1'];
@@ -26,7 +30,7 @@ if(!isset($_REQUEST['Enfrentamiento'])){
 	$set3 = $_REQUEST['set3'];
 	
 	
-	$Enfrentamiento = new Enfrentamiento($Enfrentamiento, $Grupo_Grupo, $Pareja1, $Pareja2, $set1, $set2, $set3);
+	$Enfrentamiento = new Enfrentamiento($Enfrentamiento,$Nombre, $CampeonatoCategoria, $Pareja1, $Pareja2, $set1, $set2, $set3);
  
 	return $Enfrentamiento;
 }
@@ -50,7 +54,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'EDIT':
 		if(!$_POST){//Si GET
-			$Enfrentamiento = new Enfrentamiento($_REQUEST['Enfrentamiento'],'','','','','','','');//Editar Enfrentamiento seleccionado
+			$Enfrentamiento = new Enfrentamiento($_REQUEST['Enfrentamiento'],'','','','','','','','');//Editar Enfrentamiento seleccionado
 			$Enfrentamiento->_getDatosGuardados();//Rellenar con los datos del BD
 			new Enfrentamiento_EDIT($Enfrentamiento);//Mostrar vista
 		}else{
@@ -77,11 +81,11 @@ switch ($_REQUEST['submit']){
 		
 	case 'DELETE' :
 		if(!$_POST){//Si GET
-			$Enfrentamiento = new Enfrentamiento($_REQUEST['Enfrentamiento'],'','','','','','');//Coger Enfrentamiento guardado a eliminar
+			$Enfrentamiento = new Enfrentamiento($_REQUEST['Enfrentamiento'],'','','','','','','','');//Coger Enfrentamiento guardado a eliminar
 			$Enfrentamiento->_getDatosGuardados();//Rellenar datos
 			new Enfrentamiento_DELETE($Enfrentamiento);//Mostrar vissta 
 		}else{//Si confirma borrado llega por post
-			$Enfrentamiento = new Enfrentamiento($_POST['Enfrentamiento'],'','','','','','','');//Clave
+			$Enfrentamiento = new Enfrentamiento($_POST['Enfrentamiento'],'','','','','','','','');//Clave
 			$respuesta = $Enfrentamiento->DELETE();//Borrar Enfrentamiento con dicha clave
 			new Mensaje($respuesta, '../Controllers/Controller_Enfrentamiento.php');//A ver qué pasa en la BD
 		}
@@ -89,7 +93,7 @@ switch ($_REQUEST['submit']){
 		
 	case 'SHOWCURRENT':
 		if(!$_POST){//Si GET
-			$Enfrentamiento = new Enfrentamiento($_REQUEST['Enfrentamiento'],'','','','','','','');//Coger clave del Enfrentamiento
+			$Enfrentamiento = new Enfrentamiento($_REQUEST['Enfrentamiento'],'','','','','','','','');//Coger clave del Enfrentamiento
 			$respuesta = $Enfrentamiento->SHOWCURRENT();
 			if(!is_string($respuesta)){//NO debería ser posible pedir un showcurrent de algo no existente pero si esp osible retornará un string, así que si no es un string es un Enfrentamiento
 				$Enfrentamiento->_getDatosGuardados();
@@ -101,15 +105,13 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	case 'SHOWALL':
-		$Enfrentamiento = new Enfrentamiento('','','','','','','');//No necesitamos Enfrentamiento para buscar (pero sí para acceder a la BD)
+		$Enfrentamiento = new Enfrentamiento('','','','','','','','');//No necesitamos Enfrentamiento para buscar (pero sí para acceder a la BD)
 		$respuesta = $Enfrentamiento->SHOWALL();//Todos los datos del BD estarán aqúi
-		new Enfrentamiento_SHOWALL($respuesta, '','','','','','','');//Le pasamos todos los datos del BD
+		new Enfrentamiento_SHOWALL($respuesta);//Le pasamos todos los datos del BD
 		break;
 		
 	default:
-		$Enfrentamiento = new Enfrentamiento('','','','','','','');//No necesitamos Enfrentamiento para buscar (pero sí para acceder a la BD)
-		$respuesta = $Enfrentamiento->SHOWALL();//Todos los datos del BD estarán aqúi
-		new Enfrentamiento_SHOWALL($respuesta, '','','','','','','');//Le pasamos todos los datos del BD
+		new Mensaje("Error", '../index.php');// y a ver qué ha pasado en la BD
 		break;
 }
 ?>
