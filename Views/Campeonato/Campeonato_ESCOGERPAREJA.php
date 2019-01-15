@@ -35,7 +35,6 @@ class Campeonato_ESCOGERPAREJA{  // declaración de clase
 	// y un hiperenlace para volver al script php que la invocó
 	function toString(){
 		include_once '../Views/base/header.php';
-		echo 'Introduzca el DNI de su pareja y el nivel de la Pareja:';
 		$i = 0;
 		/*Tabla para el formulario*/
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioEscogerPareja" name="formularioEscogerPareja" action="../Controllers/'; echo $this->controller; echo '">';
@@ -73,11 +72,8 @@ class Campeonato_ESCOGERPAREJA{  // declaración de clase
 
 			/*Fila para submit*/
 			echo '<tr class="'; echo $this->_getTr($i); echo'">';
-				/*echo '<td class="formularioTd">';
-					echo $this->submit;
-				echo '</td>';*/
 				
-				echo '<td class="formularioTd">';
+				echo '<td class="formularioTd" colspan="2">';
 					echo '<input class="btn btn-success" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
 				echo '</td>';
@@ -86,7 +82,7 @@ class Campeonato_ESCOGERPAREJA{  // declaración de clase
 			
 			/*Fila para volver*/
 			echo '<tr class="'; echo $this->_getTr($i); echo'">';
-				echo '<td class="formularioTd">';
+					echo '<td class="formularioTd" colspan="2">';
 					echo '<a href="'; echo $this->controller; echo '">';
 					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';

@@ -15,7 +15,10 @@ class Campeonato_SHOWALLFORUSER{
 	
 	var $categorias = "Categorias";
 	var $Nivel = "Nivel";
-	var $Sexo = "Sexo";
+	var $Sexo = "Sexo";	
+	var $acciones= "Acciones";
+	var $showGenerarRanking = true;
+	var $showGenerarRankingfinal = true;
 
 	function __construct($respuesta){
 		$this->controlador = 'Controller_Campeonato.php';
@@ -42,6 +45,18 @@ class Campeonato_SHOWALLFORUSER{
 		}
 	}
 	
+
+	function botonesOpcion(){
+		
+		if($this->showGenerarRanking){
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='RANKINGGRUPOS'/>";
+		}
+		echo '</br>';
+		
+		if($this->showGenerarRankingfinal){
+			echo "<input class='btn btn-warning' type='submit' name='submit' value='RANKINGFINAL'/>";
+		}
+	}
 	
 	function toString(){
 		include '../Views/base/header.php';
@@ -65,6 +80,11 @@ class Campeonato_SHOWALLFORUSER{
 				echo $this->categorias;
 				echo '</th>';
 				
+				if($this->showAcciones){
+					echo '<th class="tituloColumna">';
+					echo $this->acciones;
+					echo '</th>';
+				}
 			echo '</tr>';
 			/**FIN FILA TITULOS COLUMNA**/
 			
@@ -126,7 +146,14 @@ class Campeonato_SHOWALLFORUSER{
 				
 				/*Se crean los botones para las acciones*/
 				//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
-					
+				if($this->showAcciones){
+					echo '<td class="celda">';
+						if($this->showShowcurrent){
+							echo "<input class='btn btn-primary' type='submit' name='submit' value='SHOWCURRENT'/>";
+						}
+						$this->botonesOpcion();
+					echo '</td>';
+				}	
 				echo '</tr>';
 				$numFila++;
 				echo '</form>';
