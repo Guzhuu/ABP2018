@@ -4,15 +4,18 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	if(autenticado()){
+	/*if(autenticado()){
 		if(!isAdmin()){
-			$_REQUEST['submit'] = 'SHOWALL';
+			$_REQUEST['submit'] = 'ESCOGERPAREJA';
 		}
 	}else{
 		header('Location: ../index.php');
-	}
+	}*/
 	
 	include '../Modelos/Campeonato.php';
+	include '../Modelos/Pareja_pertenece_categoria.php';
+	include '../Modelos/Pareja_pertenece_categoria_de_campeonato.php';
+	include '../Modelos/Campeonato_consta_de_categorias.php';
 	include '../Views/Campeonato/Campeonato_ADD.php';
 	include '../Views/Campeonato/Campeonato_EDIT.php';
 	include '../Views/Campeonato/Campeonato_SEARCH.php';
@@ -22,8 +25,12 @@
 	include '../Views/Campeonato/Campeonato_ADDCATEGORIA.php';
 	include '../Views/Campeonato/Campeonato_ESCOGERPAREJA.php';
 	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
+	include '../Views/Campeonato/Campeonato_SHOWALLFORUSER.php';
 	include '../Modelos/Pareja.php';
+	include '../Modelos/Deportista.php';
+	include '../Modelos/Categoria.php';
 	include '../Views/Campeonato/Campeonato_CLASIFICACION.php';
+	include '../Views/Campeonato/Campeonato_INSCRITOS.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -48,17 +55,55 @@ function get_parejaCampeonato_data_form(){
 	if(!isset($_REQUEST['DNI_Companhero'])){
 		$_REQUEST['DNI_Companhero'] = 0;
 	}
+	if(!isset($_REQUEST['Nivel'])){
+		$_REQUEST['Nivel'] = 0;
+	}/*
+	if(!isset($_REQUEST['codigoCategoria'])){
+		$_REQUEST['Categoria'] = 0;
+	}*/
+	$codigoCategoria= $_REQUEST['codigoCategoria'];
 	$DNICompanhero = $_REQUEST['DNI_Companhero'];
-
-	$pareja = new Pareja($_SESSION['DNI'], $DNICompanhero);
+	$Nivel=$_REQUEST['Nivel'];
+	$pareja = new Pareja('',$_SESSION['DNI'], $DNICompanhero);
 	$_REQUEST['codPareja'] = $pareja->codPareja;
- 
-	return $pareja;
+	$respuesta= $pareja->ADD();
+	$capitan= new Deportista($_SESSION['DNI'],'', '', '', '', '', '', '', '');
+	$capitan->_getDatosGuardados();
+	$companhero= new Deportista($_REQUEST['DNI_Companhero'],'', '', '', '', '', '', '', '');
+	$companhero->_getDatosGuardados();
+	$SexoPareja= determinarSexoCategoriaPareja($capitan,$companhero);	
+
+	// ESTO ES LO QUE NO FUNCIONA
+	$catego= new Categoria($codigoCategoria,'','');
+	$catego->_getDatosGuardados();
+	//var_dump($catego);
+	//if($SexoPareja==$catego->Sexo){
+		$parejaPerteneceCategoria= new Pareja_pertenece_categoria('',$pareja->codPareja,$catego->Categoria);
+ 		//var_dump($parejaPerteneceCategoria);
+ 		/*$parejaPerteneceCategoria->_getCodigo($parejaPerteneceCategoria->Pareja_codPareja,$parejaPerteneceCategoria->Categoria_Categoria);*/
+		return $parejaPerteneceCategoria;
+	}
+
+function determinarSexoCategoriaPareja(Deportista $capitan, Deportista $companhero){
+	if($capitan->Sexo==$companhero->Sexo){
+		if($capitan->Sexo=="Hombre"){
+			return "M";
+		}
+		else{
+			return "F";
+		}
+	}
+	else if($capitan->Sexo!=$companhero->Sexo){
+		return "MX";
+	}
+	else{
+		return "Error";
+	}
 }
 
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
-	$_REQUEST['submit'] = 'SHOWALL';
+	$_REQUEST['submit'] = 'SHOWALLFORUSER';
 }
 
 switch ($_REQUEST['submit']){
@@ -205,27 +250,73 @@ switch ($_REQUEST['submit']){
 
 	case 'ESCOGERPAREJA':
 		if(!$_POST){//Si GET
-			$muestraESCOGERPAREJA = new Campeonato_ESCOGERPAREJA();//Mostrar vista add
+			$Campeonato = new Campeonato('','','','');
+			$Categorias=$Campeonato->CATEGORIAS();
+			$muestraESCOGERPAREJA = new Campeonato_ESCOGERPAREJA($Categorias);//Mostrar vista add
 		}else{
-			$pareja = get_parejaCampeonato_data_form();//Si post cogemos horario
-			$respuesta = $pareja->ADD();//Y lo añadimos
-			new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
+			$parejaPerteneceCategoria = get_parejaCampeonato_data_form();//Si post cogemos horario
+
+			$respuesta = $parejaPerteneceCategoria->ADD();//Y lo añadimos
+			//var_dump($respuesta);
+			$CategoriaDePareja= $parejaPerteneceCategoria->Categoria_Categoria;
+			$CodigoDePareja= $parejaPerteneceCategoria->Pareja_codPareja;
+			$parejaPerteneceCategoria->_getCodigo($CodigoDePareja,$CategoriaDePareja);
+			//var_dump($CategoriaDePareja);
+			//new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
+			$Campeonato = new Campeonato('','','','');
+			$respuesta = $Campeonato->SHOWALLCONCATEGORIASCOMPATIBLES($parejaPerteneceCategoria);//Todos los datos de la BD estarán aqúi
+		new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, $parejaPerteneceCategoria,'','','','');
 		}	
 	break;
 
-	case 'SHOWPARAINSCRIBIRSE':
+	case 'INSCRIBIRSECATEGORIA':
+		if(!isset($_REQUEST['Categoria'])){
+			new Mensaje('No está indicada la categoría', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+		}
+		else{
+			if(!isset($_REQUEST['Campeonato'])){
+				new Mensaje('No está indicado el campeonato', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+			else{
+				if(!isset($_REQUEST['codPareja'])){
+				new Mensaje('No está indicado la pareja de esa categoria', '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD
+			}
+				else{
+					$campeonato = new Campeonato($_REQUEST['Campeonato'],'','','');//Si post cogemos Pista
+					$campeonato->_getDatosGuardados();
+					/*
+					$categoria= new Categoria($_REQUEST['Categoria'],'','');
+					$categoria->_getDatosGuardados();
+					$pareja= new Pareja($_REQUEST['codPareja'],'','');
+					$pareja->_getDatosGuardados();*/
+					$parejaPerteneceCategoria= new Pareja_pertenece_categoria($_REQUEST['perteneceCategoria'],$_REQUEST['codPareja'],$_REQUEST['Categoria']);
+					//$parejaPerteneceCategoria->_getCodigo($parejaPerteneceCategoria->Pareja_codPareja,$parejaPerteneceCategoria->Categoria_Categoria);
+					//var_dump($parejaPerteneceCategoria);
+					$campeonatoConstaCategoria= new Campeonato_consta_de_categorias('',$_REQUEST['Campeonato'],$_REQUEST['Categoria']);
+					$campeonatoConstaCategoria->_getCodigo($campeonatoConstaCategoria->Campeonato_Campeonato,$campeonatoConstaCategoria->Categoria_Categoria);
+					$parejaPerteneceCategoriaCampeonato= new Pareja_pertenece_categoria_de_campeonato('',$campeonatoConstaCategoria->constadeCategorias,$parejaPerteneceCategoria->perteneceCategoria);
+					$respuesta = $campeonato->INSCRIBIRPAREJAENCATEGORIADECAMPEONATO($parejaPerteneceCategoriaCampeonato);//Y lo añadimos
+					/*new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD*/
 
-		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
-		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
-		new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, '','','','');//Le pasamos todos los datos de la BD
+					$parejaPerteneceCategoriaCampeonato->_getCodigo($parejaPerteneceCategoriaCampeonato->CampeonatoConstaCategoria,$parejaPerteneceCategoriaCampeonato->ParejaPerteneceCategoria);
+					new Campeonato_INSCRITOS($respuesta, $parejaPerteneceCategoriaCampeonato,'','','','');
+				}
+				
+			}
+		}
 	break;
-
 	case 'SHOWALL':
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
 		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
 		new Campeonato_SHOWALL($respuesta, '','','','');//Le pasamos todos los datos de la BD
 		break;
+	case 'SHOWALLFORUSER':
+		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
+		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
+		new Campeonato_SHOWALLFORUSER($respuesta, '','','','');//Le pasamos todos los datos de la BD
+		break;
 		
+
 	default:
 		new Mensaje("Error", '../index.php');// y a ver qué ha pasado en la BD
 		break;

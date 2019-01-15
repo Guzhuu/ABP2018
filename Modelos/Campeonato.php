@@ -541,5 +541,71 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		return $array;
 	}
 
+	function CATEGORIAS(){
+		$sql = $this->mysqli->prepare("SELECT * FROM categoria ORDER BY 1");
+		$sql->execute();
+		
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return array();
+		}else if($resultado->num_rows == 0){
+			return array();
+		}else{
+			return $resultado->fetch_all();
+		}
+	}
+
+	function SHOWALLCONCATEGORIASCOMPATIBLES($ParejaPerteneceCategoria){//Para mostrar la BD
+		$sql = $this->mysqli->prepare("SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, null, null, null, null, null FROM Campeonato WHERE Campeonato.Campeonato NOT IN 
+						(SELECT Campeonato_consta_de_categorias.Campeonato_Campeonato FROM Campeonato_consta_de_categorias) AND Campeonato.FechaFinal >= CURDATE()
+					UNION	
+					SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, Categoria.Categoria, Categoria.Nivel, Categoria.Sexo, Pareja.codPareja, pareja_pertenece_categoria.Pareja_codPareja 
+					FROM Campeonato, Campeonato_consta_de_categorias, Categoria, Pareja, pareja_pertenece_categoria WHERE Campeonato.Campeonato = Campeonato_consta_de_categorias.Campeonato_Campeonato 
+						AND Campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria AND Categoria.Categoria = ? AND Campeonato.FechaFinal >= CURDATE() AND Pareja.codPareja= pareja_pertenece_categoria.Pareja_codPareja AND Pareja.codPareja = ? ORDER BY 1");
+	$CategoriaDePareja= $ParejaPerteneceCategoria->Categoria_Categoria;
+	$CodigoDePareja= $ParejaPerteneceCategoria->Pareja_codPareja;
+	//var_dump($this->mysqli->error);
+    $sql->bind_param("is", $CategoriaDePareja, $CodigoDePareja);
+    //var_dump($CategoriaDePareja);
+          $sql->execute();
+      
+      $resultado = $sql->get_result();
+      
+		//$resultado = $this->mysqli->query($sql);
+    
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else{
+			return $resultado;
+		}
+	}
+
+	function INSCRIBIRPAREJAENCATEGORIADECAMPEONATO($ParejaCategoriaCampeonato){
+		$sql = $this->mysqli->prepare("SELECT * FROM pareja_pertenece_categoria_de_campeonato WHERE CampeonatoConstadeCategorias = ? AND ParejaPerteneceCategoria = ?");
+		$CampeonatoConstaCategoria=$ParejaCategoriaCampeonato->CampeonatoConstaCategoria;
+		$ParejaPerteneceCategoria=$ParejaCategoriaCampeonato->ParejaPerteneceCategoria;		
+		$sql->bind_param("ii", $CampeonatoConstaCategoria, $ParejaPerteneceCategoria);
+		$sql->execute();
+    
+		$resultado = $sql->get_result();
+    
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else if($resultado->num_rows != 0){
+			return 'El campeonato ya tiene asociada esa pareja de esa categoria';
+		}else{
+			$sql = $this->mysqli->prepare("INSERT INTO pareja_pertenece_categoria_de_campeonato (CampeonatoConstadeCategorias,ParejaPerteneceCategoria) VALUES (?, ?)");
+			$sql->bind_param("ii",$CampeonatoConstaCategoria,$ParejaPerteneceCategoria);
+			$resultado = $sql->execute();
+			
+			if($resultado){
+				return 'Pareja añadida con éxito a la categoria del campeonato';
+			}else{
+				return 'Error al añadir la pareja a la categoría del campeonato';
+			}
+		}
+	}
+
 }
 ?>

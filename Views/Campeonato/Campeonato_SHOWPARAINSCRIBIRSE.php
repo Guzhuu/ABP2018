@@ -25,19 +25,21 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 	
 	var $resultado;//Las tuplas a mostrar
 	
+	var $CodigoPareja = "Codigo de Pareja";
 	var $categorias = "Categorias";
 	var $Nivel = "Nivel";
 	var $Sexo = "Sexo";
+	var $showInscribirseCategoria= true;
 	var $showAddcategoria = true;
 	var $showGenerarcalendario = true;
 	var $showGenerarCuartos = true;
 	var $showGenerarRankingfinal = true;
 	var $showQuitarCategoria = true;
 	
-	function __construct($respuesta){
+	function __construct($respuesta, $ParejaPerteneceCategoria){
 		$this->controlador = 'Controller_Campeonato.php';
 		$this->resultado = $respuesta;
-		$this->toString();
+		$this->toString($ParejaPerteneceCategoria);
 	} // fin del constructor
 	
 	
@@ -45,7 +47,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 	}
 	
 	
-	function botonesOpcion(){
+	/*function botonesOpcion(){
 		if($this->showAddcategoria){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='ADDCATEGORIA'/>";
 		}
@@ -60,7 +62,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 		if($this->showGenerarRankingfinal){
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='GENERARRANKINGFINAL'/>";
 		}
-	}
+	}*/
 	
 	function sexoDe($string){
 		if($string === 'M'){
@@ -73,30 +75,14 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 	}
 	
 	
-	function toString(){
+	function toString($ParejaPerteneceCategoria){
 		include '../Views/base/header.php';
 		/**COMIENZO TABLA**/
-		echo '<table align="center">';
-			echo "<form id='AnadirBuscar' method='GET' action='"; echo $this->controlador; echo "'>";
-			echo '<tr class="filaInvisible">';
-				if($this->showAdd){
-					echo '<td class="celdaInvisible">';
-					echo "<input class='btn btn-success' type='submit' name='submit' value='ADD'/>";
-					echo '</td>';
-				}
-				
-				if($this->showSearch){
-					echo '<td class="celdaInvisible">';
-					echo "<input class='btn btn-primary' type='submit' name='submit' value='SEARCH'/>";
-					echo '</td>';
-				}
-				
-				$this->botonesArriba();
-			echo '</tr>';
-			echo '</form>';
-		echo '</table>';
+		
 			/**COMIENZO FILA TITULOS COLUMNA**/
 		echo '<table class="table table-light">';
+
+			
 			echo '<tr class="fila">';
 				/*Para cada field (campo) se muestra su nombre*/
 				$contador = 0;
@@ -113,11 +99,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 				echo $this->categorias;
 				echo '</th>';
 				
-				if($this->showAcciones){
-					echo '<th class="tituloColumna">';
-					echo $this->acciones;
-					echo '</th>';
-				}
+				
 				/*Columna de acciones*/
 			echo '</tr>';
 			/**FIN FILA TITULOS COLUMNA**/
@@ -155,14 +137,20 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 					while($categoriasDeFila[0] == $prev){
 						if($categoriasDeFila[4] != null){
 							echo '<tr>';
-							echo "<form id='formularioQuitar"; echo $num2; echo "' method='GET' action='"; echo $this->controlador; echo "'>";
+							echo "<form id='formularioInscribirse"; echo $num2; echo "' method='GET' action='"; echo $this->controlador; echo "'>";
+							echo '<input type="hidden" name="codPareja" value="'; echo $ParejaPerteneceCategoria->Pareja_codPareja; echo'">';
+							//var_dump($ParejaPerteneceCategoria->Pareja_codPareja);
+							echo '</input>';
+							echo '<input type="hidden" name="perteneceCategoria" value="'; echo $ParejaPerteneceCategoria->perteneceCategoria; echo'">';
+							//var_dump($ParejaPerteneceCategoria->perteneceCategoria);
+							echo '</input>';
 							echo "<input type='hidden' name='Campeonato' value=\""; echo $fila[0]; echo "\">";
 							echo "<input type='hidden' name='Categoria' value=\""; echo $categoriasDeFila[4]; echo "\">";
 							echo '<td>'; echo $categoriasDeFila[5]; echo '</td>';
 							echo '<td>'; echo $this->sexoDe($categoriasDeFila[6]); echo '</td>';
-							if($this->showQuitarCategoria){
+							if($this->showInscribirseCategoria){
 								echo '<td>';
-								echo "<input class='btn btn-danger' type='submit' name='submit' value='QUITARCATEGORIA'/>";
+								echo "<input class='btn btn-danger' type='submit' name='submit' value='INSCRIBIRSECATEGORIA'/>";
 								echo '</td>';
 							}
 							echo '</form>';
@@ -184,20 +172,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 				
 				/*Se crean los botones para las acciones*/
 				//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
-				if($this->showAcciones){
-					echo '<td class="celda">';
-						if($this->showEdit){
-							echo "<input class='btn btn-primary' type='submit' name='submit' value='EDIT'/>";
-						}
-						if($this->showDelete){
-							echo "<input class='btn btn-danger' type='submit' name='submit' value='DELETE'/>";
-						}
-						if($this->showShowcurrent){
-							echo "<input class='btn btn-primary' type='submit' name='submit' value='SHOWCURRENT'/>";
-						}
-						$this->botonesOpcion();
-					echo '</td>';
-				}
+				
 					
 				echo '</tr>';
 				echo '</form>';

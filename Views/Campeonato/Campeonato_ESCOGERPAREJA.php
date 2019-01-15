@@ -5,16 +5,20 @@
 	
 class Campeonato_ESCOGERPAREJA{  // declaración de clase
 	var $campos;
+	var $Categorias;
 	var $controller;
 	var $submit = 'ESCOGERPAREJA';
 	var $Volver = "Volver";
 
 	// declaración constructor de la clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
-	function __construct(){
+	function __construct($Categorias){
 		$this->campos = array(
-					"DNI_Companhero" => "Dni del Compañero");
+					"DNI_Companhero" => "Dni del Compañero",
+					"Nivel" => "Nivel de la Pareja",
+					"codigoCategoria" => "Nivel de la Pareja");
 		$this->controller = 'Controller_Campeonato.php';
+		$this->Categorias=$Categorias;
 		$this->toString();
 	} // fin del constructor
 	
@@ -31,11 +35,13 @@ class Campeonato_ESCOGERPAREJA{  // declaración de clase
 	// y un hiperenlace para volver al script php que la invocó
 	function toString(){
 		include_once '../Views/base/header.php';
-		echo 'Introduzca el DNI de su pareja:';
+		echo 'Introduzca el DNI de su pareja y el nivel de la Pareja:';
 		$i = 0;
 		/*Tabla para el formulario*/
 		echo '<form method="POST" accept-charset="UTF-8" id="formularioEscogerPareja" name="formularioEscogerPareja" action="../Controllers/'; echo $this->controller; echo '">';
 		echo '<table class="formulario">';
+		/*echo '<input type="hidden" name="Categoria" value="'; echo $this->Categoria->Campeonato; echo'">';
+			echo '</input>';*/
 			echo '<tr class="'; echo $this->_getTr($i); echo'">';
 				echo '<td class="formularioTd">';
 					echo $this->campos['DNI_Companhero'];
@@ -49,6 +55,22 @@ class Campeonato_ESCOGERPAREJA{  // declaración de clase
 			echo '</tr>';
 			$i++;
 			
+			/*Fila para codigoEscuela*/
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
+				echo '<td class="formularioTd">';
+					echo $this->campos['codigoCategoria'];
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<select name="codigoCategoria">';
+					for($j = 0; $j < count($this->Categorias); $j++){
+						echo '<option value="'; echo $this->Categorias[$j][0]; echo '">'; echo $this->Categorias[$j][1]; echo' '; echo $this->Categorias[$j][2]; echo '</option>';
+					}
+					echo '</select>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+
 			/*Fila para submit*/
 			echo '<tr class="'; echo $this->_getTr($i); echo'">';
 				/*echo '<td class="formularioTd">';

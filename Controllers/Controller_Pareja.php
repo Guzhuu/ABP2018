@@ -9,7 +9,7 @@
 	}
 	
 	include '../Modelos/Pareja.php';
-	
+	include '../Modelos/Pareja_pertenece_categoria.php';
 	include '../Views/Pareja/Pareja_EDIT.php';
 	include '../Views/Pareja/Pareja_SEARCH.php';
 	include '../Views/Pareja/Pareja_DELETE.php';
@@ -122,7 +122,16 @@ switch ($_REQUEST['submit']){
 		$respuesta = $pareja->SHOWALL();//Todos los datos de la BD estarán aqúi
 		new Pareja_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
 		break;
-		
+
+	case 'SHOWALLPAREJACATEGORIA':
+		$parejaPerteneceCategoria = new Pareja_pertenece_categoria('','','');//No necesitamos horario para buscar (pero sí para acceder a la BD)
+		$respuesta = $parejaPerteneceCategoria->SHOWALL();//Todos los datos de la BD estarán aqúi
+		new Pareja_SHOWALLPAREJACATEGORIA($respuesta);//Le pasamos todos los datos de la BD
+		break;
+
+	case 'REGISTRARENCATEGORIA':
+
+	break;
 	/*case 'ESCOGERPAREJA':
 		if(!$_POST){//Si GET
 			$muestraESCOGERPAREJA = new Pareja_ESCOGERPAREJA();//Mostrar vista add
