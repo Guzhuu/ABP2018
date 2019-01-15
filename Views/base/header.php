@@ -83,10 +83,7 @@
 			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=APUNTARSE">Apuntarse a clases</a>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=MISCLASES">Ver clases</a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Clase.php?submit=APUNTARSE">Apuntarse a clases</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Campeonato.php?submit=SHOWALLFORUSER">Ver Campeonatos</a>
 			</li>
 			<?php
 			if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){

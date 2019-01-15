@@ -4,13 +4,19 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	/*if(autenticado()){
+	if(autenticado()){
 		if(!isAdmin()){
-			$_REQUEST['submit'] = 'ESCOGERPAREJA';
+			if(!isset($_REQUEST['submit'])){
+				if($_REQUEST['submit']!='ESCOGERPAREJA' || $_REQUEST['submit']!='SHOWALLFORUSER'){
+					$_REQUEST['submit'] = 'SHOWALLFORUSER';
+				}
+			}
 		}
-	}else{
+	}
+	else{
 		header('Location: ../index.php');
-	}*/
+	}
+
 	
 	include '../Modelos/Campeonato.php';
 	include '../Modelos/Pareja_pertenece_categoria.php';
@@ -107,7 +113,7 @@ function determinarSexoCategoriaPareja(Deportista $capitan, Deportista $companhe
 
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
-	$_REQUEST['submit'] = 'SHOWALLFORUSER';
+	$_REQUEST['submit'] = 'SHOWALL';
 }
 
 switch ($_REQUEST['submit']){
@@ -340,6 +346,7 @@ switch ($_REQUEST['submit']){
 			}
 		}
 
+	break;
 	case 'SHOWPARAINSCRIBIRSE':
 		$Campeonato = new Campeonato('','','','');//No necesitamos Campeonato para buscar (pero sí para acceder a la BD)
 		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
@@ -356,8 +363,6 @@ switch ($_REQUEST['submit']){
 		$respuesta = $Campeonato->SHOWALL();//Todos los datos de la BD estarán aqúi
 		new Campeonato_SHOWALLFORUSER($respuesta, '','','','');//Le pasamos todos los datos de la BD
 		break;
-		
-
 	default:
 		new Mensaje("Error", '../index.php');// y a ver qué ha pasado en la BD
 		break;
