@@ -93,7 +93,22 @@ class Reserva{
 		}else if($resultado->fetch_row()[0] >= 5){
 			return 'Has superado el límite de reservas, cancela alguna para poder hacer otra';
 		}else{
-			return $this->ADD();
+			$sql = $this->mysqli->prepare("	SELECT * FROM pista_tiene_horario, horario 
+											WHERE codigoPistayHorario = ? 
+												AND pista_tiene_horario.Horario_Horario = horario.Horario 
+												AND horario.HoraInicio >= DATE(NOW()) + INTERVAL 7 DAY");
+			$sql->bind_param("i", $this->codigoPistayHorario);
+			$sql->execute();
+		
+			$resultado = $sql->get_result();
+			
+			if(!$resultado){
+				return 'Ha fallado el hacer la reserva';
+			}else if($resultado->num_rows != 1){
+				return 'No se puede hacer una reserva en menos de 7 días de antelación';
+			}else{
+				return $this->ADD();
+			}
 		}
 	}
 	

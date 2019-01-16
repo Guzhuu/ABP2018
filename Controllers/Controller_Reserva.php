@@ -56,7 +56,9 @@ switch ($_REQUEST['submit']){
 		if(!$_POST){//Si GET
 			$pistasyHorariosDisponibles = new Pista('','');
 			$pistasyHorariosDisponibles = $pistasyHorariosDisponibles->SHOWALL_AND_HORARIOS_LIBRES();
-			if($pistasyHorariosDisponibles->num_rows == 0){
+			if(is_string($pistasyHorariosDisponibles)){
+				new Mensaje($pistasyHorariosDisponibles, '../index.php');// y a ver qué ha pasado en la BD
+			}else if($pistasyHorariosDisponibles->num_rows == 0){
 				new Mensaje('No quedan pistas libres', '../index.php');// y a ver qué ha pasado en la BD
 			}else{
 				$muestraReserva = new Reserva_RESERVAR($pistasyHorariosDisponibles);//Mostrar vista reservar

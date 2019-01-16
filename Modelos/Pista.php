@@ -241,7 +241,7 @@ class Pista{
 						WHERE pista_tiene_horario.codigoPistayHorario NOT IN(SELECT reserva.codigoPistayHorario FROM reserva) 
 							AND pista_tiene_horario.Pista_codigoPista = pista.codigoPista 
 							AND pista_tiene_horario.Horario_Horario = horario.Horario 
-							AND horario.HoraInicio >= CURDATE()
+							AND DATE(NOW()) + INTERVAL 7 DAY <= horario.HoraInicio
 						ORDER BY pista_tiene_horario.Pista_codigoPista;");
 		
 		$resultado = $this->mysqli->query($sql);
