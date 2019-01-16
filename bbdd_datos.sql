@@ -136,23 +136,23 @@ INSERT INTO Campeonato (Campeonato, FechaInicio, FechaFinal, Nombre)
 VALUES(10, '2018-11-19 09:00:00','2019-12-19 10:00:00', 'HULIO');
 
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Cadete', 'M');
+VALUES('1', 'M');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Cadete', 'F');
+VALUES('1', 'F');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Cadete', 'MX');
+VALUES('1', 'MX');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Infantil', 'M');
+VALUES('2', 'M');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Infantil', 'F');
+VALUES('2', 'F');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Infantil', 'MX');
+VALUES('2', 'MX');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Alevin', 'M');
+VALUES('3', 'M');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Alevin', 'F');
+VALUES('3', 'F');
 INSERT INTO Categoria (Nivel, Sexo)
-VALUES('Alevin', 'MX');
+VALUES('3', 'MX');
 
  
 INSERT INTO Campeonato_consta_de_categorias (Campeonato_Campeonato, Categoria_Categoria)
