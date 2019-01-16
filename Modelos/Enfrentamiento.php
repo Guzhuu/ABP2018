@@ -437,6 +437,25 @@ public function getSet1() {
       return $resultado;
     }
   }
+  
+	function DEPORTISTASENFRENTAMIENTO(){
+		$sql = $this->mysqli->prepare("SELECT Deportista.DNI, Deportista.Nombre, Deportista.Apellidos FROM Deportista");
+		$sql->execute();
+    
+		$resultado = $sql->get_result();
+    
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else{
+			$respuesta = array();
+			
+			while($fila = $resultado->fetch_row()){
+				$respuesta[$fila[0]] = $fila[1] . " " . $fila[2];
+			}
+			
+			return $respuesta;
+		}
+	}
 
 }
 

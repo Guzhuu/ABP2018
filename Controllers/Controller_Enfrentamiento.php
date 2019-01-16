@@ -106,8 +106,9 @@ switch ($_REQUEST['submit']){
 		
 	case 'SHOWALL':
 		$Enfrentamiento = new Enfrentamiento('','','','','','','','');//No necesitamos Enfrentamiento para buscar (pero sí para acceder a la BD)
+		$Deportistas = $Enfrentamiento->DEPORTISTASENFRENTAMIENTO();
 		$respuesta = $Enfrentamiento->SHOWALL();//Todos los datos del BD estarán aqúi
-		new Enfrentamiento_SHOWALL($respuesta);//Le pasamos todos los datos del BD
+		new Enfrentamiento_SHOWALL($respuesta, $Deportistas);//Le pasamos todos los datos del BD
 		break;
 		
 	default:
