@@ -259,7 +259,7 @@ switch ($_REQUEST['submit']){
 				new Clase_SHOWALLFOR($respuesta, true);//Mostrar vissta 
 			}
 		}else{//Si confirma borrado llega por post
-			$clase = new Clase($_REQUEST['Clase'], '', '', '', '', '');//Clave
+			$clase = new Clase($_REQUEST['codClase'], '', '', '', '', '');//Clave
 			$respuesta = $clase->APUNTAR($_SESSION['DNI']);
 			new Mensaje($respuesta, '../Controllers/Controller_Clase.php?submit=APUNTARSE');//A ver qué pasa en la BD
 		}

@@ -144,12 +144,41 @@ public function getSet1() {
 			}
 		}
 	}  
+	
+	function setsCorrectos(){
+		if($set1 = $this->setCorrecto($this->set1)){
+			if($set2 = $this->setCorrecto($this->set2)){
+				if($set3 = $this->setCorrecto($this->set3)){
+					return "true";
+				}else{
+					return "Set 3: " . $this->set3 . "; (X-X) y X <= 6";
+				}
+			}else{
+				return "Set 2: " . $this->set2 . "; (X-X) y X <= 6";
+			}
+		}else{
+			return "Set 1: " . $this->set1 . "; (X-X) y X <= 6";
+		}
+	}
+	
+	function setCorrecto($set){
+		$valores = array('0', '1', '2', '3', '4', '5', '6');
+		if(is_string($set) && strlen($set) == 3 && 
+			((substr($set, 0, 1) == '6' && substr($set, 1, 1) == '-' && in_array(substr($set, 2, 1), $valores)) || 
+			 (substr($set, 2, 1) == '6' && substr($set, 1, 1) == '-' && in_array(substr($set, 0, 1), $valores)))){
+				 return true;
+		}else{
+			return false;
+		}
+	}
   
 
 	function EDIT(){//Para editar de la BD
 		if(($this->Enfrentamiento == '')){
 			return 'Enfrentamiento vacio, introduzca un Enfrentamiento';
-		}else{
+		}else if($this->setsCorrectos() != "true"){
+			return 'Hay uno o varios sets mal puestos: ' . $this->setsCorrectos();
+		}else{		
 			$sql = $this->mysqli->prepare("SELECT * FROM Enfrentamiento WHERE Enfrentamiento = ?");
 			$sql->bind_param("i", $this->Enfrentamiento);
 			$sql->execute();

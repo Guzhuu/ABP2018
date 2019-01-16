@@ -67,34 +67,65 @@ class Clase_SHOWALLFOR{
 			/*Para cada fila se muestran los datos recuperados*/
 			$num = 0;
 			while($fila = $this->resultado->fetch_row()){
-				/*Se crea un formulario para dicha fila*/
-				echo "<form id='formularioOpcion"; echo $num; echo "' method='POST' action='"; echo $this->controlador; echo "'>";
-				/*Se crea una fila <tr>*/
-				echo '<tr class="fila">';
-				
-				/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
-				for($i = 0; $i < sizeof($fila); $i++){
-					$name = $this->resultado->fetch_fields()[$i]->name;
-					if(in_array($name, $this->camposAMostrar)){
-						echo '<td class="celda">';
-						echo "<input type='hidden' name='"; echo $name; echo "' value=\""; echo $fila[$i]; echo "\">";
-						echo $fila[$i];
-						echo '</td>';
-					}else{
-						echo "<input type='hidden' name='"; echo $name; echo "' value=\""; echo $fila[$i]; echo "\">";
-					}
-				}
-				
-				
-				/*Se crean los botones para las acciones*/
-				//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
-				echo '<td class="celda">';
-					$this->botonesOpcion();
-				echo '</td>';
+				if($this->showApuntarse && ($fila[6] == 0 && $fila[10] < 4) || ($fila[6] == 1 && $fila[10] < 3)){
+					/*Se crea un formulario para dicha fila*/
+					echo "<form id='formularioOpcion"; echo $num; echo "' method='POST' action='"; echo $this->controlador; echo "'>";
+					/*Se crea una fila <tr>*/
+					echo '<tr class="fila">';
 					
-				echo '</tr>';
-				echo '</form>';
-				$num++;
+					/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
+					for($i = 0; $i < sizeof($fila); $i++){
+						$name = $this->resultado->fetch_fields()[$i]->name;
+						if(in_array($name, $this->camposAMostrar)){
+							echo '<td class="celda">';
+							echo "<input type='hidden' name='"; echo $name; echo "' value=\""; echo $fila[$i]; echo "\">";
+							echo $fila[$i];
+							echo '</td>';
+						}else{
+							echo "<input type='hidden' name='"; echo $name; echo "' value=\""; echo $fila[$i]; echo "\">";
+						}
+					}
+					
+					
+					/*Se crean los botones para las acciones*/
+					//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
+					echo '<td class="celda">';
+						$this->botonesOpcion();
+					echo '</td>';
+						
+					echo '</tr>';
+					echo '</form>';
+					$num++;
+				}else{
+					/*Se crea un formulario para dicha fila*/
+					echo "<form id='formularioOpcion"; echo $num; echo "' method='POST' action='"; echo $this->controlador; echo "'>";
+					/*Se crea una fila <tr>*/
+					echo '<tr class="fila">';
+					
+					/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
+					for($i = 0; $i < sizeof($fila); $i++){
+						$name = $this->resultado->fetch_fields()[$i]->name;
+						if(in_array($name, $this->camposAMostrar)){
+							echo '<td class="celda">';
+							echo "<input type='hidden' name='"; echo $name; echo "' value=\""; echo $fila[$i]; echo "\">";
+							echo $fila[$i];
+							echo '</td>';
+						}else{
+							echo "<input type='hidden' name='"; echo $name; echo "' value=\""; echo $fila[$i]; echo "\">";
+						}
+					}
+					
+					
+					/*Se crean los botones para las acciones*/
+					//TODO: Poner los submit hidden y hacer un botón que haga submit de los formularios, esto es para decorar
+					echo '<td class="celda">';
+						$this->botonesOpcion();
+					echo '</td>';
+						
+					echo '</tr>';
+					echo '</form>';
+					$num++;
+				}
 			}
 			/**FIN FILAS CON DATOS**/
 			
