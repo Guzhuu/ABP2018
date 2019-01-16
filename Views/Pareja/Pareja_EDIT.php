@@ -62,7 +62,7 @@ class Pareja_EDIT{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input name="HoraFin" type="text" value="'; echo $this->pareja->DNI_Companhero; echo'">';
+					echo '<input name="DNI_Companhero" type="text" value="'; echo $this->pareja->DNI_Companhero; echo'">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';

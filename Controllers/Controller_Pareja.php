@@ -4,7 +4,18 @@
 */
 	session_start();
 	include_once '../Functions/Autenticacion.php';
-	if(!autenticado()){
+	if(autenticado()){
+		if(!isAdmin()){
+			if(isset($_REQUEST['submit'])){
+				if($_REQUEST['submit']!='SHOWALLFORUSER' && $_REQUEST['submit']!='VERCAMPEONATOS' && $_REQUEST['submit']!='ADD' && $_REQUEST['submit']!='SEARCH' && $_REQUEST['submit']!='DELETE' && $_REQUEST['submit']!='SHOWCURRENT' && $_REQUEST['submit']!='EDIT'){
+					$_REQUEST['submit'] = 'SHOWALLFORUSER';
+				}
+			}else{
+				$_REQUEST['submit'] = 'SHOWALLFORUSER';
+			}
+		}
+	}
+	else{
 		header('Location: ../index.php');
 	}
 	
@@ -16,8 +27,11 @@
 	include '../Views/Pareja/Pareja_SHOWCURRENT.php';
 	include '../Views/Pareja/Pareja_ADD.php';
 	include '../Views/Pareja/Pareja_SHOWALL.php';
+	include '../Views/Pareja/Pareja_SHOWALLFORUSER.php';
 	include '../Views/Pareja/Pareja_ESCOGERPAREJA.php';
 	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
+	include '../Views/Campeonato/Campeonato_MISPAREJASESCOGERNIVEL.php';
+	include '../Modelos/Campeonato.php';
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -29,7 +43,7 @@ function get_data_form(){
 	$DNI_Companhero = $_REQUEST['DNI_Companhero'];
 
 
-	$pareja = new Pareja($DNI_Capitan, $DNI_Companhero);
+	$pareja = new Pareja('',$DNI_Capitan, $DNI_Companhero);
 	$_REQUEST['codPareja'] = $pareja->codPareja;
  
 	return $pareja;
@@ -44,11 +58,13 @@ function get_parejaCampeonato_data_form(){
 	}
 	$DNICompanhero = $_REQUEST['DNI_Companhero'];
 
-	$pareja = new Pareja($_SESSION['DNI'], $DNICompanhero);
+	$pareja = new Pareja('',$_SESSION['DNI'], $DNICompanhero);
 	$_REQUEST['codPareja'] = $pareja->codPareja;
  
 	return $pareja;
 }
+
+
 
 
 if (!isset($_REQUEST['submit'])){ //si no viene del formulario, no existe array POST
@@ -83,9 +99,10 @@ switch ($_REQUEST['submit']){
 			$muestraSEARCH = new Pareja_SEARCH();//Mostrar vista buscadora
 		}else{
 			$pareja = get_data_form();//Creamos un horario con los datos introducidos (que no insertarlo en la BD)
+			var_dump($pareja);
 			$respuesta = $pareja->SEARCH();//Buscamos los datos que se parezcan a los introducidos
 			if(!is_string($respuesta)){
-				new Pareja_SHOWALL($respuesta);
+				new Pareja_SHOWALLFORUSER($respuesta);
 			}else{//sino
 				new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');//Mensaje de error, que hay muchos
 			}
@@ -129,19 +146,35 @@ switch ($_REQUEST['submit']){
 		new Pareja_SHOWALLPAREJACATEGORIA($respuesta);//Le pasamos todos los datos de la BD
 		break;
 
-	case 'REGISTRARENCATEGORIA':
-
-	break;
-	/*case 'ESCOGERPAREJA':
+	case 'VERCAMPEONATOS':
 		if(!$_POST){//Si GET
-			$muestraESCOGERPAREJA = new Pareja_ESCOGERPAREJA();//Mostrar vista add
+			$Campeonato = new Campeonato('','','','');
+			$Categorias=$Campeonato->CATEGORIAS();
+			$Pareja= new Pareja($_REQUEST['codPareja'],'','');
+			$Pareja->_getDatosGuardados();
+			$muestraESCOGERPAREJA = new Campeonato_MISPAREJASESCOGERNIVEL($Categorias, $Pareja);//Mostrar vista add
 		}else{
-			$pareja = get_parejaCampeonato_data_form();//Si post cogemos horario
-			$respuesta = $pareja->ADD();//Y lo añadimos
-			new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
-			$muestraCAMPEONATOSposibles= new Campeonato_SHOWPARAINSCRIBIRSE($respuesta);
-		}	
-	break;*/
+			$parejaPerteneceCategoria = get_parejaCampeonato_data_form();//Si post cogemos horario
+			if($parejaPerteneceCategoria!=NULL){
+				$respuesta = $parejaPerteneceCategoria->ADD();//Y lo añadimos
+				//var_dump($respuesta);
+				$CategoriaDePareja= $parejaPerteneceCategoria->Categoria_Categoria;
+				$CodigoDePareja= $parejaPerteneceCategoria->Pareja_codPareja;
+				$parejaPerteneceCategoria->_getCodigo($CodigoDePareja,$CategoriaDePareja);
+				//var_dump($CategoriaDePareja);
+				//new Mensaje($respuesta, '../Controllers/Controller_Pareja.php');// y a ver qué ha pasado en la BD
+				$Campeonato = new Campeonato('','','','');
+				$respuesta = $Campeonato->SHOWALLCONCATEGORIASCOMPATIBLES($parejaPerteneceCategoria);//Todos los datos de la BD estarán aqúi
+			new Campeonato_SHOWPARAINSCRIBIRSE($respuesta, $parejaPerteneceCategoria,'','','','');
+			}
+		}
+			
+	break;
+	case 'SHOWALLFORUSER':
+		$pareja = new Pareja('','','');//No necesitamos horario para buscar (pero sí para acceder a la BD)
+		$respuesta = $pareja->SHOWALL();//Todos los datos de la BD estarán aqúi
+		new Pareja_SHOWALLFORUSER($respuesta);//Le pasamos todos los datos de la BD
+		break;
 
 	default:
 		$pareja = new Pareja('','','');//No necesitamos horario para buscar (pero sí para acceder a la BD)

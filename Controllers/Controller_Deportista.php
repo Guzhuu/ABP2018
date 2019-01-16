@@ -127,10 +127,20 @@ switch ($_REQUEST['submit']){
 		break;
 		
 	case 'PERFIL':
-		$deportista = new Deportista($_SESSION['DNI'],'','','','','','','','');//No necesitamos deportista para buscar (pero sí para acceder a la BD)
+		//$deportista = new Deportista($_SESSION['DNI'],'','','','','','','','');//No necesitamos deportista para buscar (pero sí para acceder a la BD)
 		//Aquí habrá que coger datos del modelo sobre el perfil y hacer una vista
 		//$respuesta = $deportista->SHOWAGENDA();//Todos los datos de la BD estarán aqúi
 		//new Deportista_SHOWALL($respuesta);//Le pasamos todos los datos de la BD
+
+			$deportista = new Deportista($_SESSION['DNI'],'', '', '', '', '', '', '', '');//Coger clave del deportista
+			$respuesta = $deportista->SHOWCURRENT();
+			if(!is_string($respuesta)){//NO debería ser posible pedir un showcurrent de algo no existente pero si esp osible retornará un string, así que si no es un string es un deportista
+				$deportista->_getDatosGuardados();
+				new Deportista_SHOWCURRENT($deportista);//Mostrar al deportista rellenado
+			}else{//sino
+				new Mensaje($respuesta, '../Controllers/Controller_Deportista.php');//Mensaje de error, que hay muchos
+			}
+		
 		break;
 		
 	default:

@@ -94,7 +94,7 @@
 				</div>
 			</li>
 			<li class="nav-item">
-			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Pareja.php">Mis parejas</a>
+			  <a class="nav-link text-nowrap" href="../Controllers/Controller_Pareja.php?submit=SHOWALLFORUSER">Mis parejas</a>
 			</li>
 			<li class="nav-item">
 				<div class="dropdown nav-link">

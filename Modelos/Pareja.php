@@ -123,11 +123,11 @@ class Pareja
   }
   
   function SEARCH(){
-    $sql = $this->mysqli->prepare("SELECT * FROM pareja WHERE ((codPareja LIKE ?) AND (DNI_Capitan LIKE ?) AND (DNI_Companhero LIKE ?))"); //No funciona
+    $sql = $this->mysqli->prepare("SELECT * FROM pareja WHERE ((DNI_Capitan LIKE ?) AND (DNI_Companhero LIKE ?))"); //No funciona
     $likePareja = "%" . $this->_getCodPareja() . "%";
     $likeDNICAPITAN = "%" . $this->_getDNI_Capitan() . "%";
     $likeDNICOMPA = "%" . $this->_getDNI_Companhero() . "%";
-    $sql->bind_param("iss", $likePareja, $likeDNICAPITAN, $likeDNICOMPA); //Puede dar fallo facil
+    $sql->bind_param("ss", $likeDNICAPITAN, $likeDNICOMPA); //Puede dar fallo facil
     $sql->execute();
     
     $resultado = $sql->get_result();
