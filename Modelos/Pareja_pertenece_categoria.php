@@ -98,7 +98,7 @@ class Pareja_pertenece_categoria
 		$resultado = $sql->execute();
 	
 		if(!$resultado){
-			return 'Ha fallado insertar la categoria en el campeonato';
+			return 'Ha fallado asignar la pareja a la categoria';
 		}else{
 			return 'Inserción correcta';
 		}
@@ -134,7 +134,7 @@ class Pareja_pertenece_categoria
 		if(!$resultado){
 			return 'No se ha podido conectar con la BD';
 		}else if($resultado->num_rows == 0){
-			return 'No se ha encontrado la pista y horario';
+			return 'No se ha encontrado la categoria y la pareja';
 		}else{
 			$sql = $this->mysqli->prepare("DELETE FROM Pareja_pertenece_categoria WHERE ((Pareja_codPareja = ?) AND (Categoria_Categoria = ?))");
 			$sql->bind_param("si", $this->getPareja_codPareja(), $this->getCategoria_Categoria());
@@ -145,7 +145,7 @@ class Pareja_pertenece_categoria
 			if(!$resultado){
 				return 'Fallo al eliminar la tupla';
 			}else{
-				return 'categoria y campeonatos eliminados correctamente';
+				return 'categoria ,pareja eliminados correctamente';
 			}
 		}
 	}
