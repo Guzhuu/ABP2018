@@ -162,7 +162,7 @@ public function getSet1() {
 	}
 	
 	function setCorrecto($set){
-		$valores = array('0', '1', '2', '3', '4', '5', '6');
+		$valores = array('0', '1', '2', '3', '4', '5');
 		if(is_string($set) && strlen($set) == 3 && 
 			((substr($set, 0, 1) == '6' && substr($set, 1, 1) == '-' && in_array(substr($set, 2, 1), $valores)) || 
 			 (substr($set, 2, 1) == '6' && substr($set, 1, 1) == '-' && in_array(substr($set, 0, 1), $valores)))){
