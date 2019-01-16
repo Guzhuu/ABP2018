@@ -7,7 +7,7 @@
 	if(autenticado()){
 		if(!isAdmin()){
 			if(isset($_REQUEST['submit'])){
-				if($_REQUEST['submit']!='ESCOGERPAREJA' && $_REQUEST['submit']!='SHOWALLFORUSER' && $_REQUEST['submit'] != 'RANKINGGRUPOS' && $_REQUEST['submit'] != 'RANKINGFINAL'){
+				if($_REQUEST['submit']!='ESCOGERPAREJA' && $_REQUEST['submit']!='SHOWALLFORUSER' && $_REQUEST['submit'] != 'RANKINGGRUPOS' && $_REQUEST['submit'] != 'RANKINGFINAL' && $_REQUEST['submit']!='INSCRIBIRSECATEGORIA'){
 					$_REQUEST['submit'] = 'SHOWALLFORUSER';
 				}
 			}else{
@@ -34,15 +34,12 @@
 	include '../Views/Campeonato/Campeonato_ESCOGERPAREJA.php';
 	include '../Views/Campeonato/Campeonato_SHOWPARAINSCRIBIRSE.php';
 	include '../Views/Campeonato/Campeonato_SHOWALLFORUSER.php';
+	include '../Views/Campeonato/Campeonato_SHOWINFOINSCRITOS.php';
 	include '../Modelos/Pareja.php';
 	include '../Modelos/Deportista.php';
 	include '../Modelos/Categoria.php';
 	include '../Views/Campeonato/Campeonato_CLASIFICACION.php';
-
-	include '../Views/Campeonato/Campeonato_INSCRITOS.php';
-
 	include '../Views/Campeonato/Campeonato_CLASIFICACIONFINAL.php';
-
 	include '../Views/MESSAGE.php';
 	
 function get_data_form(){
@@ -361,7 +358,9 @@ switch ($_REQUEST['submit']){
 					/*new Mensaje($respuesta, '../Controllers/Controller_Campeonato.php');// y a ver qué ha pasado en la BD*/
 
 					$parejaPerteneceCategoriaCampeonato->_getCodigo($parejaPerteneceCategoriaCampeonato->CampeonatoConstaCategoria,$parejaPerteneceCategoriaCampeonato->ParejaPerteneceCategoria);
-					new Campeonato_INSCRITOS($respuesta, $parejaPerteneceCategoriaCampeonato,'','','','');
+					$Campeonato = new Campeonato('','','','');
+					$respuesta = $Campeonato->SHOWINFOINSCRITOS($parejaPerteneceCategoriaCampeonato);//Todos los datos 
+					new Campeonato_SHOWINFOINSCRITOS($respuesta, $parejaPerteneceCategoriaCampeonato,'','','','');
 				}
 				
 			}
