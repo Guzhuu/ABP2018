@@ -430,7 +430,7 @@ GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";
 
 /*TODOS LOS USUARIOS TIENEN DE CONTRASEÑA 12345*/
 INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
-VALUES ('72180857A', '11', 'CESAR', ' HEREDIA MAÑAS', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, false);
+VALUES ('72180857A', '11', 'CESAR', ' HEREDIA MANIAS', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, false);
 INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
 VALUES ('08722995S', 22, 'RICARDO', 'BENAVENTENGUAL', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '12', false, false);
 INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
@@ -514,7 +514,7 @@ VALUES(6,'PistaArgentina');
 INSERT INTO Pista (codigoPista, nombre)
 VALUES(7,'PistaBrasil');
 INSERT INTO Pista (codigoPista, nombre)
-VALUES(8,'PistaEspaña');
+VALUES(8,'PistaRusia');
 
 INSERT INTO Partido (Partido, codigoHorario, codigoPista)
 VALUES(1,1, 1);

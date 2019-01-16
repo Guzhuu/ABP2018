@@ -20,10 +20,12 @@ class Enfrentamiento_SHOWALL{
 	var $DELETE = 'DELETE';
 	
 	var $resultado;//Las tuplas a mostrar
+	var $Deportistas;
 	
-	function __construct($respuesta){
+	function __construct($respuesta, $Deportistas){
 		$this->controlador = 'Controller_Enfrentamiento.php';
 		$this->resultado = $respuesta;
+		$this->Deportistas = $Deportistas;
 		$this->toString();
 	} // fin del constructor
 	
@@ -85,9 +87,11 @@ class Enfrentamiento_SHOWALL{
 			echo '<tr class="fila">';
 				/*Para cada field (campo) se muestra su nombre*/
 				while($tituloColumna = $this->resultado->fetch_field()){
-					echo '<th class="tituloColumna">';
-						echo $tituloColumna->name;
-					echo '</th>';
+					if($tituloColumna->name != "Enfrentamiento"){
+						echo '<th class="tituloColumna">';
+							echo $tituloColumna->name;
+						echo '</th>';
+					}
 				}
 				if($this->showAcciones){
 					echo '<th class="tituloColumna">';
@@ -110,34 +114,40 @@ class Enfrentamiento_SHOWALL{
 				
 				/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
 				for($i = 0; $i < sizeof($fila); $i++){
-					echo '<td class="celda">';
 					$field = $this->resultado->fetch_fields()[$i]->name;
-					echo "<input type='hidden' name='"; echo $field; echo "' value=\""; echo $fila[$i]; echo "\">";
-					if($field === "SegundaRonda"){
-						switch($fila[$i]){
-							case 0:
-								echo "Grupos";
-							break;
-							case 1:
-								echo "Final";
-							break;
-							case 2:
-								echo "Semifinal";
-							break;
-							case 3:
-								echo "Tercer-Cuarto";
-							break;
-							case 4:
-								echo "Cuartos";
-							break;
-							default:
-								echo "";
-							break;
+					if($field != "Enfrentamiento"){
+						echo '<td class="celda">';
+						echo "<input type='hidden' name='"; echo $field; echo "' value=\""; echo $fila[$i]; echo "\">";
+						if($field === "SegundaRonda"){
+							switch($fila[$i]){
+								case 0:
+									echo "Grupos";
+								break;
+								case 1:
+									echo "Final";
+								break;
+								case 2:
+									echo "Semifinal";
+								break;
+								case 3:
+									echo "Tercer-Cuarto";
+								break;
+								case 4:
+									echo "Cuartos";
+								break;
+								default:
+									echo "";
+								break;
+							}
+						}else if($field === "Pareja1" || $field === "Pareja2"){
+							echo $fila[$i] . "</br><b>" . $this->Deportistas[substr($fila[$i], 0, 9)] . "</br>" . $this->Deportistas[substr($fila[$i], 9, 9)] . "</b>";
+						}else{
+							echo $fila[$i];
 						}
+						echo '</td>';
 					}else{
-						echo $fila[$i];
+						echo "<input type='hidden' name='"; echo $field; echo "' value=\""; echo $fila[$i]; echo "\">";
 					}
-					echo '</td>';
 				}
 				
 				/*Se crean los botones para las acciones*/

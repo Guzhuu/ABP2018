@@ -18,6 +18,7 @@
 	include '../Views/Clase/Clase_SHOWALL.php';
 	include '../Views/Clase/Clase_SHOWALLFROM.php';
 	include '../Views/Clase/Clase_SHOWALLFOR.php';
+	include '../Views/Clase/Clase_VERALUMNOS.php';
 	include '../Views/MESSAGE.php';
 	
 	
@@ -234,7 +235,7 @@ switch ($_REQUEST['submit']){
 			if(is_string($respuesta)){
 				new Mensaje($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 			}else{
-				new Mensaje(var_dump($respuesta), '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
+				new Clase_VERALUMNOS($respuesta, '../Controllers/Controller_Clase.php');//A ver qué pasa en la BD
 			}
 		}
 		break;

@@ -162,7 +162,7 @@ public function getSet1() {
 	}
 	
 	function setCorrecto($set){
-		$valores = array('0', '1', '2', '3', '4', '5', '6');
+		$valores = array('0', '1', '2', '3', '4', '5');
 		if(is_string($set) && strlen($set) == 3 && 
 			((substr($set, 0, 1) == '6' && substr($set, 1, 1) == '-' && in_array(substr($set, 2, 1), $valores)) || 
 			 (substr($set, 2, 1) == '6' && substr($set, 1, 1) == '-' && in_array(substr($set, 0, 1), $valores)))){
@@ -350,9 +350,9 @@ public function getSet1() {
 	}
 	
 	function ganadorDe($set){
-		if(substr($set, 0, 1) === '6' || substr($set, 0, 1) != '0'){
+		if(substr($set, 0, 1) === '6'){
 			return -1;
-		}else if(substr($set, 2, 1) === '6' || substr($set, 2, 1) != '0'){
+		}else if(substr($set, 2, 1) === '6'){
 			return 1;
 		}else{
 			return 0;
@@ -437,6 +437,25 @@ public function getSet1() {
       return $resultado;
     }
   }
+  
+	function DEPORTISTASENFRENTAMIENTO(){
+		$sql = $this->mysqli->prepare("SELECT Deportista.DNI, Deportista.Nombre, Deportista.Apellidos FROM Deportista");
+		$sql->execute();
+    
+		$resultado = $sql->get_result();
+    
+		if(!$resultado){
+			return 'No se ha podido conectar con la BD';
+		}else{
+			$respuesta = array();
+			
+			while($fila = $resultado->fetch_row()){
+				$respuesta[$fila[0]] = $fila[1] . " " . $fila[2];
+			}
+			
+			return $respuesta;
+		}
+	}
 
 }
 

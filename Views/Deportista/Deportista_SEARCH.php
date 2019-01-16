@@ -7,6 +7,7 @@ class Deportista_SEARCH{  // declaración de clase
 	var $campos;
 	var $controller;
 	var $submit = 'SEARCH';
+	var $Volver = "Volver";
 
 	// declaración constructor de la clase
 	// se inicializa con los valores del formulario y el valor del botón submit pulsado
