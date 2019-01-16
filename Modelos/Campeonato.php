@@ -702,8 +702,16 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
 						}else{
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
 							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 8;
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
 						}
 					}
 				}
