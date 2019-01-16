@@ -419,6 +419,15 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
+INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
+VALUES ('000000000', 1, 'ADMIN', 'ADMIN ADMIN', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', true, true);
+INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
+VALUES ('111111111', 1, 'USUARIO', 'DE PRUEBAS', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, false);
+INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
+VALUES ('222222222', 1, 'ENTRENADOR', 'DE PRUEBAS', 'Mujer', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, true);
+
+GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";
+
 /*TODOS LOS USUARIOS TIENEN DE CONTRASEÑA 12345*/
 INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
 VALUES ('72180857A', '11', 'CESAR', ' HEREDIA MAÑAS', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, false);
@@ -442,12 +451,6 @@ INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_S
 VALUES ('99185554D', 25, 'JOSE', 'ESTRUCH PADIN', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '90', false, true);
 INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
 VALUES ('12345678A', 17, 'PEDRO', 'CUESTA MORALES', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '90', false, false);
-INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
-VALUES ('000000000', 1, 'ADMIN', 'ADMIN ADMIN', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', true, true);
-INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
-VALUES ('111111111', 1, 'USUARIO', 'DE PRUEBAS', 'Hombre', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, false);
-INSERT INTO Deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha, Cuota_Socio, rolAdmin, rolEntrenador)
-VALUES ('222222222', 2, 'ENTRENADOR', 'DE PRUEBAS', 'Mujer', '827ccb0eea8a706c4c34a16891f84e7b', '0', false, true);
 
 
 INSERT INTO Pareja (codPareja, DNI_Capitan, DNI_Companhero)
@@ -801,5 +804,3 @@ INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
 VALUES ('3','99185554D');
 INSERT INTO Deportista_inscrito_clase(Clase, DNI_Deportista)
 VALUES ('3','111111111');
-
-GRANT ALL PRIVILEGES ON awgp.* to AWGPusr@localhost identified by "AWGPass";
