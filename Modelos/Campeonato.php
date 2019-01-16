@@ -590,7 +590,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 			if($partidos->num_rows == 0){
 				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se ha finalizado la fase de grupos";
 			}else if($partidos->num_rows < 7){
-				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se han jugado todos los partidos de la segunda fase del torneo";
+				$respuesta[$categoria[0] . ':' . $categoria[1] . ' ' . $categoria[2]] = "No se ha jugado la fase de cuartos y la fase de semis";
 			}else{
 				$partidos = $partidos->fetch_all();
 				$arrayCategoria = array();
@@ -661,6 +661,7 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 						}
 					}
 					
+					var_dump($partidos[$i]);
 					if($partidos[$i][6] == 1){
 						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 1;
@@ -668,20 +669,14 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
 							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 1;
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
-						}else{
-							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
-							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
 						}
 					}else if($partidos[$i][6] == 2){
 						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 2;
-							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+							if($arrayCategoria[$partidos[$i][2]][$this->stringPosicion] != 3) $arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
 						}else if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) > 0){
 							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 2;
-							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
-						}else{
-							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
-							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
+							if($arrayCategoria[$partidos[$i][1]][$this->stringPosicion] != 3) $arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 4;
 						}
 					}else if($partidos[$i][6] == 3){
 						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
@@ -702,16 +697,8 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 4;
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
 						}else{
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 8;
 							$arrayCategoria[$partidos[$i][2]][$this->stringPosicion] = 8;
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
-							/*********************************ELIMINAR ESTE ELSE PARA LA VERSIÓN FINAL**************************************/
 						}
 					}
 				}
@@ -772,7 +759,11 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 						$arrayGrupo[$Grupo] = array();
 					}
 					
+							/*********************************ELIMINAR ESTA FILA PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTA FILA PARA LA VERSIÓN FINAL**************************************/
 					$arrayGrupo[$Grupo] = $this->sumarEstadisticas($Pareja2, $Pareja1, $arrayGrupo[$Grupo]);
+							/*********************************ELIMINAR ESTA FILA PARA LA VERSIÓN FINAL**************************************/
+							/*********************************ELIMINAR ESTA FILA PARA LA VERSIÓN FINAL**************************************/
 				}
 			}
 			if(empty($arrayGrupo)){
@@ -785,9 +776,9 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	}
 	
 	function ganadorDe($set){
-		if(substr($set, 0, 1) === '6' || substr($set, 0, 1) != '0'){
+		if(substr($set, 0, 1) === '6'){
 			return -1;
-		}else if(substr($set, 2, 1) === '6' || substr($set, 2, 1) != '0'){
+		}else if(substr($set, 2, 1) === '6'){
 			return 1;
 		}else{
 			return 0;
