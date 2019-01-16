@@ -277,7 +277,7 @@ class Clase{
 	}
 	
 	function CURSO(){
-		$sql = $this->mysqli->prepare(" SELECT 	clase.Clase as dude, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares,
+		$sql = $this->mysqli->prepare(" SELECT 	clase.Clase, escuela.nombreEscuela, clase.Entrenador, clase.Curso, clase.Particulares,
 												horario.HoraInicio, horario.HoraFin, pista.nombre
 										FROM clase, escuela, reserva, pista_tiene_horario, horario, pista 
 										WHERE 	clase.Curso = ? AND clase.Reserva_Reserva = reserva.Reserva AND 
