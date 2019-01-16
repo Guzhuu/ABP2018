@@ -38,6 +38,14 @@ class Deportista_ADD{  // declaración de clase
 	// y un hiperenlace para volver al script php que la invocó
 	function toString(){
 		include_once '../Views/base/header.php';
+		echo '<script type="text/javascript" src="../js/md5.js"></script>';
+		?>
+		   <script>
+			  function encriptarContrasenha(){
+				  document.getElementById("contrasenha").value = hex_md5(document.getElementById("password").value);
+			  }
+		   </script>
+		<?php
 		
 		$i = 0;
 		/*Tabla para el formulario*/
@@ -113,7 +121,8 @@ class Deportista_ADD{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input name="Contrasenha" type="password">';
+					echo '<input type="hidden" id="contrasenha" name="Contrasenha" maxlength="128" value=""/>';
+					echo '<input type="password" id="password" name="password" onChange="encriptarContrasenha()">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
