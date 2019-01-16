@@ -5,7 +5,7 @@
 //include '../Views/base/SHOWALL.php';
 
 class Campeonato_SHOWALLFORUSER{
-	var $showShowcurrent = true;
+	var $showShowcurrent = false;
 	var $showAcciones = true;
 	
 	//Obligatorio ponerlo. Indica el controlador al que ir al hacer una petición
