@@ -133,19 +133,30 @@ class Deportista_SEARCH{  // declaración de clase
 				echo '</td>';
 			echo '</tr>';
 			$i++;
-
-
-		
 			
 			/*Fila para submit*/
-			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
 					echo $this->submit;
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-primary" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
+				echo '</td>';
+			echo '</tr>';
+			$i++;
+			
+			/*Fila para volver*/
+			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+				echo '<td class="formularioTd">';
+					echo $this->Volver;
+				echo '</td>';
+				
+				echo '<td class="formularioTd">';
+					echo '<a href="'; echo $this->controller; echo '">';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
+					echo '</a>';
 				echo '</td>';
 			echo '</tr>';
 			$i++;
