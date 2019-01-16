@@ -945,17 +945,22 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 	}
 
 	function SHOWINFOINSCRITOS($ParejaCategoriaCampeonato){
-		$sql = $this->mysqli->prepare("SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, null, null, null, null, null FROM Campeonato WHERE Campeonato.Campeonato NOT IN 
+	$sql = $this->mysqli->prepare("SELECT Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, Pareja.codPareja, Categoria.Categoria, Categoria.Nivel, Categoria.Sexo FROM pareja_pertenece_categoria_de_campeonato, Campeonato_consta_de_categorias, Campeonato, Categoria, Pareja, pareja_pertenece_categoria WHERE pareja_pertenece_categoria_de_campeonato.CampeonatoConstadeCategorias= ? AND pareja_pertenece_categoria_de_campeonato.ParejaPerteneceCategoria = ? AND Campeonato_consta_de_categorias.constadeCategorias= pareja_pertenece_categoria_de_campeonato.CampeonatoConstadeCategorias AND Campeonato_consta_de_categorias.Campeonato_Campeonato = Campeonato.Campeonato AND pareja_pertenece_categoria.perteneceCategoria = pareja_pertenece_categoria_de_campeonato.ParejaPerteneceCategoria AND pareja_pertenece_categoria.Pareja_codPareja = Pareja.codPareja AND pareja_pertenece_categoria.Categoria_Categoria = Categoria.Categoria
+		 ORDER BY 1");
+
+
+	/*	$sql = $this->mysqli->prepare("SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, null, null, null, null, null FROM Campeonato WHERE Campeonato.Campeonato NOT IN 
 						(SELECT Campeonato_consta_de_categorias.Campeonato_Campeonato FROM Campeonato_consta_de_categorias) AND Campeonato.FechaInicio >= CURDATE()
 					UNION	
 					SELECT Campeonato.Campeonato, Campeonato.FechaInicio, Campeonato.FechaFinal, Campeonato.Nombre, Categoria.Categoria, Categoria.Nivel, Categoria.Sexo, Pareja.codPareja, pareja_pertenece_categoria.Pareja_codPareja 
 					FROM Campeonato, Campeonato_consta_de_categorias, Categoria, Pareja, pareja_pertenece_categoria WHERE Campeonato.Campeonato = Campeonato_consta_de_categorias.Campeonato_Campeonato 
-						AND Campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria AND Categoria.Categoria = ? AND Campeonato.FechaFinal >= CURDATE() AND Pareja.codPareja= pareja_pertenece_categoria.Pareja_codPareja AND Pareja.codPareja = ? ORDER BY 1");
-	$CategoriaDePareja= $ParejaPerteneceCategoria->Categoria_Categoria;
-	$CodigoDePareja= $ParejaPerteneceCategoria->Pareja_codPareja;
+						AND Campeonato_consta_de_categorias.Categoria_Categoria = Categoria.Categoria AND Categoria.Categoria = ? AND Campeonato.FechaFinal >= CURDATE() AND Pareja.codPareja= pareja_pertenece_categoria.Pareja_codPareja AND Pareja.codPareja = ? ORDER BY 1");*/
+	$CampeonatoCategoria= $ParejaCategoriaCampeonato->CampeonatoConstaCategoria;
+	$ParejaCategoria= $ParejaCategoriaCampeonato->ParejaPerteneceCategoria;
 	//var_dump($this->mysqli->error);
-    $sql->bind_param("is", $CategoriaDePareja, $CodigoDePareja);
-    //var_dump($CategoriaDePareja);
+    $sql->bind_param("ii", $CampeonatoCategoria, $ParejaCategoria);
+    //var_dump($CampeonatoCategoria);
+    //var_dump($ParejaCategoria);
           $sql->execute();
       
       $resultado = $sql->get_result();
