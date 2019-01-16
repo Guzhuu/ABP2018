@@ -107,7 +107,8 @@ class pista_tiene_horario{
 		$sql = $this->mysqli->prepare("	SELECT pista.codigoPista, pista.nombre, horario.Horario, horario.HoraInicio, horario.HoraFin 
 										FROM pista, horario WHERE pista.codigoPista = ? 
 											AND CONCAT(pista.codigoPista,'', horario.Horario) 
-												NOT IN (SELECT CONCAT(pista_tiene_horario.Pista_codigoPista,'',pista_tiene_horario.Horario_Horario) FROM pista_tiene_horario) 
+												NOT IN (SELECT CONCAT(pista_tiene_horario.Pista_codigoPista,'',pista_tiene_horario.Horario_Horario) FROM pista_tiene_horario)
+											AND horario.HoraInicio >= CURDATE()
 										ORDER BY pista.codigoPista, horario.Horario;");
 		$sql->bind_param("i", $this->Pista_codigoPista);
 		$sql->execute();

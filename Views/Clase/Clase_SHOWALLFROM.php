@@ -39,7 +39,7 @@ class Clase_SHOWALLFROM{
 			echo "<input class='btn btn-secondary' type='submit' name='submit' value='EDITHORARIO'/>";
 		}
 		if($this->showVerAlumnos){
-			echo "<input class='btn btn-danger' type='submit' name='submit' value='VERALUMNOS'/>";
+			echo "<input class='btn btn-secondary' type='submit' name='submit' value='VERALUMNOS'/>";
 		}
 		if($this->showAnularCurso){
 			echo "<input class='btn btn-danger' type='submit' name='submit' value='ANULARCURSO'/>";

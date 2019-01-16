@@ -63,7 +63,7 @@ switch ($_REQUEST['submit']){
 			}
 		}else{
 			$reserva = get_data_form();//Si post cogemos reserva
-			$respuesta = $reserva->ADD();//Y lo añadimos
+			$respuesta = $reserva->RESERVAR();//Y lo añadimos
 			new Mensaje($respuesta, '../Controllers/Controller_Reserva.php');// y a ver qué ha pasado en la BD
 		}
 		break;
@@ -75,7 +75,7 @@ switch ($_REQUEST['submit']){
 			$muestraReserva = new Reserva_RESERVAR($HorariosDisponibles);//Mostrar vista reservar
 		}else{
 			$reserva = get_data_form();//Si post cogemos reserva
-			$respuesta = $reserva->ADD();//Y lo añadimos
+			$respuesta = $reserva->RESERVAR();//Y lo añadimos
 			new Mensaje($respuesta, '../Controllers/Controller_Reserva.php');// y a ver qué ha pasado en la BD
 		}
 		break;
@@ -84,15 +84,14 @@ switch ($_REQUEST['submit']){
 		if(!$_POST){//Si GET
 			$pistasyHorariosDisponibles = new Pista('','');
 			$pistasyHorariosDisponibles = $pistasyHorariosDisponibles->SHOWALL_AND_HORARIOS_LIBRES();
-			var_dump($pistasyHorariosDisponibles);
 			if($pistasyHorariosDisponibles->num_rows() == 0){
 				new Mensaje('No quedan pistas libres', '../Controllers/Controller_Reserva.php');// y a ver qué ha pasado en la BD
 			}else{
 				$muestraReserva = new Reserva_RESERVAR($pistasyHorariosDisponibles);//Mostrar vista reservar
 			}
 		}else{
-			$reserva = new Reserva('',$_REQUEST['codigoPistayHorario'], $_REQUEST['DNI_Deportista']);//Editar reserva seleccionado
-			$respuesta = $reserva->ADD();//Y lo añadimos
+			$reserva = new Reserva('',$_REQUEST['codigoPistayHorario'], $_SESSION['DNI']);//Editar reserva seleccionado
+			$respuesta = $reserva->RESERVAR();//Y lo añadimos
 			new Mensaje($respuesta, '../Controllers/Controller_Reserva.php');// y a ver qué ha pasado en la BD
 		}
 		break;

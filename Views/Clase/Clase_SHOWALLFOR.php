@@ -96,7 +96,7 @@ class Clase_SHOWALLFOR{
 					echo '</tr>';
 					echo '</form>';
 					$num++;
-				}else{
+				}else if($this->showApuntarse == false){
 					/*Se crea un formulario para dicha fila*/
 					echo "<form id='formularioOpcion"; echo $num; echo "' method='POST' action='"; echo $this->controlador; echo "'>";
 					/*Se crea una fila <tr>*/

@@ -75,9 +75,25 @@ class Reserva{
 		$resultado = $sql->execute();
 	
 		if(!$resultado){
-			return 'Ha fallado el insertar la reserva';
+			return 'Ha fallado el hacer la reserva';
 		}else{
-			return 'Inserción correcta';
+			return 'Reserva creada';
+		}
+	}
+	
+	function RESERVAR(){
+		$sql = $this->mysqli->prepare("SELECT COUNT(*) FROM reserva WHERE DNI_Deportista = ?");
+		$sql->bind_param("s", $this->DNI_Deportista);
+		$sql->execute();
+	
+		$resultado = $sql->get_result();
+		
+		if(!$resultado){
+			return 'Ha fallado el hacer la reserva';
+		}else if($resultado->fetch_row()[0] >= 5){
+			return 'Has superado el límite de reservas, cancela alguna para poder hacer otra';
+		}else{
+			return $this->ADD();
 		}
 	}
 	
@@ -151,7 +167,8 @@ class Reserva{
 	}
 	
 	function CANCELARRESERVA(){
-		$sql = $this->mysqli->prepare("SELECT * FROM reserva WHERE Reserva = ? AND DNI_Deportista = ?");
+		$sql = $this->mysqli->prepare("SELECT reserva.reserva, horario.HoraInicio FROM reserva, pista_tiene_horario, horario WHERE Reserva = ? AND DNI_Deportista = ? 
+										AND reserva.codigoPistayHorario = pista_tiene_horario.codigoPistayHorario AND pista_tiene_horario.Horario_Horario = Horario.Horario");
 		$sql->bind_param("is", $this->Reserva, $this->DNI_Deportista);
 		$sql->execute();
 		
@@ -162,14 +179,21 @@ class Reserva{
 		}else if($resultado->num_rows == 0){
 			return 'Error al cancelar la reserva';
 		}else{
-			$sql = $this->mysqli->prepare("DELETE FROM reserva WHERE Reserva = ? AND DNI_Deportista = ?");
-			$sql->bind_param("is", $this->Reserva, $this->DNI_Deportista);
-			$resultado = $sql->execute();
-		
-			if(!$resultado){
-				return 'Fallo al cancelar la reserva';
+			$now = time();
+			$target = strtotime($resultado->fetch_row()[1]);
+			$diff = $now - $now;
+			if ( $diff > (12*60*60) ) {
+				return 'Solo se puede cancelar una reserva con 12 horas de antelación';
 			}else{
-				return 'Reserva cancelada correctamente';
+				$sql = $this->mysqli->prepare("DELETE FROM reserva WHERE Reserva = ? AND DNI_Deportista = ?");
+				$sql->bind_param("is", $this->Reserva, $this->DNI_Deportista);
+				$resultado = $sql->execute();
+			
+				if(!$resultado){
+					return 'Fallo al cancelar la reserva';
+				}else{
+					return 'Reserva cancelada correctamente';
+				}
 			}
 		}
 	}

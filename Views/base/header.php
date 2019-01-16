@@ -84,9 +84,7 @@
 					<?php
 					if(isset($_SESSION['rolEntrenador']) && $_SESSION['rolEntrenador']){
 						?>
-						<li class="nav-item">
 						  <a class="dropdown-item" href="../Controllers/Controller_Clase.php">Agenda de clases</a>
-						</li>
 						<?php
 					}
 					?>
