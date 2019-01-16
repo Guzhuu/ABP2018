@@ -7,9 +7,11 @@
 	if(autenticado()){
 		if(!isAdmin()){
 			if(isset($_REQUEST['submit'])){
-				if($_REQUEST['submit']!='ESCOGERPAREJA' && $_REQUEST['submit']!='SHOWALLFORUSER'){
+				if($_REQUEST['submit']!='ESCOGERPAREJA' && $_REQUEST['submit']!='SHOWALLFORUSER' && $_REQUEST['submit'] != 'RANKINGGRUPOS' && $_REQUEST['submit'] != 'RANKINGFINAL'){
 					$_REQUEST['submit'] = 'SHOWALLFORUSER';
 				}
+			}else{
+				$_REQUEST['submit'] = 'SHOWALLFORUSER';
 			}
 		}
 	}
