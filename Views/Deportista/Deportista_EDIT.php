@@ -40,6 +40,14 @@ class Deportista_EDIT{  // declaración de clase
 	// y un hiperenlace para volver al script php que la invocó
 	function toString(){
 		include_once '../Views/base/header.php';
+		echo '<script type="text/javascript" src="../js/md5.js"></script>';
+		?>
+		   <script>
+			  function encriptarContrasenha(){
+				  document.getElementById("contrasenha").value = hex_md5(document.getElementById("password").value);
+			  }
+		   </script>
+		<?php
 		
 		$i = 0;
 		/*Tabla para el formulario*/
@@ -105,7 +113,8 @@ class Deportista_EDIT{  // declaración de clase
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input name="Contrasenha" type="password">';
+					echo '<input type="hidden" id="contrasenha" name="Contrasenha" maxlength="128" value=""/>';
+					echo '<input type="password" id="password" name="password" onChange="encriptarContrasenha()">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
@@ -137,17 +146,15 @@ class Deportista_EDIT{  // declaración de clase
 				echo '</td>';
 			echo '</tr>';
 			$i++;
-
-
 			
 			/*Fila para submit*/
-			echo '<tr class="'; echo $this->_getTr($i); echo'">';
+			echo '<tr class="'; echo $this->_getTr($i); echo '">';
 				echo '<td class="formularioTd">';
 					echo $this->submit;
 				echo '</td>';
 				
 				echo '<td class="formularioTd">';
-					echo '<input type="submit" name="submit" value="'; echo $this->submit; echo '">';
+					echo '<input class="btn btn-primary" type="submit" name="submit" value="'; echo $this->submit; echo '">';
 					echo '</input>';
 				echo '</td>';
 			echo '</tr>';
@@ -161,7 +168,7 @@ class Deportista_EDIT{  // declaración de clase
 				
 				echo '<td class="formularioTd">';
 					echo '<a href="'; echo $this->controller; echo '">';
-					echo '<button>'; echo $this->Volver; echo '</button>';
+					echo '<button class="btn btn-secondary">'; echo $this->Volver; echo '</button>';
 					echo '</a>';
 				echo '</td>';
 			echo '</tr>';
