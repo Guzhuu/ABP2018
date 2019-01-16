@@ -73,7 +73,13 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 			return 'Mixto';
 		}
 	}
-	
+	function colorDe($num){
+		if($num % 2 == 0){
+			return "BBBBBB";
+		}else{
+			return "EEEEEE";
+		}
+	}
 	
 	function toString($ParejaPerteneceCategoria){
 		include '../Views/base/header.php';
@@ -108,12 +114,14 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 			/*Para cada fila se muestran los datos recuperados*/
 			$num = 0;
 			$num2 = 0;
+			$numFila = 0;
+			$numFila2 = 0;
 			$prev = '';
 			$fila = $this->resultado->fetch_row();
 			while($fila){
 				$prev = $fila[0];
 				/*Se crea una fila <tr>*/
-				echo '<tr class="fila">';
+				echo '<tr class="fila" bgcolor="' . $this->colorDe($numFila) . '">';
 				
 				/*Se crean tantas celdas y se muestran sus datos como tenga la fila*/
 				for($i = 0; $i < 4; $i++){
@@ -136,7 +144,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 					$categoriasDeFila = $fila;
 					while($categoriasDeFila[0] == $prev){
 						if($categoriasDeFila[4] != null){
-							echo '<tr>';
+							echo '<tr bgcolor="' . $this->colorDe($numFila2) . '">';
 							echo "<form id='formularioInscribirse"; echo $num2; echo "' method='GET' action='"; echo $this->controlador; echo "'>";
 							echo '<input type="hidden" name="codPareja" value="'; echo $ParejaPerteneceCategoria->Pareja_codPareja; echo'">';
 							//var_dump($ParejaPerteneceCategoria->Pareja_codPareja);
@@ -155,6 +163,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 							}
 							echo '</form>';
 							echo '</tr>';
+							$numFila2++;
 							$num2++;
 						}
 						$categoriasDeFila = $this->resultado->fetch_row();
@@ -175,6 +184,7 @@ class Campeonato_SHOWPARAINSCRIBIRSE{
 				
 					
 				echo '</tr>';
+				$numFila++;
 				echo '</form>';
 				$num++;
 			}
