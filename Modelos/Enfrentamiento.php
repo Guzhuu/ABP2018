@@ -350,9 +350,9 @@ public function getSet1() {
 	}
 	
 	function ganadorDe($set){
-		if(substr($set, 0, 1) === '6' || substr($set, 0, 1) != '0'){
+		if(substr($set, 0, 1) === '6'){
 			return -1;
-		}else if(substr($set, 2, 1) === '6' || substr($set, 2, 1) != '0'){
+		}else if(substr($set, 2, 1) === '6'){
 			return 1;
 		}else{
 			return 0;
