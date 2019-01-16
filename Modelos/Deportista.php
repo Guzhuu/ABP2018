@@ -218,14 +218,13 @@ class Deportista
     
     $resultado = $sql->get_result();
     
-    if($resultado){
+    if($resultado->num_rows != 0){
       return 'Ya se ha añadido un deportista con ese DNI';
     }else{
-
-    $sql = $this->mysqli->prepare("INSERT INTO deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha,Cuota_socio
-      ,rolAdmin, rolEntrenador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $sql->bind_param("sissssiii", $this->DNI, $this->Edad, $this->Nombre,$this->Apellidos, $this->Sexo, $this->Contrasenha,  $this->Cuota_socio, $this->rolAdmin, $this->rolEntrenador);
-    $resultado = $sql->execute();
+		$sql = $this->mysqli->prepare("INSERT INTO deportista (DNI, Edad, Nombre, Apellidos, Sexo, Contrasenha,Cuota_socio
+		  ,rolAdmin, rolEntrenador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		$sql->bind_param("sissssiii", $this->DNI, $this->Edad, $this->Nombre,$this->Apellidos, $this->Sexo, $this->Contrasenha,  $this->Cuota_socio, $this->rolAdmin, $this->rolEntrenador);
+		$resultado = $sql->execute();
   
     if(!$resultado){
       return 'Ha fallado el insertar el deportista';
