@@ -661,7 +661,6 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 						}
 					}
 					
-					var_dump($partidos[$i]);
 					if($partidos[$i][6] == 1){
 						if($this->ganadorDe($partidos[$i][3]) + $this->ganadorDe($partidos[$i][4]) + $this->ganadorDe($partidos[$i][5]) < 0){
 							$arrayCategoria[$partidos[$i][1]][$this->stringPosicion] = 1;
