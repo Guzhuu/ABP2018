@@ -315,10 +315,6 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 		
 		if($campeonato->fetch_row()[0]){
 			return "No se puede generar el calendario de un campeonato que ya ha comenzado";
-		}else{
-			$sql = $this->mysqli->prepare("	UPDATE Campeonato SET Comenzado = 1 WHERE Campeonato = ?");
-			$sql->bind_param("i", $this->Campeonato);
-			$campeonato = $sql->execute();
 		}
 		
 		$sql = $this->mysqli->prepare("	SELECT campeonato_consta_de_categorias.constadeCategorias, Categoria.Nivel, Categoria.Sexo FROM campeonato_consta_de_categorias, Categoria 
@@ -442,6 +438,11 @@ function _getDatosGuardados(){//Para recuperar de la base de datos
 							}
 						}
 					}
+					
+					$sql = $this->mysqli->prepare("	UPDATE Campeonato SET Comenzado = 1 WHERE Campeonato = ?");
+					$sql->bind_param("i", $this->Campeonato);
+					$campeonato = $sql->execute();
+		
 				}
 				
 				
